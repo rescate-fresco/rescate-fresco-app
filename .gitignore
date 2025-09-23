@@ -1,0 +1,38 @@
+# Ignorar las dependencias de Node
+/node_modules
+
+# Ignorar las variables de entorno
+.env
+.env.local
+.env.production
+.env.development
+
+# Ignorar archivos de registro
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# Ignorar archivos de compilación para el front-end (React)
+# Si usas Create React App, se compila en 'build'
+/project/frontend/build
+
+# Si usas Vite, se compila en 'dist'
+/project/frontend/dist
+
+# Ignorar caché
+.cache
+.eslintcache
+*.tgz
+
+# Ignorar directorios específicos de IDEs y sistemas operativos
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Ignorar el archivo de configuración de npm
+package-lock.json
+
+# Ignorar el directorio de tests (opcional)
+/coverage
