@@ -21,7 +21,7 @@ Rescate Fresco permite a las tiendas publicar lotes de rescate con vencimiento y
 ## 🎯 Misión
 Reducir la merma en comercios locales y facilitar el acceso a alimentos más baratos, con una experiencia simple, medible y colaborativa.
 
-## Estructura
+## Estructura del Proyecto
 
 El proyecto está organizado en una arquitectura de monorepo, con directorios separados para el front-end y el back-end dentro de la carpeta project.
 ```bash
