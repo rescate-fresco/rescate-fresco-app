@@ -66,6 +66,9 @@ cd rescate-fresco-app
 
 * express → Framework para crear el servidor y gestionar rutas HTTP.
 * cors → Middleware para habilitar peticiones cross-origin.
+* dotenv → Librería para cargar variables de entorno.
+* nodemon → Herramienta para reiniciar automáticamente la aplicación cada vez que detecta cambios
+* pg → Cliente para PostgreSQL.
 * Otros módulos → Dependencias adicionales según el proyecto.
 
 Instalación:
@@ -79,6 +82,7 @@ npm install
 * react → Biblioteca principal para interfaces de usuario.
 * react-dom → Gestión del DOM.
 * react-scripts → Scripts para desarrollo y construcción.
+* react-router-dom → Biblioteca que permite la navegación entre vistas.
 * Otros módulos → Dependencias adicionales según el proyecto.
 
 Instalación:
@@ -93,12 +97,17 @@ Asegurar de tener ambos servidores corriendo para que el frontend pueda comunica
 
 **Backend**
 ```bash
+# Para Desarrollo
 cd project/backend
 npm run dev
+
+# Para Producción 
+cd project/backend
+npm run start
 ```
 
 **Frontend**
 ```bash
 cd project/frontend
-npm start
+npm run dev
 ```
