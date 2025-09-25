@@ -94,7 +94,7 @@ Asegurar de tener ambos servidores corriendo para que el frontend pueda comunica
 **Backend**
 ```bash
 cd project/backend
-npm start
+npm run dev
 ```
 
 **Frontend**
