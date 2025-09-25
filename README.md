@@ -21,28 +21,37 @@ Rescate Fresco permite a las tiendas publicar lotes de rescate con vencimiento y
 ## 🎯 Misión
 Reducir la merma en comercios locales y facilitar el acceso a alimentos más baratos, con una experiencia simple, medible y colaborativa.
 
-## Estructura del Proyecto
+## 📚 Documentación del Proyecto
 
-El proyecto está organizado en una arquitectura de monorepo, con directorios separados para el front-end y el back-end dentro de la carpeta project.
+### ⏱️ Requisitos Previos
 
+Para poder ejecutar este proyecto, necesitas tener las siguientes herramientas instaladas en tu computadora:
+
+* Node.js (v16+ recomendado) → https://nodejs.org
+* npm (v8+ recomendado, incluido con Node.js)
+* git → https://git-scm.com/
+* Editor de código (recomendado: VSCode)
+
+Verificar instalaciones: 
+```bash
+node -v
+npm -v
+git --version
+```
+
+### 🗂️ Estructura del Proyecto
+
+El proyecto está organizado con directorios separados para el front-end y el back-end dentro de la carpeta project.
 ```bash
 rescate-fresco-app/
 ├── project/
 │   ├── frontend/   # Aplicación de front-end con React
 │   └── backend/    # Servidor de back-end con Node.js y Express
+├── tests/
+│   └── test.py
 ├── .gitignore      # Archivo para ignorar directorios y archivos de Git
 └── README.md       # Este archivo
 ```
-
-## Requisitos
-
-Para poder ejecutar este proyecto, necesitas tener las siguientes herramientas instaladas en tu computadora:
-
-* Node.js: Se recomienda la versión 14 o superior. Puedes verificarlo con node -v.
-
-* npm: Se instala junto con Node.js. Puedes verificarlo con npm -v.
-
-* Git: Para clonar el repositorio.
 
 ## Instalación y Configuración
 
