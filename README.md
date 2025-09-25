@@ -1,5 +1,25 @@
-# rescate-fresco-app
-Marketplace para reducir merma alimentaria. Tiendas publican lotes cercanos a vencimiento con precio de rescate, fotos y horarios de retiro. Consumidores reservan en 1–2 clics y reciben alertas de última hora. La plataforma ofrece KPIs de impacto: kg rescatados, % merma evitada, ahorro y tasa de retiro.
+# 🥕 Rescate Fresco 
+
+Marketplace de productos próximos a vencer o con defectos estéticos. Conectamos a tiendas locales con consumidores cercanos para reducir merma y ofrecer alimentos más baratos. Tiendas publican lotes con precio de rescate, fotos y horarios de retiro. Consumidores reservan lotes y reciben alertas de última hora.
+
+## 🚨 El Problema
+
+* Productos cercanos a vencimiento o imperfectos terminan como merma.
+* Tiendas pequeñas no tienen un canal digital simple para publicar remates.
+* Clientes no se enteran de las ofertas a tiempo ni pueden reservar fácilmente.
+* No existe trazabilidad del impacto ni métricas claras.
+
+## 💡 La Solución
+
+Rescate Fresco permite a las tiendas publicar lotes de rescate con vencimiento y precio reducido, mientras los consumidores reservan con precios convenientes y retiran en horarios definidos.
+
+* Publicación rápida de lotes con fotos, precio de rescate y vencimiento.
+* Reserva express y confirmación de retiro vía QR o PIN.
+* Notificaciones de “última hora” y recomendaciones personalizadas.
+* Panel con KPIs de impacto: kg rescatados, % merma evitada, ahorro y más.
+
+## 🎯 Misión
+Reducir la merma en comercios locales y facilitar el acceso a alimentos más baratos, con una experiencia simple, medible y colaborativa.
 
 ## Estructura
 
