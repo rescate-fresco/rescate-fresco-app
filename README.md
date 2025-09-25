@@ -24,6 +24,7 @@ Reducir la merma en comercios locales y facilitar el acceso a alimentos más bar
 ## Estructura del Proyecto
 
 El proyecto está organizado en una arquitectura de monorepo, con directorios separados para el front-end y el back-end dentro de la carpeta project.
+
 ```bash
 rescate-fresco-app/
 ├── project/
