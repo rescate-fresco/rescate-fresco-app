@@ -31,8 +31,9 @@ Para poder ejecutar este proyecto, necesitas tener las siguientes herramientas i
 * npm (v8+ recomendado, incluido con Node.js)
 * git → https://git-scm.com/
 * Editor de código (recomendado: VSCode)
+* PostgreSQL (v13+ recomendado) → https://www.postgresql.org/download/  
 
-Verificar instalaciones: 
+Verificar instalaciones (Terminal): 
 ```bash
 node -v
 npm -v
@@ -71,10 +72,11 @@ cd rescate-fresco-app
 * pg → Cliente para PostgreSQL.
 * Otros módulos → Dependencias adicionales según el proyecto.
 
-Instalación:
+Instalación (Terminal):
 ```bash
 cd project/backend
 npm install
+.env
 ```
 
 **Frontend (package.json)**
@@ -85,17 +87,35 @@ npm install
 * react-router-dom → Biblioteca que permite la navegación entre vistas.
 * Otros módulos → Dependencias adicionales según el proyecto.
 
-Instalación:
+Instalación (Terminal):
 ```bash
 cd project/frontend
 npm install
+```
+
+### ⚙️ Configuración del entorno
+
+⚠️ IMPORTANTE: para configurar el entorno se debe crear un archivo .env en la carpeta backend/. Luego, pegar el siguiente contenido en el archivo creado:
+```bash
+PORT = 5000 # Se recomienda 5000
+DATABASE_URL = postgres://usuario:contraseña@localhost:5432/rescate_db # Modificar ususario y contraseña de Postgres
+```
+
+### 💾 Configuración de la Base de Datos
+
+⚠️ IMPORTANTE: se debe tener PostgreSQL instalado y configurado con un **usuario y contraseña válidos**, los cuales deben ser agregados en el archivo .env (**Configuración del entorno**).
+
+Creae tablas: Antes de ejecutar el siguiente código en terminal, se debe modificar el usuario:
+```bash
+psql -U usuario -d rescate_db -f project/backend/src/database/init.sql
+# Pedirá la contraseña de Postgres por terminal
 ```
 
 ### 🏆 Ejecución del Proyecto
 
 Asegurar de tener ambos servidores corriendo para que el frontend pueda comunicarse con el backend.
 
-**Backend**
+**Backend (Terminal)**
 ```bash
 # Para Desarrollo
 cd project/backend
@@ -106,7 +126,7 @@ cd project/backend
 npm run start
 ```
 
-**Frontend**
+**Frontend (Terminal)**
 ```bash
 cd project/frontend
 npm run dev
