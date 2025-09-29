@@ -1,8 +1,12 @@
 import express from "express";
 import bcrypt from "bcrypt";
 import pool from "../database/index.js";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+
 const router = express.Router();
 
+dotenv.config();
 // POST → registrar usuario
 router.post("/register", async(req, res) => {
   try {
@@ -47,11 +51,48 @@ router.post("/register", async(req, res) => {
   }
 });
 
-// GET → Obtener usuarios
-router.get("/users", async (req, res) => {
+
+
+
+// POST → login usuario
+router.post("/login", async (req, res) => {
   try {
-    const result = await pool.query("SELECT id_usuario, nombre_usuario, email, rol FROM usuarios");
-    res.json(result.rows);
+    const { email, contrasena } = req.body;
+
+    // Validación básica
+    if (!email || !contrasena) {
+      return res.status(400).json({ error: "Faltan campos" });
+    }
+
+    // Buscar usuario por email
+    const result = await pool.query(
+      "SELECT id_usuario, nombre_usuario, email, contrasena_hash, rol FROM usuarios WHERE email=$1",
+      [email]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(401).json({ error: "Email o contraseña incorrectos" });
+    }
+
+    const user = result.rows[0];
+
+    // Verificar contraseña
+    const passwordMatch = await bcrypt.compare(contrasena, user.contrasena_hash);
+    if (!passwordMatch) {
+      return res.status(401).json({ error: "Email o contraseña incorrectos" });
+    }
+
+    // Aquí normalmente se genera un token JWT, pero de momento devolvemos datos básicos
+    res.json({
+      usuario: {
+        id_usuario: user.id_usuario,
+        nombre_usuario: user.nombre_usuario,
+        email: user.email,
+        rol: user.rol
+      },
+      token: "TokenDeMentira",
+      message: "Login exitoso"
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Error del servidor" });

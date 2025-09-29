@@ -98,3 +98,54 @@
   background: #01b50a;
   color : black;
 }
+
+/* Estilos para el contenedor del perfil */
+.perfil-container {
+    position: relative;
+    cursor: pointer;
+}
+
+.menu-desplegable {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background: white;
+    border: 1px solid #ccc;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    min-width: 120px;
+    z-index: 1000;
+}
+
+.menu-desplegable a,
+.menu-desplegable button {
+    padding: 8px;
+    text-decoration: none;
+    color: black;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+}
+
+.menu-desplegable a:hover,
+.menu-desplegable button:hover {
+    background-color: #eee;
+}
+
+.usuario-nombre {
+  color: black;
+  font-weight: bold;
+  font-size: 0.9rem;
+  background: transparent;
+  user-select: none;
+  cursor: pointer;
+  border: none;
+
+}
+
+.usuario-nombre:focus {
+  outline: none;
+  box-shadow: none;
+}

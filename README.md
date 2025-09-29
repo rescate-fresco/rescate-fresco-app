@@ -71,6 +71,7 @@ cd rescate-fresco-app
 * nodemon → Herramienta para reiniciar automáticamente la aplicación cada vez que detecta cambios
 * pg → Cliente para PostgreSQL.
 * bcrypt → Hasheo de contraseña.
+* jsonwebtoken → Token para sesión.
 * Otros módulos → Dependencias adicionales según el proyecto.
 
 Instalación (Terminal):

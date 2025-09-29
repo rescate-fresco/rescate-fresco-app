@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import Navbar from "../components/navbar.jsx";
 import './register.css';
+import { useNavigate } from "react-router-dom";
 
 function Register() {
+    const navigate = useNavigate();
     const [form, setForm] = useState({
     nombre_usuario: "",
     email: "",
@@ -41,6 +43,7 @@ function Register() {
                     rol: "consumidor",
                     direccion_usuario: ""
                 });
+                navigate("/Inicio");
             } else {
                 alert("Error: " + data.error);
             }
@@ -59,53 +62,53 @@ function Register() {
                     <h2>Registrarse</h2>
                     <form onSubmit={handleSubmit} className="register-form">
                         <label>
-                        Nombre:
-                        <input
-                            type="text"
-                            name="nombre_usuario"
-                            value={form.nombre_usuario}
-                            onChange={handleChange}
-                            required
-                        />
+                            Nombre:
+                            <input
+                                type="text"
+                                name="nombre_usuario"
+                                value={form.nombre_usuario}
+                                onChange={handleChange}
+                                required
+                            />
                         </label>
 
                         <label>
-                        Email:
-                        <input
-                            type="email"
-                            name="email"
-                            value={form.email}
-                            onChange={handleChange}
-                            required
-                        />
+                            Email:
+                            <input
+                                type="email"
+                                name="email"
+                                value={form.email}
+                                onChange={handleChange}
+                                required
+                            />
                         </label>
 
                         <label>
-                        Contraseña:
-                        <input
-                            type="password"
-                            name="contrasena"
-                            value={form.contrasena}
-                            onChange={handleChange}
-                            required
-                        />
+                            Contraseña:
+                            <input
+                                type="password"
+                                name="contrasena"
+                                value={form.contrasena}
+                                onChange={handleChange}
+                                required
+                            />
                         </label>
 
                         <label>
-                        Rol:
-                        <select name="rol" value={form.rol} onChange={handleChange} required>
-                            <option value="consumidor">Consumidor</option>
-                            <option value="tienda">Tienda</option>
-                        </select>
+                            Rol:
+                            <select name="rol" value={form.rol} onChange={handleChange} required>
+                                <option value="consumidor">Consumidor</option>
+                                <option value="tienda">Tienda</option>
+                            </select>
                         </label>
 
                         <label>
-                        Dirección:
-                        <textarea
-                            name="direccion_usuario"
-                            value={form.direccion_usuario}
-                            onChange={handleChange}
-                        />
+                            Dirección:
+                            <textarea
+                                name="direccion_usuario"
+                                value={form.direccion_usuario}
+                                onChange={handleChange}
+                            />
                         </label>
 
                         <button type="submit">Registrarse</button>

@@ -23,3 +23,50 @@ body {
     display: flex;
     overflow-y: auto; /* Si el contenido es muy largo, permite scroll solo en el cuerpo */
 }
+
+.login-container {
+  height: 255px;
+  width: 400px;
+  margin: 50px auto;
+  padding: 20px;
+  border-radius: 10px;
+  background: #5ae861;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  color: black;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.login-form label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 500;
+}
+
+.login-form input,
+.login-form textarea,
+.login-form select {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.login-form button {
+  padding: 10px;
+  border: none;
+  background: #017007;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  width: 100%; /* hace que el botón ocupe todo el ancho del formulario */
+  box-sizing: border-box; /* asegura que el padding no expanda el ancho */
+}
+
+.login-form button:hover {
+  background: #01b50a;
+  color : black;
+}
