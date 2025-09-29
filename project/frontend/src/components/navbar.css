@@ -1,0 +1,100 @@
+.navbar {
+    display: flex;
+    justify-content: space-between; /* logo a la izquierda, menu a la derecha */
+    align-items: center; /* Centrar verticalmente */
+    padding: 10px 20px; /* Espaciado interno */
+    height: 55px; /* Altura fija */
+    background-color: #5ae861;
+}
+
+/* Estilos para la parte izquierda del navbar */
+
+.nav-izq {
+  display: flex;
+  align-items: center; /* Centrar verticalmente */
+  gap: 20px; /* Espacio entre logo y nombre */
+}
+
+.nav-links {
+  display: flex;
+  list-style: none; /* Quitar viñetas */
+  gap: 15px; /* Espacio entre enlaces */
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links a {
+  color: black;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.nav-links a:hover { /* Efecto hover */
+  color: #017007;
+}
+
+/* Estilos para la parte derecha del navbar */
+
+.nav-der {
+  display: flex;           /* alinea en fila */
+  align-items: center;     /* centra verticalmente */
+  gap: 15px;               /* espacio entre search y botones */
+}
+
+.nav-der .search-form {
+  display: flex;
+  align-items: center; /* centra verticalmente */
+  gap: 8px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.nav-der .search-form .button_search {
+  padding: 6px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  border: 1px solid black;
+}
+
+.nav-der .search-form .button_search:hover {
+  background: white;
+  color: black;
+}
+
+.auth-buttons {
+  display: flex;
+  gap: 10px;
+  margin-left: 15px;
+}
+
+.btn-login,
+.btn-register {
+  padding: 6px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.btn-login {
+  background: transparent;
+  border: 1px solid black;
+  color: black;
+}
+
+.btn-login:hover {
+  background: black;
+  color: white;
+}
+
+.btn-register {
+  background: #017007;
+  color: white;
+  border: none;
+}
+
+.btn-register:hover {
+  background: #01b50a;
+  color : black;
+}

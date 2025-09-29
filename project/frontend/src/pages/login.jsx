@@ -1,8 +1,13 @@
+import Navbar from "../components/navbar.jsx";
+import './login.css';
 function Login() {
     return (
-        <div>
-            <h1>Página de Inicio de Sesión</h1>
-            <p>Por favor, ingresa tus credenciales para iniciar sesión.</p>
+        <div className="Login">
+            <Navbar />
+            <div className="Cuerpo">
+                <h1>Bienvenido a la página de inicio</h1>
+                <p>Esta es la página principal de la aplicación.</p>
+            </div>
         </div>
     );
 }

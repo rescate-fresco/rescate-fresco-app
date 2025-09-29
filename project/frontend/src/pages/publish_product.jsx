@@ -1,8 +1,8 @@
 import Navbar from "../components/navbar.jsx";
-import './home.css';
-function Home() {
+import './publish_product.css';
+function Publish() {
     return (
-        <div className="Home">
+        <div className="Publish">
             <Navbar />
             <div className="Cuerpo">
                 <h1>Bienvenido a la página de inicio</h1>
@@ -11,4 +11,4 @@ function Home() {
         </div>
     );
 }
-export default Home;
+export default Publish;

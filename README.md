@@ -70,6 +70,7 @@ cd rescate-fresco-app
 * dotenv → Librería para cargar variables de entorno.
 * nodemon → Herramienta para reiniciar automáticamente la aplicación cada vez que detecta cambios
 * pg → Cliente para PostgreSQL.
+* bcrypt → Hasheo de contraseña.
 * Otros módulos → Dependencias adicionales según el proyecto.
 
 Instalación (Terminal):

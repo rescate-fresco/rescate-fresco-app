@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS usuarios (
     email VARCHAR(100) UNIQUE NOT NULL,
     contrasena_hash TEXT NOT NULL,
     rol VARCHAR(20) CHECK (rol IN ('tienda', 'consumidor', 'admin')) NOT NULL,
-    direccio_usuario TEXT,
+    direccion_usuario TEXT,
     ubicacion_usuario POINT
 );
 
