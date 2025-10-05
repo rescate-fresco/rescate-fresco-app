@@ -2,14 +2,17 @@ import express from "express";
 import cors from "cors";
 import pool from "./database/index.js";
 import dotenv from "dotenv";
+import lotesRoutes from "./routes/lotes.js"; 
 
 dotenv.config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use("/api/lotes", lotesRoutes); 
 app.get("/", (req, res) => {res.send("Servidor funcionando 🚀");});
 const PORT = process.env.PORT;
+
 
 app.listen(PORT, async () => {
   // Conexión a la base de datos

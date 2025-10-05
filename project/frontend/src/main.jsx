@@ -6,6 +6,7 @@ import App from './App.jsx'
 // Importación de las páginas
 import Home from './pages/home'
 import Login from './pages/login'
+import Ofertas from './pages/ofertas'
 
 // Definición de las rutas
 const router = createBrowserRouter([
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
         path: 'login',        // Ruta para iniciar sesión
         element: <Login />,   // Componente para iniciar sesión
       },
+      {
+        path: 'ofertas',
+        element: <Ofertas />,
+      }
 
       // Otras rutas pueden ser añadidas aquí
 
