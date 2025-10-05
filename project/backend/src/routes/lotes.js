@@ -1,13 +1,9 @@
-// project/backend/src/routes/lotes.js
+
 
 import express from "express";
-// Importa la conexión a la BD desde tu server.js o el archivo que exporta el pool
 import pool from "../database/index.js"; 
 
 const router = express.Router();
-
-// RUTA: GET /api/lotes/ofertas
-// Esta ruta es /ofertas, pero se mapeará a /api/lotes/ofertas en server.js
 router.get("/ofertas", async (req, res) => {
     
     // Consulta SQL para obtener lotes PUBLICADOS que son ofertas y que no están vencidos hoy
