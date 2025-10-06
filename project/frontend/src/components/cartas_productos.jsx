@@ -1,6 +1,17 @@
 import { Link } from 'react-router-dom';
 import { aplicarDescuentoPorVencimiento } from '../utils/descuentos'; 
 
+const agregarAlCarrito = (lote) => {
+    const carritoActual = JSON.parse(localStorage.getItem("carrito")) || [];
+    // Evita duplicados
+    if (!carritoActual.some(item => item.id_lote === lote.id_lote)) {
+        carritoActual.push(lote);
+        localStorage.setItem("carrito", JSON.stringify(carritoActual));
+        alert("¡Producto agregado al carrito!");
+    } else {
+        alert("Este producto ya está en el carrito.");
+    }
+};
 
 const CartasProductos = ({ lote }) => {
     const{
@@ -52,8 +63,9 @@ const CartasProductos = ({ lote }) => {
             <Link to={`/ofertas/${lote.id_lote}`}>
                 <button>Ver Lote</button>
             </Link>
-            <button>Agregar al Carrito</button>
+            <button onClick={() => agregarAlCarrito(lote)}>Agregar al Carrito</button>
         </div>
     );
 }
+
 export default CartasProductos;
