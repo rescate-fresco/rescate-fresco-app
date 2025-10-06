@@ -8,7 +8,8 @@ import Home from './pages/home'
 import Login from './pages/login'
 import Ofertas from './pages/ofertas'
 import DetalleLote from './pages/detalle_lote.jsx'
-import Carrito from './pages/carrito.jsx';
+import Carrito from './pages/carrito.jsx'
+import MetodoPago from './pages/metodo_pago.jsx'
 
 // Definición de las rutas
 const router = createBrowserRouter([
@@ -37,7 +38,10 @@ const router = createBrowserRouter([
         path: 'carrito',
         element: <Carrito />,
       },
-
+      { 
+        path: 'carrito/pago',
+        element: <MetodoPago />,
+      }
       // Otras rutas pueden ser añadidas aquí
 
     ],

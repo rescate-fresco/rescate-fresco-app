@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Carrito = () => {
     const [carrito, setCarrito] = useState([]);
+    const navigate = useNavigate(); 
 
     // Cargar el carrito desde localStorage al montar el componente
     useEffect(() => {
@@ -30,26 +32,32 @@ const Carrito = () => {
 
     return (
         <div className="p-8">
-        <h2 className="text-2xl font-bold mb-4">Carrito de compras</h2>
-        <ul>
-            {carrito.map(item => (
-            <li key={item.id_lote} className="mb-4 border-b pb-2">
-                <span className="font-semibold">{item.nombre_lote}</span> - ${Number(item.precio_rescate).toFixed(2)}
-                <button
-                className="ml-4 text-red-500"
-                onClick={() => eliminarDelCarrito(item.id_lote)}
-                >
-                Quitar
-                </button>
-            </li>
-            ))}
-        </ul>
-        <button
-            className="mt-4 bg-red-600 text-white px-4 py-2 rounded"
-            onClick={vaciarCarrito}
-        >
-            Vaciar carrito
-        </button>
+            <h2 className="text-2xl font-bold mb-4">Carrito de compras</h2>
+            <ul>
+                {carrito.map(item => (
+                    <li key={item.id_lote} className="mb-4 border-b pb-2">
+                        <span className="font-semibold">{item.nombre_lote}</span> - ${Number(item.precio_rescate).toFixed(2)}
+                        <button
+                            className="ml-4 text-red-500"
+                            onClick={() => eliminarDelCarrito(item.id_lote)}
+                        >
+                            Quitar
+                        </button>
+                    </li>
+                ))}
+            </ul>
+            <button
+                className="mt-4 bg-green-600 text-white px-4 py-2 rounded mr-4"
+                onClick={() => navigate("/carrito/pago")}
+            >
+                Confirmar y pagar
+            </button>
+            <button
+                className="mt-4 bg-red-600 text-white px-4 py-2 rounded"
+                onClick={vaciarCarrito}
+            >
+                Vaciar carrito
+            </button>
         </div>
     );
 };
