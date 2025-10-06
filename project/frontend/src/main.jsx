@@ -7,6 +7,7 @@ import App from './App.jsx'
 import Home from './pages/home'
 import Login from './pages/login'
 import Ofertas from './pages/ofertas'
+import DetalleLote from './pages/detalle_lote.jsx'
 
 // Definición de las rutas
 const router = createBrowserRouter([
@@ -26,7 +27,11 @@ const router = createBrowserRouter([
       {
         path: 'ofertas',
         element: <Ofertas />,
-      }
+      },
+      {
+        path: 'ofertas/:id_lote',
+        element: <DetalleLote />,
+      },
 
       // Otras rutas pueden ser añadidas aquí
 

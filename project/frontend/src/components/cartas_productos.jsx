@@ -1,4 +1,4 @@
-import React from 'react';
+import { Link } from 'react-router-dom';
 import { aplicarDescuentoPorVencimiento } from '../utils/descuentos'; 
 
 
@@ -49,8 +49,10 @@ const CartasProductos = ({ lote }) => {
             {descuentoExtraPorVencimiento > 0 && (
                 <p className="alerta-vencimiento">¡Vence en {diasRestantes} días! ({descuentoExtraPorVencimiento}% extra)</p>
             )}
-
-            <button>Ver Lote</button>
+            <Link to={`/ofertas/${lote.id_lote}`}>
+                <button>Ver Lote</button>
+            </Link>
+            <button>Agregar al Carrito</button>
         </div>
     );
 }
