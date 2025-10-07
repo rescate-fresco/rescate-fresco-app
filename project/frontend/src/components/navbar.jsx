@@ -54,7 +54,6 @@ function Navbar() {
                 </div>
                 <ul className="nav-links">
                     <li><Link to="/Inicio">Inicio</Link></li>
-                    <Link to="/carrito"> | Carrito</Link>
                     {isLoggedIn && (usuario.rol === 'admin' || usuario.rol === 'tienda') && (usuario.tienda === true) && (
                         <>
                         <li><Link to="/Inicio/Tienda">Mi Tienda</Link></li>
@@ -94,6 +93,7 @@ function Navbar() {
                         </div>
                     )}
                 </div>
+                <Link to="/carrito"> | Carrito</Link>
             </div>
         </nav>
     );

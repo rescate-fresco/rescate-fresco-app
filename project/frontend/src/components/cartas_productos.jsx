@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import { aplicarDescuentoPorVencimiento } from '../utils/descuentos'; 
+import { aplicarDescuentoPorVencimiento } from '../utils/descuentos';
+import './cartas_productos.css';
 
 const agregarAlCarrito = (lote) => {
     const carritoActual = JSON.parse(localStorage.getItem("carrito")) || [];

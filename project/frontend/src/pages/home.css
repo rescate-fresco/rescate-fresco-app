@@ -22,4 +22,14 @@ body {
     width : 100%;
     display: flex;
     overflow-y: auto; /* Si el contenido es muy largo, permite scroll solo en el cuerpo */
+    color: black;
+}
+
+.productos-lista {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* tarjetas adaptables */
+    gap: 20px; /* espacio entre productos */
+    padding: 40px;
+    justify-items: center; /* centra las cartas */
+    align-items: start;
 }
