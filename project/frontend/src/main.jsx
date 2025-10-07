@@ -6,6 +6,9 @@ import App from './App.jsx'
 // Importación de las páginas
 import Home from './pages/home'
 import Login from './pages/login'
+import DetalleLote from './pages/detalle_lote.jsx'
+import Carrito from './pages/carrito.jsx'
+import MetodoPago from './pages/metodo_pago.jsx'
 
 // Definición de las rutas
 const router = createBrowserRouter([
@@ -22,7 +25,18 @@ const router = createBrowserRouter([
         path: 'login',        // Ruta para iniciar sesión
         element: <Login />,   // Componente para iniciar sesión
       },
-
+      {
+        path: 'lote/:id_lote',
+        element: <DetalleLote />,
+      },
+      {
+        path: 'carrito',
+        element: <Carrito />,
+      },
+      { 
+        path: 'carrito/pago',
+        element: <MetodoPago />,
+      }
       // Otras rutas pueden ser añadidas aquí
 
     ],
