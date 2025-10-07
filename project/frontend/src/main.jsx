@@ -10,6 +10,10 @@ import Register from './pages/register'
 import NewProduct from './pages/new_product'
 import Store from './pages/store'
 import NewStore from './pages/new_store'
+import DetalleLote from './pages/detalle_lote.jsx'
+import Carrito from './pages/carrito.jsx'
+import MetodoPago from './pages/metodo_pago.jsx'
+
 
 // Definición de las rutas
 const router = createBrowserRouter([
@@ -45,7 +49,20 @@ const router = createBrowserRouter([
       {
         path: 'Inicio/Publicar/Nuevo-Producto', // Ruta para publicar un nuevo producto
         element: <NewProduct />,                // Componente para publicar un nuevo producto
+      },
+      {
+        path: 'lote/:id_lote',
+        element: <DetalleLote />,
+      },
+      {
+        path: 'carrito',
+        element: <Carrito />,
+      },
+      { 
+        path: 'carrito/pago',
+        element: <MetodoPago />,
       }
+
     ],
   },
 ])
