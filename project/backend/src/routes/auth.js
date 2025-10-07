@@ -66,7 +66,7 @@ router.post("/login", async (req, res) => {
 
     // Buscar usuario por email
     const result = await pool.query(
-      "SELECT id_usuario, nombre_usuario, email, contrasena_hash, rol FROM usuarios WHERE email=$1",
+      "SELECT id_usuario, nombre_usuario, email, contrasena_hash, rol, tienda FROM usuarios WHERE email=$1",
       [email]
     );
 
@@ -88,7 +88,8 @@ router.post("/login", async (req, res) => {
         id_usuario: user.id_usuario,
         nombre_usuario: user.nombre_usuario,
         email: user.email,
-        rol: user.rol
+        rol: user.rol,
+        tienda: user.tienda
       },
       token: "TokenDeMentira",
       message: "Login exitoso"
@@ -96,6 +97,106 @@ router.post("/login", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Error del servidor" });
+  }
+});
+
+
+// POST → new tienda
+router.post("/tiendas", async (req, res) => {
+  const { nombre_tienda, direccion_tienda, telefono_tienda, id_usuario } = req.body;
+
+  try {
+    // Verificar si ya existe tienda con mismo usuario o nombre
+    const exists = await pool.query(
+      "SELECT * FROM tiendas WHERE id_usuario = $1 OR nombre_tienda = $2",
+      [id_usuario, nombre_tienda]
+    );
+
+    if (exists.rows.length > 0) {
+      return res.status(400).json({ message: "Ya existe una tienda con ese nombre o usuario." });
+    }
+
+    // Crear la tienda (sin lat/lon)
+    const result = await pool.query(
+      `INSERT INTO tiendas 
+        (id_usuario, nombre_tienda, direccion_tienda, telefono_tienda)
+       VALUES ($1, $2, $3, $4)
+       RETURNING *`,
+      [id_usuario, nombre_tienda, direccion_tienda, telefono_tienda]
+    );
+
+    // Actualizar columna "tienda" del usuario a true
+    await pool.query(
+      "UPDATE usuarios SET tienda = true WHERE id_usuario = $1",
+      [id_usuario]
+    );
+
+    res.status(201).json({
+      message: "Tienda creada exitosamente",
+      tienda: result.rows[0],
+    });
+
+  } catch (error) {
+    console.error("Error creando tienda:", error);
+    res.status(500).json({ message: "Error interno del servidor" });
+  }
+});
+
+
+// POST → new tienda
+router.post("/lotes", async (req, res) => {
+  const {
+    id_usuario,
+    nombre_lote,
+    categoria,
+    descripcion,
+    peso_qty,
+    precio_original,
+    precio_rescate,
+    fecha_vencimiento,
+    ventana_retiro_inicio,
+    ventana_retiro_fin
+  } = req.body;
+
+  try {
+    // Obtener id_tienda desde usuario
+    const tiendaResult = await pool.query(
+      "SELECT id_tienda FROM tiendas WHERE id_usuario = $1",
+      [id_usuario]
+    );
+
+    if (tiendaResult.rows.length === 0) {
+      return res.status(400).json({ message: "El usuario no tiene tienda registrada." });
+    }
+
+    const id_tienda = tiendaResult.rows[0].id_tienda;
+
+    const result = await pool.query(
+      `INSERT INTO lotes
+        (id_tienda, nombre_lote, categoria, descripcion, peso_qty, precio_original, precio_rescate, fecha_vencimiento, ventana_retiro_inicio, ventana_retiro_fin)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+       RETURNING *`,
+      [
+        id_tienda,
+        nombre_lote,
+        categoria,
+        descripcion,
+        peso_qty,
+        precio_original,
+        precio_rescate,
+        fecha_vencimiento,
+        ventana_retiro_inicio,
+        ventana_retiro_fin
+      ]
+    );
+
+    res.status(201).json({
+      message: "Producto publicado exitosamente",
+      lote: result.rows[0],
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error interno del servidor" });
   }
 });
 

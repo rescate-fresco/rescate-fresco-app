@@ -54,8 +54,14 @@ function Navbar() {
                 </div>
                 <ul className="nav-links">
                     <li><Link to="/Inicio">Inicio</Link></li>
-                    {isLoggedIn && (
-                        <li><Link to="/Inicio/Publicar">Publicar Producto</Link></li>
+                    {isLoggedIn && (usuario.rol === 'admin' || usuario.rol === 'tienda') && (usuario.tienda === true) && (
+                        <>
+                        <li><Link to="/Inicio/Tienda">Mi Tienda</Link></li>
+                        <li><Link to="/Inicio/Publicar/Nuevo-Producto">Publicar Producto</Link></li>
+                        </>
+                    )}
+                    {isLoggedIn && (usuario.rol === 'admin' || usuario.rol === 'tienda') && (usuario.tienda === false) && (
+                        <li><Link to="/Inicio/Crear-Tienda">Crear Tienda</Link></li>
                     )}
                 </ul>
             </div>

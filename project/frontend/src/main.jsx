@@ -7,7 +7,9 @@ import App from './App.jsx'
 import Home from './pages/home'
 import Login from './pages/login'
 import Register from './pages/register'
-import Publish from './pages/publish_product'
+import NewProduct from './pages/new_product'
+import Store from './pages/store'
+import NewStore from './pages/new_store'
 
 // Definición de las rutas
 const router = createBrowserRouter([
@@ -25,16 +27,24 @@ const router = createBrowserRouter([
         element: <Home />,         // Componente para la página de inicio
       },
       {
-        path: 'Inicio/Publicar',   // Ruta para publicar un producto
-        element: <Publish />,      // Componente para publicar un producto
-      },
-      {
         path: 'Iniciar-Sesion',    // Ruta para iniciar sesión
         element: <Login />,        // Componente para iniciar sesión
       },
       {
         path: 'Registrarse',       // Ruta para registrarse
         element: <Register />,     // Componente para registrarse
+      },
+      {
+        path: 'Inicio/Tienda',     // Ruta para la tienda
+        element: <Store />,        // Componente para la tienda
+      },
+      {
+        path: 'Inicio/Crear-Tienda',  // Ruta para crear una nueva tienda
+        element: <NewStore />,        // Componente para crear una nueva tienda
+      },
+      {
+        path: 'Inicio/Publicar/Nuevo-Producto', // Ruta para publicar un nuevo producto
+        element: <NewProduct />,                // Componente para publicar un nuevo producto
       }
     ],
   },

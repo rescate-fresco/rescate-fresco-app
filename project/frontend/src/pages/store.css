@@ -3,7 +3,7 @@ body {
   padding: 0;
 }
 
-.Publish {
+.Store {
     display: flex;
     flex-direction: column; /* Alinea el navbar y el cuerpo en columna */
     min-width: 1000px; /* Asegura un ancho mínimo para evitar que el diseño se rompa en pantallas pequeñas */
