@@ -11,12 +11,13 @@ const MetodoPago = () => {
                 onClick={() => handlePago("tarjeta de crédito")}
             >
                 Tarjeta de crédito
+                {/* Hacer la logica del pago */}
             </button>
             <button
                 className="bg-yellow-500 text-white px-4 py-2 rounded"
                 onClick={() => handlePago("transferencia")}
             >
-                Transferencia
+                {/* Hacer la logica del pago */}
             </button>
         </div>
     );

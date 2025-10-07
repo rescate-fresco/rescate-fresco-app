@@ -60,7 +60,7 @@ const CartasProductos = ({ lote }) => {
             {descuentoExtraPorVencimiento > 0 && (
                 <p className="alerta-vencimiento">¡Vence en {diasRestantes} días! ({descuentoExtraPorVencimiento}% extra)</p>
             )}
-            <Link to={`/ofertas/${lote.id_lote}`}>
+            <Link to={`/lote/${lote.id_lote}`}>
                 <button>Ver Lote</button>
             </Link>
             <button onClick={() => agregarAlCarrito(lote)}>Agregar al Carrito</button>

@@ -1,5 +1,4 @@
 import express from "express";
-// Asegúrate de que esta ruta a 'pool' es correcta:
 import pool from "../database/index.js"; 
 
 const router = express.Router();
@@ -20,8 +19,8 @@ const CONDICIONES_OFERTA = `
     AND fecha_vencimiento >= CURRENT_DATE
 `;
 
-// --- RUTA 1: GET /api/lotes/ofertas ---
-router.get("/ofertas", async (req, res) => {
+
+router.get("/", async (req, res) => {
     const sqlQuery = `
         SELECT ${CAMPOS_LOTE}
         FROM lotes
@@ -37,7 +36,7 @@ router.get("/ofertas", async (req, res) => {
     }
 });
 
-// --- RUTA 2: GET /api/lotes/:id_lote ---
+
 router.get("/:id_lote", async (req, res) => {
     const { id_lote } = req.params;
     const sqlQuery = `

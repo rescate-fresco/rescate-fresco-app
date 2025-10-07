@@ -6,7 +6,6 @@ import App from './App.jsx'
 // Importación de las páginas
 import Home from './pages/home'
 import Login from './pages/login'
-import Ofertas from './pages/ofertas'
 import DetalleLote from './pages/detalle_lote.jsx'
 import Carrito from './pages/carrito.jsx'
 import MetodoPago from './pages/metodo_pago.jsx'
@@ -27,11 +26,7 @@ const router = createBrowserRouter([
         element: <Login />,   // Componente para iniciar sesión
       },
       {
-        path: 'ofertas',
-        element: <Ofertas />,
-      },
-      {
-        path: 'ofertas/:id_lote',
+        path: 'lote/:id_lote',
         element: <DetalleLote />,
       },
       {
