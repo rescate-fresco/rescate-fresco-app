@@ -1,7 +1,21 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import Navbar from "../components/navbar.jsx";
+import './detalle_lote.css';
 
 const API_URL = `${import.meta.env.VITE_API_URL}api/lotes`;
+
+const agregarAlCarrito = (lote) => {
+    const carritoActual = JSON.parse(localStorage.getItem("carrito")) || [];
+    // Evita duplicados
+    if (!carritoActual.some(item => item.id_lote === lote.id_lote)) {
+        carritoActual.push(lote);
+        localStorage.setItem("carrito", JSON.stringify(carritoActual));
+        alert("¡Producto agregado al carrito!");
+    } else {
+        alert("Este producto ya está en el carrito.");
+    }
+};
 
 const DetalleLote = () => {
     const { id_lote } = useParams();
@@ -30,13 +44,35 @@ const DetalleLote = () => {
     if (!lote) return <div>No se encontró el lote.</div>;
 
     return (
-        <div className="detalle-lote">
-            <h2>{lote.nombre_lote}</h2>
-            <p>Precio original: ${Number(lote.precio_original).toFixed(2)}</p>
-            <p>Precio de rescate: ${Number(lote.precio_rescate).toFixed(2)}</p>
-            <p>Fecha de vencimiento: {lote.fecha_vencimiento}</p>
-            {/* Puedes agregar más detalles aquí */}
+        <div className="DetalleLote">
+            <Navbar />
+            <div className="Cuerpo">
+                <div className="detalle-lote">
+                    <h2>{lote.nombre_lote}</h2>
+                    <div className="detalle-info">
+                        <p><strong>Categoría:</strong> {lote.categoria || 'Sin categoría'}</p>
+                        <p><strong>Descripción:</strong> {lote.descripcion || 'No disponible'}</p>
+                        <p><strong>Peso:</strong> {lote.peso_qty} kg</p>
+                        <p><strong>Precio original:</strong> <span className="precio-original"> ${Number(lote.precio_original).toFixed(2)}</span></p>
+                        <p><strong>Precio oferta:</strong> <span className="precio-rescate">${Number(lote.precio_rescate).toFixed(2)}</span></p>
+                        <p><strong>Fecha de vencimiento:</strong> {new Date(lote.fecha_vencimiento).toLocaleDateString()}</p>
+                        <p><strong>Ventana de retiro:</strong>{' '}
+                        {lote?.ventana_retiro_inicio && lote?.ventana_retiro_fin
+                            ? `${new Date(lote.ventana_retiro_inicio.replace(' ', 'T')).toLocaleString('es-CL', { hour12: false })} - ${new Date(lote.ventana_retiro_fin.replace(' ', 'T')).toLocaleString('es-CL', { hour12: false })}`
+                            : 'No definida'}
+                        </p>
+                        <p>
+                        <strong>Estado:</strong>{' '}
+                        <span className={`estado ${lote.estado?.toLowerCase().replace(/\s+/g, '-')}`}>
+                            {lote.estado}
+                        </span>
+                        </p>
+                    </div>
+                    <button onClick={() => agregarAlCarrito(lote)}>Agregar al Carrito</button>
+                </div>
+            </div>
         </div>
+        
     );
 };
 

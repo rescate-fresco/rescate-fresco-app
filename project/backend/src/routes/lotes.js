@@ -10,12 +10,16 @@ const CAMPOS_LOTE = `
     precio_rescate, 
     fecha_vencimiento,
     id_tienda, 
-    estado
+    estado,
+    ventana_retiro_inicio,
+    ventana_retiro_fin,
+    categoria,
+    peso_qty
 `;
 
 const CONDICIONES_OFERTA = `
     precio_rescate < precio_original 
-    AND estado = 'PUBLICADO' 
+    AND estado = 'DISPONIBLE' 
     AND fecha_vencimiento >= CURRENT_DATE
 `;
 

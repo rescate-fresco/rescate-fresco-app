@@ -2,18 +2,6 @@ import { Link } from 'react-router-dom';
 import { aplicarDescuentoPorVencimiento } from '../utils/descuentos';
 import './cartas_productos.css';
 
-const agregarAlCarrito = (lote) => {
-    const carritoActual = JSON.parse(localStorage.getItem("carrito")) || [];
-    // Evita duplicados
-    if (!carritoActual.some(item => item.id_lote === lote.id_lote)) {
-        carritoActual.push(lote);
-        localStorage.setItem("carrito", JSON.stringify(carritoActual));
-        alert("¡Producto agregado al carrito!");
-    } else {
-        alert("Este producto ya está en el carrito.");
-    }
-};
-
 const CartasProductos = ({ lote }) => {
     const{
         nombre_lote,
@@ -62,9 +50,8 @@ const CartasProductos = ({ lote }) => {
                 <p className="alerta-vencimiento">¡Vence en {diasRestantes} días! ({descuentoExtraPorVencimiento}% extra)</p>
             )}
             <Link to={`/lote/${lote.id_lote}`}>
-                <button>Ver Lote</button>
+                <button>Ver Detalle</button>
             </Link>
-            <button onClick={() => agregarAlCarrito(lote)}>Agregar al Carrito</button>
         </div>
     );
 }
