@@ -18,12 +18,14 @@ const Carrito = () => {
         const nuevoCarrito = carrito.filter(item => item.id_lote !== id_lote);
         setCarrito(nuevoCarrito);
         localStorage.setItem("carrito", JSON.stringify(nuevoCarrito));
+        window.dispatchEvent(new Event("storage")); // Notificar a otros componentes
     };
 
     // Vaciar el carrito
     const vaciarCarrito = () => {
         setCarrito([]);
         localStorage.removeItem("carrito");
+        window.dispatchEvent(new Event("storage")); // Notificar a otros componentes
     };
 
     if (carrito.length === 0) {

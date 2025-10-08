@@ -25,6 +25,23 @@ const DetalleLote = () => {
         fetchLote();
     }, [id_lote]);
 
+    const agregarAlCarrito = (producto) => {
+        // 1. Obtener el carrito actual de localStorage
+        const carritoActual = JSON.parse(localStorage.getItem("carrito")) || [];
+    
+        // 2. Evitar duplicados y agregar el nuevo producto
+        if (!carritoActual.some(item => item.id_lote === producto.id_lote)) {
+            const nuevoCarrito = [...carritoActual, producto];
+            // 3. Guardar el carrito actualizado en localStorage
+            localStorage.setItem("carrito", JSON.stringify(nuevoCarrito));
+            // 4. ¡Línea clave! Notificar a otros componentes (como el Navbar) del cambio
+            window.dispatchEvent(new Event("storage"));
+            alert("¡Producto agregado al carrito!");
+        } else {
+            alert("Este producto ya está en el carrito.");
+        }
+    };
+
     if (cargando) return <div>Cargando detalles del lote...</div>;
     if (error) return <div>Error: {error}</div>;
     if (!lote) return <div>No se encontró el lote.</div>;
@@ -36,6 +53,12 @@ const DetalleLote = () => {
             <p>Precio de rescate: ${Number(lote.precio_rescate).toFixed(2)}</p>
             <p>Fecha de vencimiento: {lote.fecha_vencimiento}</p>
             {/* Puedes agregar más detalles aquí */}
+            <button 
+                onClick={() => agregarAlCarrito(lote)}
+                className="mt-4 bg-green-600 text-white px-4 py-2 rounded"
+            >
+                Agregar al Carrito
+            </button>
         </div>
     );
 };

@@ -5,6 +5,7 @@ import './navbar.css';
 function Navbar() {
     const [usuario, setUsuario] = useState(null);
     const isLoggedIn = !!usuario;
+    const [cartCount, setCartCount] = useState(0);
 
     const [menuAbierto, setMenuAbierto] = useState(false);
     const menuRef = useRef(null);
@@ -12,6 +13,17 @@ function Navbar() {
     const navigate = useNavigate();
 
     useEffect(() => {
+        
+        const updateCartCount = () => {
+            const carritoGuardado = localStorage.getItem("carrito");
+            if (carritoGuardado) {
+                setCartCount(JSON.parse(carritoGuardado).length);
+            } else {
+                setCartCount(0);
+            }
+        };
+        updateCartCount();
+
         const storedUser = localStorage.getItem("usuario");
         if (storedUser) {
             try {
@@ -21,6 +33,11 @@ function Navbar() {
                 localStorage.removeItem("usuario");
             }
         }
+        window.addEventListener("storage", updateCartCount);
+        return () => {
+            window.removeEventListener("storage", updateCartCount);
+        };
+
     }, []);
 
     const handleLogout = () => { /* Bien */
@@ -93,7 +110,14 @@ function Navbar() {
                         </div>
                     )}
                 </div>
-                <Link to="/carrito"> | Carrito</Link>
+                <Link to="/carrito" className="cart-link">
+                    <img src="https://images.falabella.com/v3/assets/blt7c5c2f2f888a7cc3/bltee24e879d497dc04/65b2492a1be7ff13e55d90c6/carritodesk.svg" alt="Carrito" />
+                    {cartCount >= 0 && (
+                        <span className="cart-count">{cartCount}</span>
+                    )
+                        
+                    }
+                </Link>
             </div>
         </nav>
     );

@@ -8,6 +8,8 @@ const agregarAlCarrito = (lote) => {
     if (!carritoActual.some(item => item.id_lote === lote.id_lote)) {
         carritoActual.push(lote);
         localStorage.setItem("carrito", JSON.stringify(carritoActual));
+        
+        window.dispatchEvent(new Event("storage"));
         alert("¡Producto agregado al carrito!");
     } else {
         alert("Este producto ya está en el carrito.");
