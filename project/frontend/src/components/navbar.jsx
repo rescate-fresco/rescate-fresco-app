@@ -6,7 +6,7 @@ function Navbar() {
     const [usuario, setUsuario] = useState(null);
     const isLoggedIn = !!usuario;
     const [cartCount, setCartCount] = useState(0);
-
+    const [searchTerm, setSearchTerm] = useState(''); // Estado para el término de búsqueda
     const [menuAbierto, setMenuAbierto] = useState(false);
     const menuRef = useRef(null);
 
@@ -44,6 +44,16 @@ function Navbar() {
         localStorage.removeItem("usuario");
         setUsuario(null); 
         navigate("/");
+    };
+
+    // Función para manejar el envío del formulario de búsqueda
+    const handleSearchSubmit = (e) => {
+        e.preventDefault(); // Evita que la página se recargue
+        if (searchTerm.trim()) {
+            navigate(`/Inicio?q=${encodeURIComponent(searchTerm.trim())}`);
+        } else {
+            navigate('/Inicio'); // Si la búsqueda está vacía, va a la página principal
+        }
     };
 
     const toggleMenu = () => { /* Bien */
@@ -84,9 +94,9 @@ function Navbar() {
             </div>
 
             <div className="nav-der">
-                <form className="search-form" role="search">
-                    <input type="search" placeholder="Search" aria-label="Search"/>
-                    <button className="button_search" type="submit">Search</button>
+                <form className="search-form" role="search" onSubmit={handleSearchSubmit}>
+                    <input type="search" placeholder="Buscar" aria-label="Search" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                    <button className="button_search" type="submit">Buscar</button>
                 </form>
 
                 <div className="auth-buttons">
