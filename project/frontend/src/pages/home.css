@@ -1,6 +1,6 @@
 body {
-  margin: 0;
-  padding: 0;
+    margin: 0;
+    padding: 0;
 }
 
 .Home {
@@ -27,7 +27,7 @@ body {
 
 .productos-lista {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* tarjetas adaptables */
+    grid-template-columns: repeat(4, 1fr); /* 4 columnas de igual tamaño */
     gap: 20px; /* espacio entre productos */
     padding: 40px;
     justify-items: center; /* centra las cartas */
