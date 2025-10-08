@@ -5,8 +5,9 @@ CREATE TABLE IF NOT EXISTS usuarios (
     email VARCHAR(100) UNIQUE NOT NULL,
     contrasena_hash TEXT NOT NULL,
     rol VARCHAR(20) CHECK (rol IN ('tienda', 'consumidor', 'admin')) NOT NULL,
-    direccio_usuario TEXT,
-    ubicacion_usuario POINT
+    direccion_usuario TEXT,
+    ubicacion_usuario POINT,
+    tienda BOOLEAN DEFAULT FALSE
 );
 
 -- Tiendas
@@ -14,6 +15,7 @@ CREATE TABLE IF NOT EXISTS tiendas (
     id_tienda SERIAL PRIMARY KEY,
     id_usuario INT UNIQUE REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
     nombre_tienda VARCHAR(100) NOT NULL,
+    telefono_tienda VARCHAR(20),
     direccion_tienda TEXT,
     ubicacion_tienda POINT
 );
@@ -32,6 +34,13 @@ CREATE TABLE IF NOT EXISTS lotes (
     ventana_retiro_inicio TIMESTAMP NOT NULL,
     ventana_retiro_fin TIMESTAMP NOT NULL,
     estado VARCHAR(20) CHECK (estado IN ('PUBLICADO','RESERVADO','RETIRADO','CADUCADO','CANCELADO')) DEFAULT 'PUBLICADO'
+);
+
+-- Imágnes
+CREATE TABLE IF NOT EXISTS imagenes_lote (
+    id_imagen SERIAL PRIMARY KEY,
+    id_lote INT REFERENCES lotes(id_lote) ON DELETE CASCADE,
+    url TEXT NOT NULL
 );
 
 -- Reservas

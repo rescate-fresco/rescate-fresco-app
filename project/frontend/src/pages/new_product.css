@@ -1,0 +1,77 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.NewProduct {
+    display: flex;
+    flex-direction: column; /* Alinea el navbar y el cuerpo en columna */
+    min-width: 1000px; /* Asegura un ancho mínimo para evitar que el diseño se rompa en pantallas pequeñas */
+    width: 100vw; /* Asegura que ocupe todo el ancho de la ventana */
+    min-height: 100vh; /* Asegura que ocupe toda la altura de la ventana */
+    background-color: #f4f3ef;
+}
+
+.Navbar {
+    position: fixed; /* Fija el navbar en la parte superior */
+    flex-direction: 0; /* Evita que el navbar se encoja si hay poco espacio */
+}
+
+.Cuerpo {
+    flex-grow: 1; /* Permite que .Cuerpo ocupe todo el espacio restante disponible */
+    width : 100%;
+    display: flex;
+    overflow-y: auto; /* Si el contenido es muy largo, permite scroll solo en el cuerpo */
+}
+
+.lote-container {
+  width: 700px;
+  margin: 80px auto;
+  padding: 25px;
+  background: #5ae861;
+  border-radius: 12px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  color: black;
+}
+
+.lote-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.lote-form label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 500;
+}
+
+.lote-form input,
+.lote-form textarea {
+  padding: 8px 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.lote-form textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.lote-form button {
+  background: #017007;
+  color: white;
+  padding: 12px;
+  width: 100%;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.lote-form button:hover {
+  background: #01b50a;
+  color : black;
+}

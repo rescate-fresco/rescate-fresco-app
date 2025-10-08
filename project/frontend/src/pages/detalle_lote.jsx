@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-const API_URL = `${import.meta.env.VITE_API_URL}/api/lotes`;
+const API_URL = `${import.meta.env.VITE_API_URL}api/lotes`;
 
 const DetalleLote = () => {
     const { id_lote } = useParams();

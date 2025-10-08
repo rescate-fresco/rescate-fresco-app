@@ -6,9 +6,14 @@ import App from './App.jsx'
 // Importación de las páginas
 import Home from './pages/home'
 import Login from './pages/login'
+import Register from './pages/register'
+import NewProduct from './pages/new_product'
+import Store from './pages/store'
+import NewStore from './pages/new_store'
 import DetalleLote from './pages/detalle_lote.jsx'
 import Carrito from './pages/carrito.jsx'
 import MetodoPago from './pages/metodo_pago.jsx'
+
 
 // Definición de las rutas
 const router = createBrowserRouter([
@@ -18,12 +23,32 @@ const router = createBrowserRouter([
     errorElement: <div>Error al cargar la aplicación</div>, // Componente de error
     children: [
       {
-        index: true,          // Ruta por defecto
-        element: <Home />,    // Componente para la ruta principal
+        index: true,               // Ruta por defecto
+        element: <Home />,         // Componente para la ruta principal
       },
       {
-        path: 'login',        // Ruta para iniciar sesión
-        element: <Login />,   // Componente para iniciar sesión
+        path: 'Inicio',            // Ruta para la página de inicio
+        element: <Home />,         // Componente para la página de inicio
+      },
+      {
+        path: 'Iniciar-Sesion',    // Ruta para iniciar sesión
+        element: <Login />,        // Componente para iniciar sesión
+      },
+      {
+        path: 'Registrarse',       // Ruta para registrarse
+        element: <Register />,     // Componente para registrarse
+      },
+      {
+        path: 'Inicio/Tienda',     // Ruta para la tienda
+        element: <Store />,        // Componente para la tienda
+      },
+      {
+        path: 'Inicio/Crear-Tienda',  // Ruta para crear una nueva tienda
+        element: <NewStore />,        // Componente para crear una nueva tienda
+      },
+      {
+        path: 'Inicio/Publicar/Nuevo-Producto', // Ruta para publicar un nuevo producto
+        element: <NewProduct />,                // Componente para publicar un nuevo producto
       },
       {
         path: 'lote/:id_lote',
@@ -37,7 +62,6 @@ const router = createBrowserRouter([
         path: 'carrito/pago',
         element: <MetodoPago />,
       }
-      // Otras rutas pueden ser añadidas aquí
 
     ],
   },
