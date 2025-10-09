@@ -49,8 +49,9 @@ function Navbar() {
     // Función para manejar el envío del formulario de búsqueda
     const handleSearchSubmit = (e) => {
         e.preventDefault(); // Evita que la página se recargue
-        if (searchTerm.trim()) {
-            navigate(`/Inicio?q=${encodeURIComponent(searchTerm.trim())}`);
+        const term = searchTerm.trim();
+        if (term) {
+            navigate(`/Inicio?q=${encodeURIComponent(term)}`); // Navega a la página de resultados de búsqueda
         } else {
             navigate('/Inicio'); // Si la búsqueda está vacía, va a la página principal
         }
