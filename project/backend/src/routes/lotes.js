@@ -3,8 +3,6 @@ import pool from "../database/index.js";
 
 const router = express.Router();
 
-// 1. **DEFINICIÓN DE LA FUNCIÓN DE REPOSITORIO (LOCAL)**
-//    No la exportamos directamente, sino que la usamos dentro de este módulo.
 async function buscarLotes(searchTerm) {
     const query = `
         SELECT 
@@ -28,21 +26,15 @@ async function buscarLotes(searchTerm) {
             ts_rank(l.lotes_search_tsv, plainto_tsquery('spanish', $1)) DESC,
             l.fecha_vencimiento ASC;
     `;
-    
-    // Añadimos try/catch para manejo de errores en la capa de datos
     try {
         const res = await pool.query(query, [searchTerm]);
         return res.rows;
     } catch (error) {
         console.error("Error en función buscarLotes (Repositorio):", error);
-        throw error; // Propagamos el error para que el controlador lo maneje
+        throw error;
     }
 }
-// Fin de la definición de la función de repositorio
-// ----------------------------------------------------
 
-
-// 2. CONSTANTES
 const CAMPOS_LOTE = `
     id_lote, 
     nombre_lote, 
@@ -61,9 +53,7 @@ const CONDICIONES_OFERTA = `
 `;
 
 
-// 3. RUTAS (Controlador)
 
-// --- RUTA DE BÚSQUEDA INTELIGENTE ---
 router.get("/buscar", async (req, res) => {
     const searchTerm = req.query.q; 
     
@@ -72,35 +62,60 @@ router.get("/buscar", async (req, res) => {
     }
 
     try {
-        // Usamos la función local buscarLotes
+        
         const lotesEncontrados = await buscarLotes(searchTerm.trim()); 
         res.json(lotesEncontrados); 
     } catch (error) {
-        // El error ya viene de la función buscarLotes
+        
         res.status(500).json({ mensaje: "Error interno del servidor al realizar la búsqueda" });
     }
 });
-// ------------------------------------
 
-// Ruta para obtener todos los lotes
-router.get("/", async (req, res) => {
-    const sqlQuery = `
-        SELECT ${CAMPOS_LOTE}
-        FROM lotes
-        WHERE ${CONDICIONES_OFERTA}
-        ORDER BY fecha_vencimiento ASC;
-    `;
+router.get("/", async (req, res) => {  
+    const { categoria, sortBy = 'fecha_vencimiento', order = 'ASC' } = req.query;
+   
+    let baseQuery = `SELECT ${CAMPOS_LOTE} FROM lotes`;
+    const whereClauses = [CONDICIONES_OFERTA];
+    const queryParams = [];
+
+    
+    if (categoria) {
+        queryParams.push(categoria);
+        whereClauses.push(`categoria ILIKE $${queryParams.length}`);
+    }
+
+    baseQuery += ` WHERE ${whereClauses.join(' AND ')}`;
+
+    
+    const allowedSortBy = ['fecha_vencimiento', 'precio_rescate', 'ventana_retiro_inicio'];
+    const sortColumn = allowedSortBy.includes(sortBy) ? sortBy : 'fecha_vencimiento'; 
+    const sortOrder = order.toUpperCase() === 'DESC' ? 'DESC' : 'ASC'; 
+    
+    baseQuery += ` ORDER BY ${sortColumn} ${sortOrder}`;
+    
+
     try {
-        const resultado = await pool.query(sqlQuery); 
-        res.json(resultado.rows); 
+        const resultado = await pool.query(baseQuery, queryParams);
+        res.json(resultado.rows);
     } catch (error) {
-        console.error("Error al obtener lotes de oferta:", error);
-        res.status(500).json({ mensaje: "Error interno del servidor al consultar lotes de oferta" });
+        console.error("Error al obtener lotes:", error);
+        res.status(500).json({ mensaje: "Error interno del servidor al consultar lotes" });
     }
 });
 
 
-// Ruta para obtener el detalle del lote
+router.get("/categorias", async (req, res) => {
+    try {
+        const resultado = await pool.query("SELECT DISTINCT categoria FROM lotes WHERE categoria IS NOT NULL AND categoria <> '' ORDER BY categoria ASC");
+        res.json(resultado.rows.map(row => row.categoria));
+    } catch (error) {
+        console.error("Error al obtener categorías:", error);
+        res.status(500).json({ mensaje: "Error interno del servidor" });
+    }
+});
+
+
+
 router.get("/:id_lote", async (req, res) => {
     const { id_lote } = req.params;
     const sqlQuery = `
@@ -122,6 +137,4 @@ router.get("/:id_lote", async (req, res) => {
     }
 });
 
-// 4. **EXPORT DEFAULT AL FINAL**
-//    El export default SIEMPRE debe ir al final de la definición del módulo.
 export default router;

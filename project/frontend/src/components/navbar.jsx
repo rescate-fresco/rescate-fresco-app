@@ -6,7 +6,7 @@ function Navbar() {
     const [usuario, setUsuario] = useState(null);
     const isLoggedIn = !!usuario;
     const [cartCount, setCartCount] = useState(0);
-    const [searchTerm, setSearchTerm] = useState(''); // Estado para el término de búsqueda
+    const [searchTerm, setSearchTerm] = useState(''); 
     const [menuAbierto, setMenuAbierto] = useState(false);
     const menuRef = useRef(null);
 
@@ -46,22 +46,22 @@ function Navbar() {
         navigate("/");
     };
 
-    // Función para manejar el envío del formulario de búsqueda
+    
     const handleSearchSubmit = (e) => {
-        e.preventDefault(); // Evita que la página se recargue
+        e.preventDefault(); 
         const term = searchTerm.trim();
         if (term) {
-            navigate(`/Inicio?q=${encodeURIComponent(term)}`); // Navega a la página de resultados de búsqueda
+            navigate(`/Inicio?q=${encodeURIComponent(term)}`); 
         } else {
-            navigate('/Inicio'); // Si la búsqueda está vacía, va a la página principal
+            navigate('/Inicio'); 
         }
     };
 
-    const toggleMenu = () => { /* Bien */
+    const toggleMenu = () => { 
         setMenuAbierto(!menuAbierto);
     };
 
-    useEffect(() => { /* Bien */
+    useEffect(() => { 
         const handleClickFuera = (event) => {
             if (menuRef.current && !menuRef.current.contains(event.target)) {
                 setMenuAbierto(false);

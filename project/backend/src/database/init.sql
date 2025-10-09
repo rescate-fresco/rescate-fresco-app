@@ -72,36 +72,19 @@ CREATE TABLE IF NOT EXISTS notificaciones (
     fecha_envio TIMESTAMP DEFAULT NOW()
 );
 
--- (Tus comandos CREATE TABLE van aquí arriba...)
--- CREATE TABLE IF NOT EXISTS lotes (...);
--- ... (etc.)
 
-
------------------------------------------------------------
--- 💡 CONFIGURACIÓN PARA BÚSQUEDA AVANZADA (FULL-TEXT SEARCH)
------------------------------------------------------------
-
--- 1. Añadir la columna tsvector a la tabla lotes
 ALTER TABLE lotes
 ADD COLUMN lotes_search_tsv tsvector;
-
--- 2. Función que calcula el tsvector automáticamente
---    (Para que la columna se llene al insertar o actualizar)
 CREATE OR REPLACE FUNCTION actualizar_lotes_tsv() RETURNS trigger AS $$
 BEGIN
     NEW.lotes_search_tsv :=
-        -- Usa el diccionario 'spanish' para el análisis
         setweight(to_tsvector('spanish', coalesce(NEW.nombre_lote, '')), 'A') ||
         setweight(to_tsvector('spanish', coalesce(NEW.descripcion, '')), 'B') ||
         setweight(to_tsvector('spanish', coalesce(NEW.categoria, '')), 'C');
     RETURN NEW;
 END
 $$ LANGUAGE plpgsql;
-
--- 3. Crear el Trigger para automatizar la actualización
 CREATE TRIGGER tgr_lotes_search_update
 BEFORE INSERT OR UPDATE ON lotes
 FOR EACH ROW EXECUTE FUNCTION actualizar_lotes_tsv();
-
--- 4. Crear el índice GIN para acelerar las búsquedas
 CREATE INDEX lotes_tsv_idx ON lotes USING GIN (lotes_search_tsv);

@@ -1,0 +1,26 @@
+.filtros-container {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.filtro-select {
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    background-color: white;
+    font-size: 1rem;
+    color: #333; 
+    cursor: pointer;
+    min-width: 180px;
+}
+
+.filtro-select:disabled {
+    background-color: #e9ecef;
+    cursor: not-allowed;
+}

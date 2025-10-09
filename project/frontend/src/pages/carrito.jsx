@@ -5,7 +5,6 @@ const Carrito = () => {
     const [carrito, setCarrito] = useState([]);
     const navigate = useNavigate(); 
 
-    // Cargar el carrito desde localStorage al montar el componente
     useEffect(() => {
         const carritoGuardado = localStorage.getItem("carrito");
         if (carritoGuardado) {
@@ -13,19 +12,17 @@ const Carrito = () => {
         }
     }, []);
 
-    // Eliminar un producto del carrito
     const eliminarDelCarrito = (id_lote) => {
         const nuevoCarrito = carrito.filter(item => item.id_lote !== id_lote);
         setCarrito(nuevoCarrito);
         localStorage.setItem("carrito", JSON.stringify(nuevoCarrito));
-        window.dispatchEvent(new Event("storage")); // Notificar a otros componentes
+        window.dispatchEvent(new Event("storage")); 
     };
 
-    // Vaciar el carrito
     const vaciarCarrito = () => {
         setCarrito([]);
         localStorage.removeItem("carrito");
-        window.dispatchEvent(new Event("storage")); // Notificar a otros componentes
+        window.dispatchEvent(new Event("storage")); 
     };
 
     if (carrito.length === 0) {
