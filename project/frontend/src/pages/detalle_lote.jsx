@@ -5,23 +5,27 @@ import './detalle_lote.css';
 
 const API_URL = `${import.meta.env.VITE_API_URL}api/lotes`;
 
-const agregarAlCarrito = (lote) => {
-    const carritoActual = JSON.parse(localStorage.getItem("carrito")) || [];
-    // Evita duplicados
-    if (!carritoActual.some(item => item.id_lote === lote.id_lote)) {
-        carritoActual.push(lote);
-        localStorage.setItem("carrito", JSON.stringify(carritoActual));
-        alert("¡Producto agregado al carrito!");
-    } else {
-        alert("Este producto ya está en el carrito.");
-    }
-};
+
 
 const DetalleLote = () => {
     const { id_lote } = useParams();
     const [lote, setLote] = useState(null);
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState(null);
+    const [enCarrito, setEnCarrito] = useState(false);
+
+    const agregarAlCarrito = (lote) => {
+        const carritoActual = JSON.parse(localStorage.getItem("carrito")) || [];
+        // Evita duplicados
+        if (!carritoActual.some(item => item.id_lote === lote.id_lote)) {
+            carritoActual.push(lote);
+            localStorage.setItem("carrito", JSON.stringify(carritoActual));
+            setEnCarrito(true); 
+            alert("¡Producto agregado al carrito!");
+        } else {
+            alert("Este producto ya está en el carrito.");
+        }
+    };    
 
     useEffect(() => {
         const fetchLote = async () => {
@@ -30,6 +34,10 @@ const DetalleLote = () => {
             if (!resp.ok) throw new Error("No se pudo cargar el lote");
             const data = await resp.json();
             setLote(data);
+
+            const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+            const estaEnCarrito = carrito.some(item => item.id_lote === Number(id_lote));
+            setEnCarrito(estaEnCarrito);
         } catch (err) {
             setError(err.message);
         } finally {
@@ -68,7 +76,18 @@ const DetalleLote = () => {
                         </span>
                         </p>
                     </div>
-                    <button onClick={() => agregarAlCarrito(lote)}>Agregar al Carrito</button>
+                    <div className="boton-carrito-container">
+                        {enCarrito ? (
+                            <p className="en-carrito">¡En el carrito!</p>
+                        ) : (
+                            <button
+                                onClick={() => agregarAlCarrito(lote)}
+                                disabled={lote.estado !== "DISPONIBLE"} 
+                            >
+                                Agregar al Carrito
+                            </button>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>

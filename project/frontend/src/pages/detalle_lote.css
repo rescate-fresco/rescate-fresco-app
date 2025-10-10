@@ -93,3 +93,14 @@ body {
     background: #01b50a;
     color: black;
 }
+
+.en-carrito {
+    color: #16a34a;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
