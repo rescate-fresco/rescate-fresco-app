@@ -54,7 +54,11 @@ body {
 .productos-grid {
     flex: 1;
     overflow-y: auto;
-    height: 100vh; /* asegura scroll solo en productos */
+    padding: 2rem;
+    padding-bottom: 100px; /* 👈 deja espacio para el último producto */
+    display: grid;
+    gap: 24px;
+    scroll-behavior: smooth;
 }
 
 /* Lista de productos con diseño en cuadrícula */

@@ -5,8 +5,13 @@
     padding: 20px;
     text-align: center;
     transition: transform 0.2s ease;
-    width: 280px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 280px; /* Mantenemos el ancho fijo */
 }
+
+
 
 .producto-card:hover {
     transform: translateY(-5px);
@@ -42,15 +47,22 @@
     font-size: 0.9em;
 }
 
+.botones-container {
+    display: flex;
+    justify-content: space-between; /* Espacio entre los botones */
+    gap: 10px; /* Espacio entre botones si no ocupan todo el ancho */
+    margin-top: 1rem; /* Espacio arriba de los botones */
+}
+
 .producto-card button {
     padding: 10px;
     border: none;
     background: #017007;
+    color: white;
     border-radius: 5px;
     cursor: pointer;
     font-weight: bold;
-    width: 48%;
-    margin: 5px 1%;
+    flex: 1; /* Hace que ambos botones ocupen el mismo espacio */
     transition: background 0.2s ease;
 }
 

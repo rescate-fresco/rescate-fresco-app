@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import React, { useState, useEffect, useRef } from "react";
 import './navbar.css';
+import { FaSearch } from 'react-icons/fa'; // 1. Importa el ícono
 
 function Navbar() {
     const [usuario, setUsuario] = useState(null);
@@ -96,8 +97,19 @@ function Navbar() {
 
             <div className="nav-der">
                 <form className="search-form" role="search" onSubmit={handleSearchSubmit}>
-                    <input type="search" placeholder="Buscar" aria-label="Search" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
-                    <button className="button_search" type="submit">Buscar</button>
+                    <label htmlFor="search" className="visually-hidden">Buscar producto</label>
+                    <input
+                        id="search"
+                        type="search"
+                        placeholder="Buscar productos"
+                        aria-label="Buscar productos"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        autoComplete="off"
+                    />
+                    <button className="search-button-icon" type="submit" aria-label="Buscar">
+                        <FaSearch aria-hidden="true" /> {/* 2. Usa el componente del ícono */}
+                    </button>
                 </form>
 
                 <div className="auth-buttons">
