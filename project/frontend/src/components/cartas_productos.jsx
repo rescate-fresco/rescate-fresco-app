@@ -4,7 +4,6 @@ import './cartas_productos.css';
 
 const agregarAlCarrito = (lote) => {
     const carritoActual = JSON.parse(localStorage.getItem("carrito")) || [];
-    // Evita duplicados
     if (!carritoActual.some(item => item.id_lote === lote.id_lote)) {
         carritoActual.push(lote);
         localStorage.setItem("carrito", JSON.stringify(carritoActual));

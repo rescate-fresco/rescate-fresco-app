@@ -5,31 +5,72 @@ body {
 
 .Home {
     display: flex;
-    flex-direction: column; /* Alinea el navbar y el cuerpo en columna */
-    min-width: 1000px; /* Asegura un ancho mínimo para evitar que el diseño se rompa en pantallas pequeñas */
-    width: 100vw; /* Asegura que ocupe todo el ancho de la ventana */
-    min-height: 100vh; /* Asegura que ocupe toda la altura de la ventana */
+    flex-direction: column; /* Navbar arriba, cuerpo abajo */
+    min-width: 1000px;
+    width: 100vw;
+    height: 100vh;
+    min-height: 100vh;
     background-color: #f4f3ef;
+    overflow: hidden
 }
 
+/* Navbar fijo arriba */
 .Navbar {
-    position: fixed; /* Fija el navbar en la parte superior */
-    flex-direction: 0; /* Evita que el navbar se encoja si hay poco espacio */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10;
 }
 
 .Cuerpo {
-    flex-grow: 1; /* Permite que .Cuerpo ocupe todo el espacio restante disponible */
-    width : 100%;
+    flex-grow: 1;
     display: flex;
-    overflow-y: auto; /* Si el contenido es muy largo, permite scroll solo en el cuerpo */
+    overflow: hidden; /* evita doble scroll */
     color: black;
+    background-color: #f4f3ef;
+}
+.contenido-principal {
+    display: flex;
+    flex: 1;
+    overflow-y: hidden;
 }
 
+/* Barra lateral con filtros */
+.sidebar-filtros {
+    flex: 0 0 260px;
+    background: #fff;
+    border-radius: 0 10px 10px 0; /* Esquinas solo del lado derecho */
+    padding: 1.5rem 1rem;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.08);
+    height: 100vh; /* 👉 ocupa toda la altura de la ventana */
+    position: sticky;
+    top: 0; /* se mantiene fija desde el top */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.productos-grid {
+    flex: 1;
+    overflow-y: auto;
+    height: 100vh; /* asegura scroll solo en productos */
+}
+
+/* Lista de productos con diseño en cuadrícula */
 .productos-lista {
     display: grid;
-    grid-template-columns: repeat(4, 1fr); /* 4 columnas de igual tamaño */
-    gap: 20px; /* espacio entre productos */
-    padding: 40px;
-    justify-items: center; /* centra las cartas */
-    align-items: start;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+    padding: 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Mensajes de carga o error centrados */
+.info-msg, .error-msg {
+    text-align: center;
+    color: #333;
+    font-weight: 500;
+    margin-top: 2rem;
 }

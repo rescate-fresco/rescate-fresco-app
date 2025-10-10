@@ -1,26 +1,78 @@
 .filtros-container {
     display: flex;
-    gap: 1rem;
-    padding: 1rem;
-    background-color: #f0f0f0;
-    border-radius: 8px;
-    margin-bottom: 1.5rem;
     flex-wrap: wrap;
+    gap: 1rem;
     align-items: center;
+    justify-content: flex-start;
+    padding: 1rem 1.5rem;
+    
 }
 
-.filtro-select {
-    padding: 0.5rem 0.75rem;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    background-color: white;
+/* Cada filtro individual */
+.filtro-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    min-width: 200px;
+}
+
+/* Etiquetas */
+.filtro-label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+/* Íconos */
+.filtro-icon {
+    color: #43a047;
     font-size: 1rem;
-    color: #333; 
-    cursor: pointer;
-    min-width: 180px;
 }
 
+/* Selects */
+.filtro-select {
+    appearance: none;
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    font-size: 0.95rem;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg width='10' height='6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%23666' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 10px;
+}
+
+/* Hover y focus */
+.filtro-select:hover,
+.filtro-select:focus {
+    border-color: #43a047;
+    box-shadow: 0 0 4px rgba(67, 160, 71, 0.3);
+    outline: none;
+}
+
+/* Estado deshabilitado */
 .filtro-select:disabled {
     background-color: #e9ecef;
     cursor: not-allowed;
+    color: #777;
+}
+
+
+/* Responsividad */
+@media (max-width: 768px) {
+    .filtros-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filtro-item {
+        width: 100%;
+    }
 }

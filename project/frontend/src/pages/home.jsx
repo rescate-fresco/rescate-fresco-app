@@ -61,20 +61,28 @@ function Home() {
             <Navbar />
             <div className="Cuerpo">
                 <div className="contenido-principal">
-                    {!searchQuery && <FiltrosLotes onFilterChange={handleFilterChange} />}
+                    <aside className="sidebar-filtros">
+                        <FiltrosLotes onFilterChange={handleFilterChange} />
+                    </aside>
 
-                    {searchQuery && <h2 className="titulo-busqueda">Resultados para: "{searchQuery}"</h2>}
-
-                    {cargando && <h2 className="info-msg">Cargando productos...</h2>}
-                    {error && <h2 className="error-msg">Error: {error}</h2>}
-                    {!cargando && !error && productos.length === 0 && (
-                        <h2 className="info-msg">{searchQuery ? `No se encontraron productos para "${searchQuery}"` : 'No hay productos disponibles.'}</h2>
-                    )}
-                    {!cargando && !error && productos.length > 0 && (
-                        <div className="productos-lista">
-                            {productos.map(lote => <CartasProductos key={lote.id_lote} lote={lote} />)}
-                        </div>
-                    )}
+                    <section className="productos-grid">
+                        {cargando && <h2 className="info-msg">Cargando productos...</h2>}
+                        {error && <h2 className="error-msg">Error: {error}</h2>}
+                        {!cargando && !error && productos.length === 0 && (
+                            <h2 className="info-msg">
+                                {searchQuery
+                                    ? `No se encontraron productos para "${searchQuery}"`
+                                    : "No hay productos disponibles."}
+                            </h2>
+                        )}
+                        {!cargando && !error && productos.length > 0 && (
+                            <div className="productos-lista">
+                                {productos.map((lote) => (
+                                    <CartasProductos key={lote.id_lote} lote={lote} />
+                                ))}
+                            </div>
+                        )}
+                    </section>
                 </div>
             </div>
         </div>
