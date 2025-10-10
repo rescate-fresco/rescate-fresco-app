@@ -1,35 +1,31 @@
 body {
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  padding: 0;
 }
 
 .Home {
     display: flex;
-    flex-direction: column; /* Navbar arriba, cuerpo abajo */
-    min-width: 1000px;
-    width: 100vw;
-    height: 100vh;
-    min-height: 100vh;
+    flex-direction: column; /* Alinea el navbar y el cuerpo en columna */
+    min-width: 1000px; /* Asegura un ancho mínimo para evitar que el diseño se rompa en pantallas pequeñas */
+    width: 100vw; /* usa todo el ancho de la ventana */
+    position: relative; /* Asegura que ocupe todo el ancho de la ventana */
+    min-height: 100vh; /* Asegura que ocupe toda la altura de la ventana */
     background-color: #f4f3ef;
-    overflow: hidden
 }
 
-/* Navbar fijo arriba */
 .Navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 10;
+    position: fixed; /* Fija el navbar en la parte superior */
+    flex-direction: 0; /* Evita que el navbar se encoja si hay poco espacio */
 }
 
 .Cuerpo {
-    flex-grow: 1;
+    flex-grow: 1; /* Permite que .Cuerpo ocupe todo el espacio restante disponible */
+    width : 100%;
     display: flex;
-    overflow: hidden; /* evita doble scroll */
+    overflow-y: auto; /* Si el contenido es muy largo, permite scroll solo en el cuerpo */
     color: black;
-    background-color: #f4f3ef;
 }
+
 .contenido-principal {
     display: flex;
     flex: 1;

@@ -33,7 +33,9 @@ CREATE TABLE IF NOT EXISTS lotes (
     fecha_vencimiento TIMESTAMP NOT NULL,
     ventana_retiro_inicio TIMESTAMP NOT NULL,
     ventana_retiro_fin TIMESTAMP NOT NULL,
-    estado VARCHAR(20) CHECK (estado IN ('PUBLICADO','RESERVADO','RETIRADO','CADUCADO','CANCELADO')) DEFAULT 'PUBLICADO'
+    estado VARCHAR(20) CHECK (estado IN ('PUBLICADO','DISPONIBLE','NO DISPONIBLE','CANCELADO','RESERVADO','OCULTO')) DEFAULT 'PUBLICADO',
+    reserva_expires_at TIMESTAMP WITH TIME ZONE,
+    reserva_user_id INT NULL REFERENCES usuarios(id_usuario)
 );
 
 -- Imágnes

@@ -1,11 +1,21 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+
 .Carrito {
     display: flex;
     flex-direction: column;
     min-width: 1000px;
     width: 100vw;
-    height: 100vh;
+    /*height: 100vh;*/
     min-height: 100vh;
     background-color: #f4f3ef; 
+}
+
+.Navbar {
+    position: fixed; /* Fija el navbar en la parte superior */
+    flex-direction: 0; /* Evita que el navbar se encoja si hay poco espacio */
 }
 
 .Cuerpo {
@@ -168,3 +178,18 @@
     color: #ffffff;
     border: 1px solid #ddd;
 }
+
+.estado {
+  padding: 4px 10px;
+  border-radius: 8px;
+  color: white;
+  font-weight: bold;
+}
+
+/* Use a hyphenated class name for "no disponible" (apply in HTML as class="estado no-disponible") */
+.estado.publicado { background: #3498db; }
+.estado.disponible { background: #2ecc71; }
+.estado.no-disponible { background: #e67e22; }
+.estado.cancelado { background: #e74c3c; }
+.estado.reservado { background: #9b59b6; }
+.estado.oculto { background: #7f8c8d; }

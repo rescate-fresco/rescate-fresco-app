@@ -1,8 +1,8 @@
 import express from "express";
 import bcrypt from "bcrypt";
 import pool from "../database/index.js";
-import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
 
 const router = express.Router();
 
@@ -143,7 +143,7 @@ router.post("/tiendas", async (req, res) => {
 });
 
 
-// POST → new tienda
+// POST → new PRODUCTO
 router.post("/lotes", async (req, res) => {
   const {
     id_usuario,

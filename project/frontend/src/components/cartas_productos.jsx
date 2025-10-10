@@ -2,19 +2,6 @@ import { Link } from 'react-router-dom';
 import { aplicarDescuentoPorVencimiento } from '../utils/descuentos';
 import './cartas_productos.css';
 
-const agregarAlCarrito = (lote) => {
-    const carritoActual = JSON.parse(localStorage.getItem("carrito")) || [];
-    if (!carritoActual.some(item => item.id_lote === lote.id_lote)) {
-        carritoActual.push(lote);
-        localStorage.setItem("carrito", JSON.stringify(carritoActual));
-        
-        window.dispatchEvent(new Event("storage"));
-        alert("¡Producto agregado al carrito!");
-    } else {
-        alert("Este producto ya está en el carrito.");
-    }
-};
-
 const CartasProductos = ({ lote }) => {
     const{
         nombre_lote,
@@ -49,24 +36,22 @@ const CartasProductos = ({ lote }) => {
 
     return (
         <div className="producto-card">
-            <div> {/* Contenedor para el contenido superior */}
-                <img src={imagen || "https://placehold.co/300x200/50B498/ffffff?text=Producto"} alt={nombre_lote} className="imagen-producto" />
-                <h3>{nombre_lote}</h3>
-                <p className="precio-original">${Number(precio_original).toFixed(2)}</p>
-                <p className="precio-oferta">
-                    ¡Ahora solo ${Number(precioFinal).toFixed(2)}!
-                    {descuentoTotalPorcentaje > 0 && <span className="descuento"> -{descuentoTotalPorcentaje}%</span>}
-                </p>
-                {descuentoExtraPorVencimiento > 0 && (
-                    <p className="alerta-vencimiento">¡Vence en {diasRestantes} días! ({descuentoExtraPorVencimiento}% extra)</p>
-                )}
-            </div>
-            <div className="botones-container">
-                <Link to={`/lote/${lote.id_lote}`} style={{ flex: 1, display: 'flex' }}>
-                    <button>Ver Lote</button>
-                </Link>
-                <button onClick={() => agregarAlCarrito(lote)}>Agregar al Carrito</button>
-            </div>
+            <img src={imagen || "https://placehold.co/300x200/50B498/ffffff?text=Producto"} alt={nombre_lote} className="imagen-producto" />
+            <h3>{nombre_lote}</h3>
+            <p className="precio-original">${Number(precio_original).toFixed(2)}</p>
+
+            <p className="precio-oferta">
+            ¡Ahora solo ${Number(precioFinal).toFixed(2)}!
+            {descuentoTotalPorcentaje > 0 && 
+                <span className="descuento"> -{descuentoTotalPorcentaje}%</span>
+            }
+            </p>
+            {descuentoExtraPorVencimiento > 0 && (
+                <p className="alerta-vencimiento">¡Vence en {diasRestantes} días! ({descuentoExtraPorVencimiento}% extra)</p>
+            )}
+            <Link to={`/lote/${lote.id_lote}`}>
+                <button>Ver Detalle</button>
+            </Link>
         </div>
     );
 }

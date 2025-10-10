@@ -43,12 +43,16 @@ const CAMPOS_LOTE = `
     precio_rescate, 
     fecha_vencimiento,
     id_tienda, 
-    estado
+    estado,
+    ventana_retiro_inicio,
+    ventana_retiro_fin,
+    categoria,
+    peso_qty
 `;
 
 const CONDICIONES_OFERTA = `
-    precio_rescate < precio_original 
-    AND estado = 'PUBLICADO' 
+    precio_rescate < precio_original
+    AND estado IN ('PUBLICADO', 'RESERVADO', 'DISPONIBLE', 'NO DISPONIBLE')
     AND fecha_vencimiento >= CURRENT_DATE
 `;
 
@@ -134,6 +138,84 @@ router.get("/:id_lote", async (req, res) => {
     } catch (error) {
         console.error(`Error al obtener detalle del lote ${id_lote}:`, error);
         res.status(500).json({ mensaje: "Error interno del servidor al consultar el detalle del lote" });
+    }
+});
+
+router.post("/reservar", async (req, res) => {
+  const { idUsuario, lotes } = req.body;
+
+  if (!idUsuario || !Array.isArray(lotes) || lotes.length === 0) {
+    return res.status(400).json({ message: "Datos inválidos" });
+  }
+
+  try {
+    const query = `
+      UPDATE public.lotes
+      SET estado = 'RESERVADO',
+          reserva_expires_at = NOW() + INTERVAL '15 minutes',
+          reserva_user_id = $1
+      WHERE id_lote = ANY($2::int[])
+        AND (
+            estado = 'DISPONIBLE'
+            OR (estado = 'RESERVADO' AND reserva_user_id = $1)
+        )
+      RETURNING id_lote;
+    `;
+    const result = await pool.query(query, [idUsuario, lotes]);
+
+    if (result.rowCount === 0)
+      return res.status(400).json({ message: "No se pudo reservar los lotes" });
+
+    res.json({ message: "Lotes reservados por 15 minutos", reservados: result.rows });
+  } catch (err) {
+    console.error("❌ Error en /reservar:");
+    console.error("Mensaje:", err.message);
+    console.error("Detalle:", err.stack);
+    res.status(500).json({ message: "Error al reservar los lotes", error: err.message });
+  }
+});
+
+router.post("/liberar", async (req, res) => {
+    const { lotes } = req.body;
+
+    if (!Array.isArray(lotes) || lotes.length === 0) {
+        return res.status(400).json({ message: "Datos inválidos" });
+    }
+
+    try {
+        const query = `
+            UPDATE public.lotes
+            SET estado = 'DISPONIBLE',
+                reserva_expires_at = NULL,
+                reserva_user_id = NULL
+            WHERE id_lote = ANY($1::int[])
+            RETURNING id_lote;
+        `;
+        const result = await pool.query(query, [lotes]);
+
+        if (result.rowCount === 0)
+            return res.status(400).json({ message: "No se pudieron liberar los lotes" });
+
+        res.json({ message: "Lotes liberados", lotes: result.rows });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Error al liberar los lotes" });
+    }
+});
+
+router.post('/por-ids', async (req, res) => {
+    const { ids } = req.body; // array de id_lote
+    const sqlQuery = `
+        SELECT *
+        FROM lotes
+        WHERE id_lote = ANY($1)
+    `;
+    try {
+        const resultado = await pool.query(sqlQuery, [ids]);
+        res.json({ lotes: resultado.rows });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error al consultar lotes" });
     }
 });
 
