@@ -1,17 +1,30 @@
 import { Link, useNavigate } from 'react-router-dom';
 import React, { useState, useEffect, useRef } from "react";
 import './navbar.css';
+import { FaSearch } from 'react-icons/fa'; // 1. Importa el ícono
 
 function Navbar() {
     const [usuario, setUsuario] = useState(null);
     const isLoggedIn = !!usuario;
-
+    const [cartCount, setCartCount] = useState(0);
+    const [searchTerm, setSearchTerm] = useState(''); 
     const [menuAbierto, setMenuAbierto] = useState(false);
     const menuRef = useRef(null);
 
     const navigate = useNavigate();
 
     useEffect(() => {
+        
+        const updateCartCount = () => {
+            const carritoGuardado = localStorage.getItem("carrito");
+            if (carritoGuardado) {
+                setCartCount(JSON.parse(carritoGuardado).length);
+            } else {
+                setCartCount(0);
+            }
+        };
+        updateCartCount();
+
         const storedUser = localStorage.getItem("usuario");
         if (storedUser) {
             try {
@@ -21,6 +34,11 @@ function Navbar() {
                 localStorage.removeItem("usuario");
             }
         }
+        window.addEventListener("storage", updateCartCount);
+        return () => {
+            window.removeEventListener("storage", updateCartCount);
+        };
+
     }, []);
 
     const handleLogout = () => { /* Bien */
@@ -29,11 +47,22 @@ function Navbar() {
         navigate("/");
     };
 
-    const toggleMenu = () => { /* Bien */
+    
+    const handleSearchSubmit = (e) => {
+        e.preventDefault(); 
+        const term = searchTerm.trim();
+        if (term) {
+            navigate(`/Inicio?q=${encodeURIComponent(term)}`); 
+        } else {
+            navigate('/Inicio'); 
+        }
+    };
+
+    const toggleMenu = () => { 
         setMenuAbierto(!menuAbierto);
     };
 
-    useEffect(() => { /* Bien */
+    useEffect(() => { 
         const handleClickFuera = (event) => {
             if (menuRef.current && !menuRef.current.contains(event.target)) {
                 setMenuAbierto(false);
@@ -67,9 +96,20 @@ function Navbar() {
             </div>
 
             <div className="nav-der">
-                <form className="search-form" role="search">
-                    <input type="search" placeholder="Search" aria-label="Search"/>
-                    <button className="button_search" type="submit">Search</button>
+                <form className="search-form" role="search" onSubmit={handleSearchSubmit}>
+                    <label htmlFor="search" className="visually-hidden">Buscar producto</label>
+                    <input
+                        id="search"
+                        type="search"
+                        placeholder="Buscar productos"
+                        aria-label="Buscar productos"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        autoComplete="off"
+                    />
+                    <button className="search-button-icon" type="submit" aria-label="Buscar">
+                        <FaSearch aria-hidden="true" /> {/* 2. Usa el componente del ícono */}
+                    </button>
                 </form>
 
                 <div className="auth-buttons">
@@ -93,7 +133,14 @@ function Navbar() {
                         </div>
                     )}
                 </div>
-                <Link to="/carrito"> | Carrito</Link>
+                <Link to="/carrito" className="cart-link">
+                    <img src="https://images.falabella.com/v3/assets/blt7c5c2f2f888a7cc3/bltee24e879d497dc04/65b2492a1be7ff13e55d90c6/carritodesk.svg" alt="Carrito" />
+                    {cartCount >= 0 && (
+                        <span className="cart-count">{cartCount}</span>
+                    )
+                        
+                    }
+                </Link>
             </div>
         </nav>
     );

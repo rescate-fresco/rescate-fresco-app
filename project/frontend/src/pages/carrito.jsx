@@ -1,26 +1,35 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/navbar.jsx";
+
 import './carrito.css';
 
 const Carrito = () => {
     const [carrito, setCarrito] = useState([]);
     const navigate = useNavigate(); 
 
-    // Cargar el carrito desde localStorage al montar el componente
     useEffect(() => {
-        const cargarCarrito = () => {
-            const carritoGuardado = localStorage.getItem("carrito");
-            if (carritoGuardado) {
-                setCarrito(JSON.parse(carritoGuardado));
+        const cargarCarrito = async () => {
+            const carritoGuardado = JSON.parse(localStorage.getItem("carrito") || "[]");
+            if (carritoGuardado.length === 0) return;
+
+            try {
+                const ids = carritoGuardado.map(item => item.id_lote);
+                const resp = await fetch(`${import.meta.env.VITE_API_URL}api/lotes/por-ids`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ ids })
+                });
+                const data = await resp.json();
+                setCarrito(data.lotes);  // actualizamos con datos frescos de la BD
+                localStorage.setItem("carrito", JSON.stringify(data.lotes));
+            } catch (err) {
+                console.error(err);
+                setCarrito(carritoGuardado); // fallback
             }
         };
 
-        cargarCarrito(); // carga inicial
-
-        window.addEventListener("storage", cargarCarrito); // escucha cambios en otras pestañas
-
-        return () => window.removeEventListener("storage", cargarCarrito);
+        cargarCarrito();
     }, []);
 
     // Eliminar un producto del carrito
@@ -39,10 +48,10 @@ const Carrito = () => {
         } catch (err) {
             console.error("Error al liberar lote:", err.message);
         }
-
         const nuevoCarrito = carrito.filter(item => item.id_lote !== id_lote);
         setCarrito(nuevoCarrito);
         localStorage.setItem("carrito", JSON.stringify(nuevoCarrito));
+        window.dispatchEvent(new Event("storage")); 
     };
 
     // Vaciar el carrito
@@ -64,11 +73,10 @@ const Carrito = () => {
         } catch (err) {
             console.error("Error al liberar lotes:", err.message);
         }
-
         setCarrito([]);
         localStorage.removeItem("carrito");
+        window.dispatchEvent(new Event("storage")); 
     };
-
 
     const usuario = JSON.parse(localStorage.getItem("usuario") || "{}"); // CAMBIO
     const idUsuario = usuario.id_usuario || null; // CAMBIO
@@ -78,8 +86,25 @@ const Carrito = () => {
         (item.estado === "RESERVADO" && item.reserva_user_id === idUsuario) // CAMBIO
     );
 
+    const totalOriginal = carrito.reduce((acc, item) => acc + Number(item.precio_original), 0);
+    const totalRescate = carrito.reduce((acc, item) => acc + Number(item.precio_rescate), 0);
+    const descuentoTotal = totalOriginal - totalRescate;
+
     if (carrito.length === 0) {
-        return <div className="p-8 text-center">El carrito está vacío.</div>;
+        return (
+            <div className="Carrito">
+                <Navbar />
+                <div className="Cuerpo">
+                    <div className="carrito-container">
+                        <div className="carrito-vacio-content">
+                            <h2>Tu carrito está vacío</h2>
+                            <p>Parece que aún no has agregado productos. ¡Explora nuestras ofertas!</p>
+                            <button className="btn-accion btn-confirmar" onClick={() => navigate("/")}>Ver productos</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
 
@@ -119,59 +144,53 @@ const Carrito = () => {
         <div className="Carrito">
             <Navbar />
             <div className="Cuerpo">
-                
-                {carrito.length === 0 ? (
-                <div className="carrito-vacio">El carrito está vacío.</div>
-                ) : (
-                <div className="carrito-contenedor">
-                    <h2 className="carrito-titulo">Carrito de compras</h2>
-                    <ul className="carrito-lista">
-                    {carrito.map((item) => (
-                        <li key={item.id_lote} className="carrito-item">
-                        <div className="carrito-info">
-                            <span className="carrito-nombre">{item.nombre_lote}</span>
-                            <span className="carrito-precio">
-                            ${Number(item.precio_rescate).toFixed(2)}
-                            </span>
-                            <p>
-                            <strong>Estado:</strong>{' '}
-                            <span className={`estado ${item.estado?.toLowerCase().replace(/\s+/g, '-')}`}>
-                                {item.estado}
-                            </span>
-                            </p>
+                <div className="carrito-container">
+                    <h2 className="titulo-carrito">Carrito de compras</h2>
+                    <div className="carrito-layout">
+                        <div className="carrito-productos">
+                            <ul className="carrito-lista">
+                                {carrito.map(item => (
+                                    <li key={item.id_lote} className="carrito-item">
+                                        <span className="item-info">
+                                            <span className="item-nombre">{item.nombre_lote}</span> - ${Number(item.precio_rescate).toFixed(2)}
+                                        </span>
+                                        <p>
+                                        <strong>Estado:</strong>{' '}
+                                        <span className={`estado ${item.estado?.toLowerCase().replace(/\s+/g, '-')}`}>
+                                            {item.estado}
+                                        </span>
+                                        </p>
+                                        <button className="btn-quitar" onClick={() => eliminarDelCarrito(item.id_lote)}>
+                                            Quitar
+                                        </button>
+                                    </li>
+                                ))}
+                            </ul>
                         </div>
-                        <button
-                            className="carrito-boton quitar"
-                            onClick={() => eliminarDelCarrito(item.id_lote)}
-                        >
-                            Quitar
-                        </button>
-                        </li>
-                    ))}
-                    </ul>
-                    <div className="carrito-acciones">
-                     <button
-                        className="carrito-boton confirmar"
-                        onClick={confirmarYPagar}
-                        disabled={!todosDisponibles}
-                    >
-                        Confirmar y pagar
-                    </button>
-                    <button
-                        className="carrito-boton vaciar"
-                        onClick={vaciarCarrito}
-                    >
-                        Vaciar carrito
-                    </button>
+                        <div className="carrito-resumen">
+                            <h3>Resumen del pedido</h3>
+                            <div className="resumen-fila">
+                                <span>Total Original:</span>
+                                <span>${totalOriginal.toFixed(2)}</span>
+                            </div>
+                            <div className="resumen-fila descuento-total">
+                                <span>Descuento Total:</span>
+                                <span>-${descuentoTotal.toFixed(2)}</span>
+                            </div>
+                            <div className="resumen-fila total-pagar">
+                                <span>Total a Pagar:</span>
+                                <span>${totalRescate.toFixed(2)}</span>
+                            </div>
+                            <button className="btn-accion btn-confirmar" onClick={confirmarYPagar} disabled={!todosDisponibles}>Confirmar y pagar</button>
+                            <button className="btn-accion btn-vaciar" onClick={vaciarCarrito}>Vaciar carrito</button>
+                            {!todosDisponibles && (
+                                <p style={{color: "red", marginTop: "10px"}}>
+                                    Todos los productos deben estar disponibles para confirmar el pago.
+                                </p>
+                            )}
+                        </div>
                     </div>
-                    {!todosDisponibles && (
-                        <p style={{color: "red", marginTop: "10px"}}>
-                            Todos los productos deben estar disponibles para confirmar el pago.
-                        </p>
-                    )}
                 </div>
-                )}
-                    
             </div>
         </div>
     );
