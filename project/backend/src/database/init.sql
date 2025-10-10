@@ -71,3 +71,20 @@ CREATE TABLE IF NOT EXISTS notificaciones (
     tipo VARCHAR(50),
     fecha_envio TIMESTAMP DEFAULT NOW()
 );
+
+
+ALTER TABLE lotes
+ADD COLUMN lotes_search_tsv tsvector;
+CREATE OR REPLACE FUNCTION actualizar_lotes_tsv() RETURNS trigger AS $$
+BEGIN
+    NEW.lotes_search_tsv :=
+        setweight(to_tsvector('spanish', coalesce(NEW.nombre_lote, '')), 'A') ||
+        setweight(to_tsvector('spanish', coalesce(NEW.descripcion, '')), 'B') ||
+        setweight(to_tsvector('spanish', coalesce(NEW.categoria, '')), 'C');
+    RETURN NEW;
+END
+$$ LANGUAGE plpgsql;
+CREATE TRIGGER tgr_lotes_search_update
+BEFORE INSERT OR UPDATE ON lotes
+FOR EACH ROW EXECUTE FUNCTION actualizar_lotes_tsv();
+CREATE INDEX lotes_tsv_idx ON lotes USING GIN (lotes_search_tsv);

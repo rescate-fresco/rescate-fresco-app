@@ -93,6 +93,7 @@ Instalación (Terminal):
 ```bash
 cd project/frontend
 npm install
+npm install react-icons
 ```
 
 ### ⚙️ Configuración del entorno
