@@ -235,4 +235,35 @@ router.get("/tienda/:id_tienda", async (req, res) => {
         res.status(500).json({ mensaje: "Error interno del servidor al consultar los lotes de la tienda" });
     }
 });
+
+//Actualizar estados en Mi Tienda
+router.put("/:id_lote/estado", async (req, res) => {
+  const { id_lote } = req.params;
+  const { estado_producto } = req.body;
+
+  const estadosPermitidos = ["DISPONIBLE", "NO DISPONIBLE", "OCULTO", "ELIMINADO"];
+  if (!estadosPermitidos.includes(estado_producto.toUpperCase())) {
+    return res.status(400).json({ mensaje: "Estado no permitido" });
+  }
+
+  try {
+    const query = `
+      UPDATE lotes
+      SET estado = $1
+      WHERE id_lote = $2
+      RETURNING id_lote, estado;
+    `;
+    const resultado = await pool.query(query, [estado_producto.toUpperCase(), id_lote]);
+
+    if (resultado.rowCount === 0) {
+      return res.status(404).json({ mensaje: "Lote no encontrado" });
+    }
+
+    res.json({ mensaje: "Estado actualizado", lote: resultado.rows[0] });
+  } catch (err) {
+    console.error("Error al actualizar estado:", err);
+    res.status(500).json({ mensaje: "Error interno al actualizar estado" });
+  }
+});
+
 export default router;

@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
-import CartasProductos from "../components/cartas_productos";
+import Navbar from "../components/navbar.jsx";
+import CartasTienda from "../components/cartas_tienda";
+import './store.css';
 
 const API_BASE = import.meta.env.VITE_API_URL;
 const API_URL = `${API_BASE}api/lotes/tienda`; // <-- Agregué la barra faltante
@@ -74,12 +76,14 @@ function Store() {
     }
 
     return (    
-        <div>
-            <h2>Mi tienda - Productos publicados</h2>
-            <div className="productos-lista">
-                {misProductos.map(lote => (
-                    <CartasProductos key={lote.id_lote} lote={lote} />
-                ))}
+        <div className="Store">
+            <Navbar />
+            <div className="Cuerpo">
+                <div className="productos-lista">
+                    {misProductos.map(lote => (
+                        <CartasTienda key={lote.id_lote} lote={lote} />
+                    ))}
+                </div>
             </div>
         </div>
     );  

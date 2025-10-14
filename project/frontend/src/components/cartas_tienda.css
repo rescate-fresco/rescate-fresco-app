@@ -1,0 +1,49 @@
+.producto-tienda {
+    display: flex;
+    padding: 20px;
+    border-radius: 10px;
+    width: 1000px; /* Mantenemos el ancho fijo */
+    height: 70px;
+    align-items: center;
+    background: white;
+    justify-content: space-between;
+}
+
+.producto-tienda button {
+    padding: 10px;
+    border: none;
+    background: #017007;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    flex: 1; /* Hace que ambos botones ocupen el mismo espacio */
+    transition: background 0.2s ease;
+}
+
+.producto-tienda button:hover {
+    background: #01b50a;
+    color: black;
+}
+
+.alerta-vencimiento-tienda {
+    color: #b50a0a;
+    font-size: 0.9em;
+}
+
+.imagen-producto-tienda {
+    width: 100px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+
+.botones-container {
+    display: flex;
+    justify-content: space-between; /* Espacio entre los botones */
+    gap: 10px; /* Espacio entre botones si no ocupan todo el ancho */
+    margin-top: 1rem; /* Espacio arriba de los botones */
+}
+
+
