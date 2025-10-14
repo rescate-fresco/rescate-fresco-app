@@ -20,7 +20,7 @@ function Register() {
     const handleSubmit = async (e) => { // e es el evento
         e.preventDefault(); // evita que se recargue la página
         try {
-            const res = await fetch("http://localhost:5000/api/register", {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}api/auth/register`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({

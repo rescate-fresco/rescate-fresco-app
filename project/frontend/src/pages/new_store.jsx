@@ -30,7 +30,7 @@ function NewStore() {
         }
 
         try {
-        const response = await fetch("http://localhost:5000/api/tiendas", {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}api/auth/tiendas`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({

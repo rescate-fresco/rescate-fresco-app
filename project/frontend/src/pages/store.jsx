@@ -1,39 +1,69 @@
 import { useEffect, useState } from "react";
 import CartasProductos from "../components/cartas_productos";
 
-
-const API_URL = `${import.meta.env.VITE_API_URL}api/lotes/tienda`;
+const API_BASE = import.meta.env.VITE_API_URL;
+const API_URL = `${API_BASE}api/lotes/tienda`; // <-- Agregué la barra faltante
 
 function Store() {
     const [misProductos, setMisProductos] = useState([]);
-    const [cargado, setCargado] = useState(true);
+    const [cargando, setCargando] = useState(true); // <-- Cambié 'cargado' por 'cargando'
     const [error, setError] = useState(null);
+    const [idTienda, setIdTienda] = useState(null);
 
-    const usuario = JSON.parse(localStorage.getItem("usuario"));
-    const ID_TIENDA = usuario?.id_tienda || 1;
-    console.log("ID_TIENDA:", ID_TIENDA);
-    console.log("Usuario:", usuario);
-
+    const usuario = JSON.parse(localStorage.getItem("usuario") || "{}");
 
     useEffect(() => {
-        const fetchMisProductos = async () => {
+        const fetchIdTienda = async () => {
+            if (!usuario?.id_usuario) {
+                setError("No hay usuario logueado");
+                setCargando(false); // <-- Cambié de setCargando
+                return;
+            }
             try {
-                const response = await fetch(`${API_URL}/${ID_TIENDA}`);
+                const response = await fetch(`${API_BASE}api/auth/me/${usuario.id_usuario}`); // <-- Agregué barra
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
-                setMisProductos(data);
+                setIdTienda(data.id_tienda);
+                console.log("ID_TIENDA obtenido:", data.id_tienda);
             } catch (err) {
+                console.error("Error obteniendo id_tienda:", err);
                 setError(err.message);
-            } finally {
-                setCargado(false);
+                setCargando(false); // <-- Cambié de setCargando
             }
         };
+        fetchIdTienda();
+    }, [usuario?.id_usuario]);
+
+    useEffect(() => {
+        const fetchMisProductos = async () => {
+            if (!idTienda) return;
+            
+            try {
+                console.log(`Fetch URL: ${API_URL}/${idTienda}`);
+                const response = await fetch(`${API_URL}/${idTienda}`);
+                console.log("Response status:", response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log("Productos recibidos:", data);
+                setMisProductos(data);
+            } catch (err) {
+                console.error("Error obteniendo productos:", err);
+                setError(err.message);
+            } finally {
+                setCargando(false); // <-- Cambié de setCargando
+            }
+        };
+        
         fetchMisProductos();
-    }, [ID_TIENDA]);
-    
-    if (cargado) {
+    }, [idTienda]);
+
+    if (cargando) { // <-- Cambié de cargando
         return <div>Cargando...</div>;
     }
     if (error) {
@@ -42,15 +72,15 @@ function Store() {
     if (!misProductos || misProductos.length === 0) {
         return <div>No hay productos disponibles en tu tienda.</div>;
     }
+
     return (    
         <div>
-            <h2> Mi tienda - Productos publicados
-                <div className="productos-lista">
-                    {misProductos.map(lote => (
-                        <CartasProductos key={lote.id_lote} lote={lote} />
-                    ))}
-                </div>
-            </h2>
+            <h2>Mi tienda - Productos publicados</h2>
+            <div className="productos-lista">
+                {misProductos.map(lote => (
+                    <CartasProductos key={lote.id_lote} lote={lote} />
+                ))}
+            </div>
         </div>
     );  
 }

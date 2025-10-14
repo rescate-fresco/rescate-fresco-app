@@ -200,12 +200,24 @@ router.post("/lotes", async (req, res) => {
   }
 });
 
-router.get("/me", async (req, res) => {
-  const userId = req.user.id; 
-  const result = await pool.query(
-    "SELECT id_tienda FROM usuarios WHERE id = $1",
-    [userId]
-  );
-  res.json({ id_tienda: result.rows[0].id_tienda});
+router.get("/me/:id_usuario", async (req, res) => {
+  try {
+    const { id_usuario } = req.params;
+    
+    const result = await pool.query(
+      "SELECT id_tienda FROM tiendas WHERE id_usuario = $1",
+      [id_usuario]
+    );
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "Usuario no tiene tienda registrada" });
+    }
+    
+    res.json({ id_tienda: result.rows[0].id_tienda });
+  } catch (error) {
+    console.error("Error obteniendo id_tienda:", error);
+    res.status(500).json({ message: "Error interno del servidor" });
+  }
 });
+
 export default router;
