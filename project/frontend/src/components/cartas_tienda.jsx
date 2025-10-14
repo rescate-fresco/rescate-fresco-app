@@ -61,11 +61,12 @@ const CartasTienda = ({ lote }) => {
             {descuentoExtraPorVencimiento > 0 && (
                 <p className="alerta-vencimiento-tienda">¡Vence en {diasRestantes} días!</p>
             )}
-             <label>
+             <label className="estado-lote">
                 Estado:
                 <select 
                 value={estado_producto} 
                 onChange={(e) => handleEstadoChange(e.target.value, lote.id_lote)}
+                disabled={["ELIMINADO", "RESERVADO"].includes(estado_producto?.toUpperCase())}
                 >
                 <option value="DISPONIBLE">Disponible</option>
                 <option value="NO DISPONIBLE">No disponible</option>
