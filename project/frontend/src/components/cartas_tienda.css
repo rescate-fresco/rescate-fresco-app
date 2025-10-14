@@ -1,0 +1,83 @@
+.producto-tienda {
+    display: flex;
+    padding: 20px;
+    border-radius: 10px;
+    width: 1000px; /* Mantenemos el ancho fijo */
+    height: 70px;
+    align-items: center;
+    background: white;
+    justify-content: space-between;
+}
+
+.producto-tienda button {
+    padding: 10px;
+    border: none;
+    background: #017007;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    flex: 1; /* Hace que ambos botones ocupen el mismo espacio */
+    transition: background 0.2s ease;
+}
+
+.producto-tienda button:hover {
+    background: #01b50a;
+    color: black;
+}
+
+.alerta-vencimiento-tienda {
+    color: #b50a0a;
+    font-size: 0.9em;
+}
+
+.imagen-producto-tienda {
+    width: 100px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+
+.botones-container {
+    display: flex;
+    justify-content: space-between; /* Espacio entre los botones */
+    gap: 10px; /* Espacio entre botones si no ocupan todo el ancho */
+    margin-top: 1rem; /* Espacio arriba de los botones */
+}
+
+.estado-lote {
+  display: flex;
+  font-weight: 600;
+  color: #333;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.select-estado {
+  padding: 8px 10px;
+  border: 1.5px solid #ccc;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background-color: #fff;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.select-estado:hover:not(:disabled) {
+  border-color: #50b498;
+  box-shadow: 0 0 5px rgba(80, 180, 152, 0.4);
+}
+
+.select-estado:focus {
+  outline: none;
+  border-color: #50b498;
+  box-shadow: 0 0 5px rgba(80, 180, 152, 0.6);
+}
+
+.select-estado:disabled {
+  background-color: #f3f3f3;
+  color: #999;
+  cursor: not-allowed;
+  border-color: #ddd;
+}

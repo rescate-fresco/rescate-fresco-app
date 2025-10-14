@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../components/navbar.jsx";
+import Navbar from "../components/navbar";
 import './login.css';
 
 function Login() {
@@ -18,7 +18,7 @@ function Login() {
     const handleSubmit = async (e) => { /* Bien */
         e.preventDefault();
         try {
-            const res = await fetch("http://localhost:5000/api/login", {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}api/auth/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({

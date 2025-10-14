@@ -72,9 +72,10 @@ body {
 .estado.publicado { background: #3498db; }
 .estado.disponible { background: #2ecc71; }
 .estado.no-disponible { background: #e67e22; }
-.estado.cancelado { background: #e74c3c; }
+.estado.cancelado { background: #e7e13c; }
 .estado.reservado { background: #9b59b6; }
 .estado.oculto { background: #7f8c8d; }
+.estado.eliminado { background: #e74c3c; }
 
 .detalle-lote button {
     padding: 10px;
