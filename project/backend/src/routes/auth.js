@@ -200,4 +200,12 @@ router.post("/lotes", async (req, res) => {
   }
 });
 
+router.get("/me", async (req, res) => {
+  const userId = req.user.id; 
+  const result = await pool.query(
+    "SELECT id_tienda FROM usuarios WHERE id = $1",
+    [userId]
+  );
+  res.json({ id_tienda: result.rows[0].id_tienda});
+});
 export default router;

@@ -219,4 +219,20 @@ router.post('/por-ids', async (req, res) => {
     }
 });
 
+router.get("/tienda/:id_tienda", async (req, res) => {
+    const { id_tienda } = req.params;
+    const sqlQuery = `
+        SELECT ${CAMPOS_LOTE}
+        FROM lotes
+        WHERE id_tienda = $1
+        ORDER BY fecha_vencimiento ASC;
+    `;
+    try {
+        const resultado = await pool.query(sqlQuery, [id_tienda]); 
+        res.json(resultado.rows);
+    } catch (error) {
+        console.error(`Error al obtener lotes de la tienda ${id_tienda}:`, error);
+        res.status(500).json({ mensaje: "Error interno del servidor al consultar los lotes de la tienda" });
+    }
+});
 export default router;
