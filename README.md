@@ -78,7 +78,6 @@ Instalación (Terminal):
 ```bash
 cd project/backend
 npm install
-.env
 ```
 
 **Frontend (package.json)**
@@ -87,8 +86,9 @@ npm install
 * react-dom → Gestión del DOM.
 * react-scripts → Scripts para desarrollo y construcción.
 * react-router-dom → Biblioteca que permite la navegación entre vistas.
+* react-icons → Librería de iconos propia de React   
 * cypress → Pruebas de interfaz de ususario (UI).
-* mocha-junit-reporter -> 
+* mocha-junit-reporter → 
 * Otros módulos → Dependencias adicionales según el proyecto.
 
 Instalación (Terminal):
@@ -100,10 +100,17 @@ npm install react-icons
 
 ### ⚙️ Configuración del entorno
 
-⚠️ IMPORTANTE: para configurar el entorno se debe crear un archivo .env en la carpeta backend/. Luego, pegar el siguiente contenido en el archivo creado:
+⚠️ IMPORTANTE: para configurar el entorno se debe crear un archivo .env en la carpeta backend/ y  frontend/. 
+
+Luego, pegar el siguiente contenido en el archivo creado en backend:
 ```bash
 PORT = 5000 # Se recomienda 5000
 DATABASE_URL = postgres://usuario:contraseña@localhost:5432/rescate_db # Modificar ususario y contraseña de Postgres
+```
+
+Finalmente, pegar el siguiente contenido en el archivo creado en frontend:
+```bash
+VITE_API_URL=http://localhost:5000/
 ```
 
 ### 💾 Configuración de la Base de Datos

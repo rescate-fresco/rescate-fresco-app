@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="12.228" tests="3" failures="2">
+  <testsuite name="Root Suite" timestamp="2025-10-16T14:09:35" tests="0" file="..\tests\e2e\login.cy.js" time="0.000" failures="0">
+  </testsuite>
+  <testsuite name="Login E2E" timestamp="2025-10-16T14:09:35" tests="3" time="12.221" failures="2">
+    <testcase name="Login E2E Carga la página de login" time="6.857" classname="Carga la página de login">
+    </testcase>
+    <testcase name="Login E2E Muestra error con credenciales inválidas" time="0.000" classname="Muestra error con credenciales inválidas">
+      <failure message="`cy.click()` can only be called on a single element. Your subject contained 2 elements. Pass `{ multiple: true }` if you want to serially click each element.
+
+https://on.cypress.io/click" type="CypressError"><![CDATA[CypressError: `cy.click()` can only be called on a single element. Your subject contained 2 elements. Pass `{ multiple: true }` if you want to serially click each element.
+
+https://on.cypress.io/click
+    at mouseAction (http://localhost:5173/__cypress/runner/cypress_runner.js:114038:68)
+    at Context.click (http://localhost:5173/__cypress/runner/cypress_runner.js:114205:14)
+    at wrapped (http://localhost:5173/__cypress/runner/cypress_runner.js:145489:19)
+From Your Spec Code:
+    at Object.proxyGetter [as get] (http://localhost:5173/__cypress/runner/cypress_runner.js:80563:22)
+    at exists (http://localhost:5173/__cypress/runner/cypress_runner.js:150347:26)
+    at elExists (http://localhost:5173/__cypress/runner/cypress_runner.js:150362:10)
+    at ensureExistence (http://localhost:5173/__cypress/runner/cypress_runner.js:150543:22)
+    at onFailFn (http://localhost:5173/__cypress/runner/cypress_runner.js:150572:53)]]></failure>
+    </testcase>
+    <testcase name="Login E2E Login exitoso redirige a Home" time="0.000" classname="Login exitoso redirige a Home">
+      <failure message="`cy.click()` can only be called on a single element. Your subject contained 2 elements. Pass `{ multiple: true }` if you want to serially click each element.
+
+https://on.cypress.io/click" type="CypressError"><![CDATA[CypressError: `cy.click()` can only be called on a single element. Your subject contained 2 elements. Pass `{ multiple: true }` if you want to serially click each element.
+
+https://on.cypress.io/click
+    at mouseAction (http://localhost:5173/__cypress/runner/cypress_runner.js:114038:68)
+    at Context.click (http://localhost:5173/__cypress/runner/cypress_runner.js:114205:14)
+    at wrapped (http://localhost:5173/__cypress/runner/cypress_runner.js:145489:19)
+From Your Spec Code:
+    at Object.proxyGetter [as get] (http://localhost:5173/__cypress/runner/cypress_runner.js:80563:22)
+    at exists (http://localhost:5173/__cypress/runner/cypress_runner.js:150347:26)
+    at elExists (http://localhost:5173/__cypress/runner/cypress_runner.js:150362:10)
+    at ensureExistence (http://localhost:5173/__cypress/runner/cypress_runner.js:150543:22)
+    at onFailFn (http://localhost:5173/__cypress/runner/cypress_runner.js:150572:53)]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>

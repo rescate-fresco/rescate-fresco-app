@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="6.087" tests="3" failures="0">
+  <testsuite name="Root Suite" timestamp="2025-10-16T14:30:17" tests="0" file="..\tests\e2e\login.cy.js" time="0.000" failures="0">
+  </testsuite>
+  <testsuite name="Login E2E" timestamp="2025-10-16T14:30:17" tests="3" time="6.085" failures="0">
+    <testcase name="Login E2E Carga la página de login" time="1.642" classname="Carga la página de login">
+    </testcase>
+    <testcase name="Login E2E Muestra error con credenciales inválidas" time="1.944" classname="Muestra error con credenciales inválidas">
+    </testcase>
+    <testcase name="Login E2E Login exitoso redirige a Home" time="2.210" classname="Login exitoso redirige a Home">
+    </testcase>
+  </testsuite>
+</testsuites>

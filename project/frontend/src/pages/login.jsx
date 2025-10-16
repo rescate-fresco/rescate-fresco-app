@@ -72,7 +72,7 @@ function Login() {
                             />
                         </label>
 
-                        <button type="submit">Iniciar Sesión</button>
+                        <button type="submit" data-cy="submit-login">Iniciar Sesión</button>
                     </form>
                 </div>
             </div>
