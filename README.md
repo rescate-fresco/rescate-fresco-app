@@ -87,6 +87,7 @@ npm install
 * react-dom → Gestión del DOM.
 * react-scripts → Scripts para desarrollo y construcción.
 * react-router-dom → Biblioteca que permite la navegación entre vistas.
+* cypress → Pruebas de interfaz de ususario (UI).
 * Otros módulos → Dependencias adicionales según el proyecto.
 
 Instalación (Terminal):

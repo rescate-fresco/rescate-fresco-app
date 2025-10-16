@@ -1,5 +1,6 @@
 import express from "express";
 import pool from "../database/index.js"; 
+import * as Sentry from "@sentry/node";
 
 const router = express.Router();
 
@@ -70,7 +71,7 @@ router.get("/buscar", async (req, res) => {
         const lotesEncontrados = await buscarLotes(searchTerm.trim()); 
         res.json(lotesEncontrados); 
     } catch (error) {
-        
+        Sentry.captureException(error);   
         res.status(500).json({ mensaje: "Error interno del servidor al realizar la búsqueda" });
     }
 });
@@ -102,6 +103,7 @@ router.get("/", async (req, res) => {
         const resultado = await pool.query(baseQuery, queryParams);
         res.json(resultado.rows);
     } catch (error) {
+        Sentry.captureException(error);   
         console.error("Error al obtener lotes:", error);
         res.status(500).json({ mensaje: "Error interno del servidor al consultar lotes" });
     }
@@ -113,6 +115,7 @@ router.get("/categorias", async (req, res) => {
         const resultado = await pool.query("SELECT DISTINCT categoria FROM lotes WHERE categoria IS NOT NULL AND categoria <> '' ORDER BY categoria ASC");
         res.json(resultado.rows.map(row => row.categoria));
     } catch (error) {
+        Sentry.captureException(error);   
         console.error("Error al obtener categorías:", error);
         res.status(500).json({ mensaje: "Error interno del servidor" });
     }
@@ -136,6 +139,7 @@ router.get("/:id_lote", async (req, res) => {
         }
         res.json(resultado.rows[0]);
     } catch (error) {
+        Sentry.captureException(error);   
         console.error(`Error al obtener detalle del lote ${id_lote}:`, error);
         res.status(500).json({ mensaje: "Error interno del servidor al consultar el detalle del lote" });
     }
@@ -168,6 +172,7 @@ router.post("/reservar", async (req, res) => {
 
         res.json({ message: "Lotes reservados por 15 minutos", reservados: result.rows });
     } catch (err) {
+        Sentry.captureException(err);   
         console.error("❌ Error en /reservar:");
         console.error("Mensaje:", err.message);
         console.error("Detalle:", err.stack);
@@ -198,6 +203,7 @@ router.post("/liberar", async (req, res) => {
 
         res.json({ message: "Lotes liberados", lotes: result.rows });
     } catch (err) {
+        Sentry.captureException(err);   
         console.error(err);
         res.status(500).json({ message: "Error al liberar los lotes" });
     }
@@ -214,6 +220,7 @@ router.post('/por-ids', async (req, res) => {
         const resultado = await pool.query(sqlQuery, [ids]);
         res.json({ lotes: resultado.rows });
     } catch (error) {
+        Sentry.captureException(error);   
         console.error(error);
         res.status(500).json({ message: "Error al consultar lotes" });
     }
@@ -231,6 +238,7 @@ router.get("/tienda/:id_tienda", async (req, res) => {
         const resultado = await pool.query(sqlQuery, [id_tienda]); 
         res.json(resultado.rows);
     } catch (error) {
+        Sentry.captureException(error);   
         console.error(`Error al obtener lotes de la tienda ${id_tienda}:`, error);
         res.status(500).json({ mensaje: "Error interno del servidor al consultar los lotes de la tienda" });
     }
@@ -261,6 +269,7 @@ router.put("/:id_lote/estado", async (req, res) => {
 
     res.json({ mensaje: "Estado actualizado", lote: resultado.rows[0] });
   } catch (err) {
+    Sentry.captureException(err);   
     console.error("Error al actualizar estado:", err);
     res.status(500).json({ mensaje: "Error interno al actualizar estado" });
   }
