@@ -20,6 +20,9 @@ Rescate Fresco permite a las tiendas publicar lotes de rescate con vencimiento y
 
 ### 🎯 Misión
 Reducir la merma en comercios locales y facilitar el acceso a alimentos más baratos, con una experiencia simple, medible y colaborativa.
+# 🎥 Videos
+
+[**Tutorial para levevantar el proyecto**](https://youtu.be/ARGkUSNoyf8)
 
 # 📚 Documentación del Proyecto
 
