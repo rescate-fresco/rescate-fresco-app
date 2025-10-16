@@ -116,7 +116,7 @@ function NewProduct() {
                         <input type="datetime-local" name="ventana_retiro_fin" value={form.ventana_retiro_fin} onChange={handleChange} required />
                         </label>
 
-                        <button type="submit">Publicar</button>
+                        <button type="submit" data-cy="new-product-button">Publicar</button>
                     </form>
                 </div>
             </div>
