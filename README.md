@@ -88,6 +88,7 @@ npm install
 * react-scripts → Scripts para desarrollo y construcción.
 * react-router-dom → Biblioteca que permite la navegación entre vistas.
 * cypress → Pruebas de interfaz de ususario (UI).
+* mocha-junit-reporter -> 
 * Otros módulos → Dependencias adicionales según el proyecto.
 
 Instalación (Terminal):
