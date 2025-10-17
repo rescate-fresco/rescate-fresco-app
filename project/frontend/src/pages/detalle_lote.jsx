@@ -5,8 +5,6 @@ import './detalle_lote.css';
 
 const API_URL = `${import.meta.env.VITE_API_URL}api/lotes`;
 
-
-
 const DetalleLote = () => {
     const { id_lote } = useParams();
     const [lote, setLote] = useState(null);
