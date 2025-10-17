@@ -91,7 +91,7 @@ npm install
 * react-router-dom → Biblioteca que permite la navegación entre vistas.
 * react-icons → Librería de iconos propia de React   
 * cypress → Pruebas de interfaz de ususario (UI).
-* mocha-junit-reporter → 
+* mocha-junit-reporter → Formatear en un archivo de salida con el formato JUnit XML
 * Otros módulos → Dependencias adicionales según el proyecto.
 
 Instalación (Terminal):
