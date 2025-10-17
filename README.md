@@ -20,6 +20,9 @@ Rescate Fresco permite a las tiendas publicar lotes de rescate con vencimiento y
 
 ### 🎯 Misión
 Reducir la merma en comercios locales y facilitar el acceso a alimentos más baratos, con una experiencia simple, medible y colaborativa.
+# 🎥 Videos
+
+[**Tutorial para levevantar el proyecto**](https://youtu.be/ARGkUSNoyf8)
 
 # 📚 Documentación del Proyecto
 
@@ -78,7 +81,6 @@ Instalación (Terminal):
 ```bash
 cd project/backend
 npm install
-.env
 ```
 
 **Frontend (package.json)**
@@ -87,21 +89,30 @@ npm install
 * react-dom → Gestión del DOM.
 * react-scripts → Scripts para desarrollo y construcción.
 * react-router-dom → Biblioteca que permite la navegación entre vistas.
+* react-icons → Librería de iconos propia de React   
+* cypress → Pruebas de interfaz de ususario (UI).
+* mocha-junit-reporter → Formatear en un archivo de salida con el formato JUnit XML
 * Otros módulos → Dependencias adicionales según el proyecto.
 
 Instalación (Terminal):
 ```bash
 cd project/frontend
 npm install
-npm install react-icons
 ```
 
 ### ⚙️ Configuración del entorno
 
-⚠️ IMPORTANTE: para configurar el entorno se debe crear un archivo .env en la carpeta backend/. Luego, pegar el siguiente contenido en el archivo creado:
+⚠️ IMPORTANTE: para configurar el entorno se debe crear un archivo .env en la carpeta backend/ y  frontend/. 
+
+Luego, pegar el siguiente contenido en el archivo creado en backend:
 ```bash
 PORT = 5000 # Se recomienda 5000
 DATABASE_URL = postgres://usuario:contraseña@localhost:5432/rescate_db # Modificar ususario y contraseña de Postgres
+```
+
+Finalmente, pegar el siguiente contenido en el archivo creado en frontend:
+```bash
+VITE_API_URL=http://localhost:5000/
 ```
 
 ### 💾 Configuración de la Base de Datos

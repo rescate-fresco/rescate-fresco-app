@@ -102,7 +102,7 @@ function NewStore() {
                     required
                 />
                 </label>
-                <button type="submit">Crear Tienda</button>
+                <button type="submit" data-cy="submit-tienda">Crear Tienda</button>
             </form>
             </div>
         </div>

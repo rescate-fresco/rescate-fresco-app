@@ -3,12 +3,16 @@ import bcrypt from "bcrypt";
 import pool from "../database/index.js";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
+import * as Sentry from "@sentry/node";
 
 const router = express.Router();
 
 dotenv.config();
+
+
 // POST → registrar usuario
 router.post("/register", async(req, res) => {
+  //throw new Error("Test Sentry en registro");
   try {
     const {
       nombre_usuario,
@@ -46,6 +50,7 @@ router.post("/register", async(req, res) => {
 
     res.status(201).json({ id_usuario: result.rows[0].id_usuario });
   } catch (err) {
+    Sentry.captureException(err); 
     console.error(err);
     res.status(500).json({ error: "Error del servidor" });
   }
@@ -57,6 +62,8 @@ router.post("/register", async(req, res) => {
 // POST → login usuario
 router.post("/login", async (req, res) => {
   try {
+    // dentro de /login
+    // throw new Error("Test Sentry en login"); // quitar luego
     const { email, contrasena } = req.body;
 
     // Validación básica
@@ -95,6 +102,7 @@ router.post("/login", async (req, res) => {
       message: "Login exitoso"
     });
   } catch (err) {
+    Sentry.captureException(err); 
     console.error(err);
     res.status(500).json({ error: "Error del servidor" });
   }
@@ -137,6 +145,7 @@ router.post("/tiendas", async (req, res) => {
     });
 
   } catch (error) {
+    Sentry.captureException(error); 
     console.error("Error creando tienda:", error);
     res.status(500).json({ message: "Error interno del servidor" });
   }
@@ -195,6 +204,7 @@ router.post("/lotes", async (req, res) => {
       lote: result.rows[0],
     });
   } catch (error) {
+    Sentry.captureException(error); 
     console.error(error);
     res.status(500).json({ message: "Error interno del servidor" });
   }
@@ -215,6 +225,7 @@ router.get("/me/:id_usuario", async (req, res) => {
     
     res.json({ id_tienda: result.rows[0].id_tienda });
   } catch (error) {
+    Sentry.captureException(error); 
     console.error("Error obteniendo id_tienda:", error);
     res.status(500).json({ message: "Error interno del servidor" });
   }

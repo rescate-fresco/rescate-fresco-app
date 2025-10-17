@@ -35,7 +35,7 @@ function Register() {
             const data = await res.json();
 
             if (res.ok) {
-                alert("Usuario registrado con ID: " + data.id_usuario);
+                alert("Usuario registrado con éxito");
                 setForm({
                     nombre_usuario: "",
                     email: "",
@@ -111,7 +111,7 @@ function Register() {
                             />
                         </label>
 
-                        <button type="submit">Registrarse</button>
+                        <button type="submit" data-cy="submit-register">Registrarse</button>
                     </form>
                 </div>
 

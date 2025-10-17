@@ -1,0 +1,11 @@
+{
+    "nombre_lote": "Caja de Manzanas",
+    "categoria": "frutas",
+    "descripcion": "Manzanas en oferta",
+    "peso_qty": 5,
+    "precio_original": 5000,
+    "precio_rescate": 3000,
+    "fecha_vencimiento": "2026-12-31T18:30",
+    "ventana_retiro_inicio": "2026-12-30T10:00",
+    "ventana_retiro_fin": "2026-12-30T12:00"
+}

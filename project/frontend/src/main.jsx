@@ -1,6 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import * as Sentry from "@sentry/react";
 import './index.css'
 import App from './App.jsx'
 // Importación de las páginas
@@ -13,6 +14,18 @@ import NewStore from './pages/new_store'
 import DetalleLote from './pages/detalle_lote.jsx'
 import Carrito from './pages/carrito.jsx'
 import MetodoPago from './pages/metodo_pago.jsx'
+import ErrorButton from "./components/errorButton.jsx";
+
+
+
+Sentry.init({
+  dsn: "https://e9803e30b6e4e329466c65c06a7ce678@o4510195937771520.ingest.us.sentry.io/4510196401897472",
+  // Setting this option to true will send default PII data to Sentry.
+  // For example, automatic IP address collection on events
+  sendDefaultPii: true
+});
+
+
 
 
 // Definición de las rutas
@@ -61,6 +74,10 @@ const router = createBrowserRouter([
       { 
         path: 'carrito/pago',
         element: <MetodoPago />,
+      }, 
+      {
+        path: 'debug-error',
+        element: <ErrorButton />,
       }
 
     ],
@@ -71,6 +88,8 @@ const router = createBrowserRouter([
 const root = createRoot(document.getElementById("root"));
 root.render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <Sentry.ErrorBoundary fallback={<div>Ocurrió un error en la aplicación.</div>}>
+      <RouterProvider router={router} />
+    </Sentry.ErrorBoundary>
   </StrictMode>
 );

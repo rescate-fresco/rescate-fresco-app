@@ -36,3 +36,6 @@ package-lock.json
 
 # Ignorar el directorio de tests (opcional)
 /coverage
+
+# Ignoar .venv o cualquier entorno virtual de Python
+.venv/

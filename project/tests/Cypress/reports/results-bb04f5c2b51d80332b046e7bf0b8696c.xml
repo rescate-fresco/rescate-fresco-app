@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="22.874" tests="3" failures="0">
+  <testsuite name="Root Suite" timestamp="2025-10-16T21:36:43" tests="0" file="..\tests\Cypress\e2e\crear_producto.cy.js" time="0.000" failures="0">
+  </testsuite>
+  <testsuite name="Crear Producto (Lote) E2E" timestamp="2025-10-16T21:36:43" tests="3" time="22.868" failures="0">
+    <testcase name="Crear Producto (Lote) E2E crea un producto exitosamente (mock)" time="11.040" classname="crea un producto exitosamente (mock)">
+    </testcase>
+    <testcase name="Crear Producto (Lote) E2E muestra errores de validación cuando faltan campos" time="2.238" classname="muestra errores de validación cuando faltan campos">
+    </testcase>
+    <testcase name="Crear Producto (Lote) E2E muestra error cuando el nombre está duplicado (mock 409)" time="9.083" classname="muestra error cuando el nombre está duplicado (mock 409)">
+    </testcase>
+  </testsuite>
+</testsuites>
