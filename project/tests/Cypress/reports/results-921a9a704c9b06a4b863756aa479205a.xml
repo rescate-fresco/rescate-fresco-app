@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="14.751" tests="3" failures="0">
+  <testsuite name="Root Suite" timestamp="2025-10-16T21:37:11" tests="0" file="..\tests\Cypress\e2e\crear_tienda.cy.js" time="0.000" failures="0">
+  </testsuite>
+  <testsuite name="Funcionalidad de Creación de Tienda" timestamp="2025-10-16T21:37:11" tests="3" time="14.748" failures="0">
+    <testcase name="Funcionalidad de Creación de Tienda debería permitir a un usuario crear una nueva tienda exitosamente" time="7.502" classname="debería permitir a un usuario crear una nueva tienda exitosamente">
+    </testcase>
+    <testcase name="Funcionalidad de Creación de Tienda debería mostrar error si el nombre ya existe" time="4.748" classname="debería mostrar error si el nombre ya existe">
+    </testcase>
+    <testcase name="Funcionalidad de Creación de Tienda debería mostrar error si falta información requerida" time="1.953" classname="debería mostrar error si falta información requerida">
+    </testcase>
+  </testsuite>
+</testsuites>

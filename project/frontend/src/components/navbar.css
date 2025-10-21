@@ -1,0 +1,222 @@
+.navbar {
+    display: flex;
+    justify-content: space-between; /* logo a la izquierda, menu a la derecha */
+    align-items: center; /* Centrar verticalmente */
+    padding: 10px 20px; /* Espaciado interno */
+    height: 55px; /* Altura fija */
+    background-color: #5ae861;
+}
+
+/* Estilos para la parte izquierda del navbar */
+
+.nav-izq {
+  display: flex;
+  align-items: center; /* Centrar verticalmente */
+  gap: 20px; /* Espacio entre logo y nombre */
+}
+
+.nav-links {
+  display: flex;
+  list-style: none; /* Quitar viñetas */
+  gap: 15px; /* Espacio entre enlaces */
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links a {
+  color: black;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.nav-links a:hover { /* Efecto hover */
+  color: #017007;
+}
+
+/* Estilos para la parte derecha del navbar */
+
+.nav-der {
+  display: flex;           /* alinea en fila */
+  align-items: center;     /* centra verticalmente */
+  gap: 15px;               /* espacio entre search y botones */
+}
+
+/* ======== BARRA DE BÚSQUEDA ACCESIBLE ======== */
+
+.search-form {
+  display: flex;
+  align-items: center;
+  background-color: white;
+  border: 1px solid #aaa;
+  border-radius: 20px;
+  padding: 4px 10px;
+  transition: all 0.2s ease-in-out;
+  max-width: 320px;
+  height: 34px;
+}
+
+.search-form:focus-within {
+  border-color: #017007;
+  box-shadow: 0 0 0 2px rgba(1, 112, 7, 0.2);
+}
+
+.search-form input[type="search"] {
+  border: none;
+  outline: none;
+  flex: 1;
+  font-size: 0.9rem;
+  padding: 4px 6px;
+  background: transparent;
+  color: #222;
+}
+
+.search-form input[type="search"]::placeholder {
+  color: #888;
+}
+
+.search-button-icon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #017007;
+  padding: 4px;
+  transition: color 0.2s ease-in-out;
+}
+
+.search-button-icon:hover {
+  color: black;
+}
+
+/* Texto oculto para accesibilidad */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+
+.nav-der .search-form .button_search {
+  padding: 6px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 0.9rem;
+  border: 1px solid black;
+}
+
+.nav-der .search-form .button_search:hover {
+  background: white;
+  color: black;
+}
+
+.auth-buttons {
+  display: flex;
+  gap: 10px;
+  margin-left: 15px;
+}
+
+.btn-login,
+.btn-register {
+  padding: 6px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.btn-login {
+  background: transparent;
+  border: 1px solid black;
+  color: black;
+}
+
+.btn-login:hover {
+  background: black;
+  color: white;
+}
+
+.btn-register {
+  background: #017007;
+  color: white;
+  border: none;
+}
+
+.btn-register:hover {
+  background: #01b50a;
+  color : black;
+}
+
+/* Estilos para el contenedor del perfil */
+.perfil-container {
+    position: relative;
+    cursor: pointer;
+}
+
+.menu-desplegable {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background: white;
+    border: 1px solid #ccc;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    min-width: 120px;
+    z-index: 1000;
+}
+
+.menu-desplegable a,
+.menu-desplegable button {
+    padding: 8px;
+    text-decoration: none;
+    color: black;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+}
+
+.menu-desplegable a:hover,
+.menu-desplegable button:hover {
+    background-color: #eee;
+}
+
+.usuario-nombre {
+  color: black;
+  font-weight: bold;
+  font-size: 0.9rem;
+  background: transparent;
+  user-select: none;
+  cursor: pointer;
+  border: none;
+
+}
+
+.usuario-nombre:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.cart-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.cart-count {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
