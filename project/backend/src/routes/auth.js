@@ -10,11 +10,34 @@ const router = express.Router();
 dotenv.config();
 
 
+// Rate limiting simple en memoria (para producción usar Redis)
+const loginAttempts = new Map();
+const RATE_LIMIT_WINDOW = 15 * 60 * 1000; // 15 minutos
+const MAX_ATTEMPTS = 5;
+
+function checkRateLimit(email) {
+  const now = Date.now();
+  const attempts = loginAttempts.get(email) || [];
+  
+  // Limpiar intentos antiguos
+  const recentAttempts = attempts.filter(time => now - time < RATE_LIMIT_WINDOW);
+  
+  if (recentAttempts.length >= MAX_ATTEMPTS) {
+    return false; // Bloqueado
+  }
+
+  recentAttempts.push(now);
+  loginAttempts.set(email, recentAttempts);
+  return true; // Permitido
+}
+
+
+
 // POST → registrar usuario
 router.post("/register", async(req, res) => {
   //throw new Error("Test Sentry en registro");
   try {
-    const {
+    let {
       nombre_usuario,
       email,
       contrasena,
@@ -26,11 +49,47 @@ router.post("/register", async(req, res) => {
     if (!nombre_usuario || !email || !contrasena || !rol)
       return res.status(400).json({ error: "Faltan campos" });
 
+    // Normalizar y validar email
+    const emailLimpio = String(email).trim().toLowerCase();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    
+    if (/\s/.test(req.body.email)) {
+      return res.status(400).json({ error: "El email no puede contener espacios" });
+    }
+
+    if (!emailRegex.test(emailLimpio) || emailLimpio.length < 5 || emailLimpio.length > 255) {
+      return res.status(400).json({ error: "Formato de email inválido" });
+    }
+  
+    
+
+    nombre_usuario = String(nombre_usuario).trim();
+    if (nombre_usuario.length === 0 || nombre_usuario.length > 100) {
+      return res.status(400).json({ error: "Nombre de usuario inválido (1-100 caracteres)" });
+    }
+
+    // Sanitizar caracteres peligrosos en nombre (prevenir XSS básico)
+    if (/<script|javascript:|on\w+=/i.test(nombre_usuario)) {
+      return res.status(400).json({ error: "Nombre de usuario contiene caracteres no permitidos" });
+    }
+
+    if (typeof contrasena !== "string" || contrasena.length < 3) {
+      return res.status(400).json({ error: "Contraseña muy corta (mínimo 3 caracteres)" });
+    }
+
+    
+    if (contrasena.length > 128) {
+      return res.status(400).json({ error: "Contraseña demasiado larga (máximo 128 caracteres)" });
+    }
+
     if (!["tienda", "consumidor"].includes(rol))
       return res.status(400).json({ error: "Rol inválido" });
 
     // Revisar si el email ya existe
-    const existe = await pool.query("SELECT 1 FROM usuarios WHERE email=$1", [email]);
+    const existe = await pool.query(
+      "SELECT 1 FROM usuarios WHERE LOWER(email) = LOWER($1)", 
+      [emailLimpio]
+    );
     if (existe.rowCount > 0)
       return res.status(409).json({ error: "Email ya registrado" });
 
@@ -45,10 +104,18 @@ router.post("/register", async(req, res) => {
       VALUES ($1,$2,$3,$4,$5) 
       RETURNING id_usuario`;
 
-    const values = [nombre_usuario, email, contrasena_hash, rol, direccion_usuario];
-    const result = await pool.query(query, values);
-
-    res.status(201).json({ id_usuario: result.rows[0].id_usuario });
+    const values = [nombre_usuario, emailLimpio, contrasena_hash, rol, direccion_usuario];
+    
+    try {
+      const result = await pool.query(query, values);
+      return res.status(201).json({ id_usuario: result.rows[0].id_usuario });
+    } catch (dbErr) {
+      // Manejar duplicado por constraint único (race condition)
+      if (dbErr.code === "23505" || (dbErr.constraint && dbErr.constraint.includes("email"))) {
+        return res.status(409).json({ error: "Email ya registrado" });
+      }
+      throw dbErr; // Re-lanzar otros errores
+    }
   } catch (err) {
     Sentry.captureException(err); 
     console.error(err);
@@ -64,17 +131,68 @@ router.post("/login", async (req, res) => {
   try {
     // dentro de /login
     // throw new Error("Test Sentry en login"); // quitar luego
-    const { email, contrasena } = req.body;
-
-    // Validación básica
+    const { email, contrasena, captcha } = req.body;
+    
     if (!email || !contrasena) {
-      return res.status(400).json({ error: "Faltan campos" });
+      return res.status(400).json({ error: "Faltan campos requeridos" });
     }
+
+     // Validar longitudes ANTES de procesar
+    if (typeof email !== "string" || email.length > 255) {
+      return res.status(400).json({ error: "Email demasiado largo" });
+    }
+    if (typeof contrasena !== "string" || contrasena.length > 128) {
+      return res.status(400).json({ error: "Contraseña demasiado larga" });
+    }
+
+    const emailLimpio = email.trim().toLowerCase();
+    
+    if (!checkRateLimit(emailLimpio)) {
+      return res.status(429).json({ 
+        error: "Demasiados intentos fallidos. Intente nuevamente en 15 minutos" 
+      });
+    }
+
+    // Validar formato de email
+    if (emailLimpio.length < 5 || emailLimpio.length > 50 || !/\S+@\S+\.\S+/.test(emailLimpio)) {
+      return res.status(400).json({ error: "Formato de email inválido" });
+    }
+    
+    // Validar longitud mínima de contraseña
+    if (contrasena.length < 8) {
+      return res.status(400).json({ error: "La contraseña debe tener al menos 8 caracteres" });
+    }
+
+    if (process.env.NODE_ENV === "production"){ // este if solo sirve para las pruebas
+
+      if (!captcha) {
+        return res.status(400).json({ error: "Token CAPTCHA requerido" });
+      }
+      // Preparamos la URL para preguntar a Google
+      const secretKey = process.env.RECAPTCHA_SECRET_KEY;
+      const verifyURL = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${captcha}`;
+      // Hacemos la petición (fetch está disponible en Node.js 18+)
+      const captchaRes = await fetch(verifyURL, { method: "POST" });
+      const captchaData = await captchaRes.json();
+      // Google nos responde. Comprobamos si fue exitoso
+      if (!captchaData.success) {
+        console.warn("reCAPTCHA fallido (success: false)", captchaData["error-codes"]);
+        return res.status(401).json({ error: "Verificación CAPTCHA fallida" });
+      }
+      
+      // Para reCAPTCHA v3, también revisamos el 'score'
+      // 0.5 es un umbral común. Si es menor, es probable que sea un bot.
+      if (captchaData.score < 0.5) {
+        return res.status(401).json({ error: "Verificación fallida (score bajo), posible bot." });
+      }
+    }
+    
+    
 
     // Buscar usuario por email
     const result = await pool.query(
-      "SELECT id_usuario, nombre_usuario, email, contrasena_hash, rol, tienda FROM usuarios WHERE email=$1",
-      [email]
+      "SELECT id_usuario, nombre_usuario, email, contrasena_hash, rol, tienda FROM usuarios WHERE LOWER(email) = LOWER($1)",
+      [emailLimpio]
     );
 
     if (result.rowCount === 0) {
@@ -89,6 +207,21 @@ router.post("/login", async (req, res) => {
       return res.status(401).json({ error: "Email o contraseña incorrectos" });
     }
 
+     // Limpiar intentos fallidos tras login exitoso
+    loginAttempts.delete(emailLimpio);
+
+    // 7. GENERAR TOKEN JWT REAL (¡MEJORADO!)
+    const tokenPayload = {
+      id_usuario: user.id_usuario,
+      rol: user.rol,
+      email: user.email,
+    };
+
+    const token = jwt.sign(
+      tokenPayload, 
+      process.env.JWT_SECRET, // Usa la clave secreta del .env
+      { expiresIn: '1d' } // El token expira en 1 día
+    );
     // Aquí normalmente se genera un token JWT, pero de momento devolvemos datos básicos
     res.json({
       usuario: {
@@ -98,7 +231,7 @@ router.post("/login", async (req, res) => {
         rol: user.rol,
         tienda: user.tienda
       },
-      token: "TokenDeMentira",
+      token: token,
       message: "Login exitoso"
     });
   } catch (err) {

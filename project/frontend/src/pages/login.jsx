@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { GoogleReCaptchaProvider, useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import Navbar from "../components/navbar";
 import './login.css';
 
-function Login() {
-    const navigate = useNavigate();
 
+function LoginForm() {
+    const navigate = useNavigate();
+    const { executeRecaptcha } = useGoogleReCaptcha();
+    
     const [form, setForm] = useState({ /* Bien */
         email: "",
         contrasena: ""
@@ -17,15 +20,34 @@ function Login() {
 
     const handleSubmit = async (e) => { /* Bien */
         e.preventDefault();
+        
+        let tokenParaEnviar = null;
+
+        // asegurar que executeRecaptcha esté disponible (protegemos en dev)
+        if (!executeRecaptcha) {
+            console.warn("reCAPTCHA no inicializado; continuar sin token (solo dev).");
+        } else {
+            try {
+                tokenParaEnviar = await executeRecaptcha("login");
+            } catch (err) {
+                console.error("Error al ejecutar reCAPTCHA:", err);
+                alert("Error al verificar CAPTCHA. Intenta nuevamente.");
+                return;
+            }
+        }
+
+        const emailLimpio = form.email.trim().toLowerCase().replace(/</g, "&lt;").replace(/>/g, "&gt;");
         try {
             const res = await fetch(`${import.meta.env.VITE_API_URL}api/auth/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    email: form.email,
-                    contrasena: form.contrasena
+                    email: emailLimpio,
+                    contrasena: form.contrasena,
+                    captcha: tokenParaEnviar
                 }),
             });
+            
 
             const data = await res.json();
 
@@ -58,8 +80,12 @@ function Login() {
                                 value={form.email}
                                 onChange={handleChange}
                                 required
+                                minLength={5}
+                                maxLength={50}
+                                placeholder="ejemplo@correo.com"
                             />
                         </label>
+
 
                         <label>
                             Contraseña:
@@ -69,9 +95,12 @@ function Login() {
                                 value={form.contrasena}
                                 onChange={handleChange}
                                 required
+                                minLength={8}
+                                maxLength={20}
+                                placeholder="Mínimo 8 caracteres"
                             />
                         </label>
-
+                        
                         <button type="submit" data-cy="submit-login">Iniciar Sesión</button>
                     </form>
                 </div>
@@ -79,4 +108,10 @@ function Login() {
         </div>
     );
 }
-export default Login;
+export default function Login() {
+    return (
+        <GoogleReCaptchaProvider reCaptchaKey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}>
+            <LoginForm />
+        </GoogleReCaptchaProvider>
+    );
+}
