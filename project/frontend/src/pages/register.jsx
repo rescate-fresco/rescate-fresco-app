@@ -19,13 +19,14 @@ function Register() {
 
     const handleSubmit = async (e) => { // e es el evento
         e.preventDefault(); // evita que se recargue la página
+        const emailLimpio = form.email.trim().toLowerCase();
         try {
             const res = await fetch(`${import.meta.env.VITE_API_URL}api/auth/register`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     nombre_usuario: form.nombre_usuario,
-                    email: form.email,
+                    email: emailLimpio,
                     contrasena: form.contrasena,
                     rol: form.rol,
                     direccion_usuario: form.direccion_usuario
@@ -69,6 +70,8 @@ function Register() {
                                 value={form.nombre_usuario}
                                 onChange={handleChange}
                                 required
+                                minLength={5}
+                                maxLength={20}
                             />
                         </label>
 
@@ -80,8 +83,14 @@ function Register() {
                                 value={form.email}
                                 onChange={handleChange}
                                 required
+                                minLength={5}
+                                maxLength={50}
+                                placeholder="ejemplo@correo.com"
                             />
                         </label>
+                        {form.email.length > 0 && form.email.length < 5 && (
+                            <p style={{ color: "red" }}>El correo debe tener al menos 5 caracteres.</p>
+                        )}
 
                         <label>
                             Contraseña:
@@ -90,9 +99,14 @@ function Register() {
                                 name="contrasena"
                                 value={form.contrasena}
                                 onChange={handleChange}
-                                required
+                                requiredminLength={8}
+                                maxLength={20}
+                                placeholder="Mínimo 8 caracteres"
                             />
                         </label>
+                        {form.contrasena.length > 0 && form.contrasena.length < 8 && (
+                            <p style={{ color: "red" }}>La contraseña debe tener al menos 8 caracteres.</p>
+                        )}
 
                         <label>
                             Rol:
@@ -108,6 +122,9 @@ function Register() {
                                 name="direccion_usuario"
                                 value={form.direccion_usuario}
                                 onChange={handleChange}
+                                required
+                                minLength={5}
+                                maxLength={50}
                             />
                         </label>
 
