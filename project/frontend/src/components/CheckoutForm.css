@@ -1,0 +1,69 @@
+/* Estilos para el formulario de Stripe */
+
+#payment-form {
+  width: 100%;
+  max-width: 500px; /* Limita el ancho del formulario */
+  margin: 20px auto;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #333;
+}
+
+.FormGroup {
+  border: 1px solid #e0e0e0;
+  padding: 14px 12px;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+}
+
+/* El #card-element es donde Stripe inyecta su iframe */
+#card-element {
+  width: 100%;
+}
+
+.pay-button {
+  display: block;
+  width: 100%;
+  background: #2c5282; /* Un azul corporativo */
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  padding: 14px;
+  border-radius: 8px;
+  margin-top: 20px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.pay-button:hover {
+  background: #3a6b9e;
+}
+
+.pay-button:disabled {
+  background-color: #a0aec0;
+  cursor: not-allowed;
+}
+
+/* Mensaje de error */
+#payment-message {
+  color: #e53e3e; /* Rojo de error */
+  font-size: 14px;
+  margin-top: 15px;
+  text-align: center;
+}
+
+/* Mensaje de éxito */
+.checkout-success {
+  text-align: center;
+  color: #2f855a; /* Verde de éxito */
+  padding: 20px;
+  border: 1px solid #c6f6d5;
+  border-radius: 8px;
+  background-color: #f0fff4;
+}
