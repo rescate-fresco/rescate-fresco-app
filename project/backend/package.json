@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.920.0",
     "@sentry/profiling-node": "^10.20.0",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",

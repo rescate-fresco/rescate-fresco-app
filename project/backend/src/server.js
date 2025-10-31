@@ -4,10 +4,10 @@ import pool from "./database/index.js";
 import dotenv from "dotenv";
 import authRoutes from "./routes/auth.js";
 import lotesRouter from "./routes/lotes.js"; 
-
-dotenv.config();
 import "./instrument.js";
 import * as Sentry from "@sentry/node";
+
+dotenv.config();
 const app = express();
 
 app.use(express.json()); 
@@ -38,7 +38,7 @@ const PORT = process.env.PORT;
 
 
 app.listen(PORT, async () => {
-  // Conexión a la base de datos
+  // Conexión a la base de datos RDS
   try {
     const result = await pool.query("SELECT NOW()");
     console.log("✅ DB conectada:", result.rows[0].now);
@@ -46,7 +46,7 @@ app.listen(PORT, async () => {
     Sentry.captureException(err);
     console.error("❌ Error DB:", err);
   }
-  console.log("Servidor corriendo en puerto 5000");
+  console.log(`Servidor corriendo en puerto ${PORT} 🚀`);
 });
 
 app.get("/debug-sentry", function mainHandler(req, res) {
