@@ -5,8 +5,7 @@
 
 import express from 'express';
 import Stripe from 'stripe';
-import pool from '../database/index.js'; // 👈 IMPORTANTE: Importar el pool de la base de datos
-
+import pool from '../database/index.js'; 
 const router = express.Router();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -15,7 +14,6 @@ router.post('/create-payment-intent', async (req, res) => {
   try {
     const { amount, userId, cartIds } = req.body; 
 
-    // (Opcional pero recomendado) Validar que el userId exista
     if (!userId) {
       return res.status(400).json({ error: 'Falta el ID del usuario (userId)' });
     }
@@ -87,7 +85,6 @@ router.post(
       case 'payment_intent.payment_failed':
         const failedIntent = event.data.object;
         console.log(`❌ Pago Fallido. ID: ${failedIntent.id}, Razón: ${failedIntent.last_payment_error?.message}`);
-        // Aquí podrías notificar al usuario o marcar la orden como "fallida".
         break;
     }
 

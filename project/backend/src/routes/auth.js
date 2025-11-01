@@ -10,7 +10,6 @@ const router = express.Router();
 dotenv.config();
 
 
-// Rate limiting simple en memoria (para producción usar Redis)
 const loginAttempts = new Map();
 const RATE_LIMIT_WINDOW = 15 * 60 * 1000; // 15 minutos
 const MAX_ATTEMPTS = 5;
@@ -19,23 +18,21 @@ function checkRateLimit(email) {
   const now = Date.now();
   const attempts = loginAttempts.get(email) || [];
   
-  // Limpiar intentos antiguos
   const recentAttempts = attempts.filter(time => now - time < RATE_LIMIT_WINDOW);
   
   if (recentAttempts.length >= MAX_ATTEMPTS) {
-    return false; // Bloqueado
+    return false; 
   }
 
   recentAttempts.push(now);
   loginAttempts.set(email, recentAttempts);
-  return true; // Permitido
+  return true;
 }
 
 
 
 // POST → registrar usuario
 router.post("/register", async(req, res) => {
-  //throw new Error("Test Sentry en registro");
   try {
     let {
       nombre_usuario,
@@ -129,8 +126,6 @@ router.post("/register", async(req, res) => {
 // POST → login usuario
 router.post("/login", async (req, res) => {
   try {
-    // dentro de /login
-    // throw new Error("Test Sentry en login"); // quitar luego
     const { email, contrasena, captcha } = req.body;
     
     if (!email || !contrasena) {
@@ -168,20 +163,15 @@ router.post("/login", async (req, res) => {
       if (!captcha) {
         return res.status(400).json({ error: "Token CAPTCHA requerido" });
       }
-      // Preparamos la URL para preguntar a Google
       const secretKey = process.env.RECAPTCHA_SECRET_KEY;
       const verifyURL = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${captcha}`;
-      // Hacemos la petición (fetch está disponible en Node.js 18+)
       const captchaRes = await fetch(verifyURL, { method: "POST" });
       const captchaData = await captchaRes.json();
-      // Google nos responde. Comprobamos si fue exitoso
       if (!captchaData.success) {
         console.warn("reCAPTCHA fallido (success: false)", captchaData["error-codes"]);
         return res.status(401).json({ error: "Verificación CAPTCHA fallida" });
       }
       
-      // Para reCAPTCHA v3, también revisamos el 'score'
-      // 0.5 es un umbral común. Si es menor, es probable que sea un bot.
       if (captchaData.score < 0.5) {
         return res.status(401).json({ error: "Verificación fallida (score bajo), posible bot." });
       }
@@ -210,7 +200,6 @@ router.post("/login", async (req, res) => {
      // Limpiar intentos fallidos tras login exitoso
     loginAttempts.delete(emailLimpio);
 
-    // 7. GENERAR TOKEN JWT REAL (¡MEJORADO!)
     const tokenPayload = {
       id_usuario: user.id_usuario,
       rol: user.rol,
@@ -219,10 +208,9 @@ router.post("/login", async (req, res) => {
 
     const token = jwt.sign(
       tokenPayload, 
-      process.env.JWT_SECRET, // Usa la clave secreta del .env
-      { expiresIn: '1d' } // El token expira en 1 día
+      process.env.JWT_SECRET, 
+      { expiresIn: '1d' } 
     );
-    // Aquí normalmente se genera un token JWT, pero de momento devolvemos datos básicos
     res.json({
       usuario: {
         id_usuario: user.id_usuario,
@@ -247,7 +235,6 @@ router.post("/tiendas", async (req, res) => {
   const { nombre_tienda, direccion_tienda, telefono_tienda, id_usuario } = req.body;
 
   try {
-    // Verificar si ya existe tienda con mismo usuario o nombre
     const exists = await pool.query(
       "SELECT * FROM tiendas WHERE id_usuario = $1 OR nombre_tienda = $2",
       [id_usuario, nombre_tienda]
@@ -257,7 +244,6 @@ router.post("/tiendas", async (req, res) => {
       return res.status(400).json({ message: "Ya existe una tienda con ese nombre o usuario." });
     }
 
-    // Crear la tienda (sin lat/lon)
     const result = await pool.query(
       `INSERT INTO tiendas 
         (id_usuario, nombre_tienda, direccion_tienda, telefono_tienda)

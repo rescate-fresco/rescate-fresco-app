@@ -2,10 +2,9 @@
 
 #payment-form {
   width: 100%;
-  max-width: 500px; /* Limita el ancho del formulario */
-  margin: 20px auto;
 }
 
+/* Etiqueta para cada campo */
 .form-label {
   display: block;
   margin-bottom: 8px;
@@ -13,30 +12,65 @@
   color: #333;
 }
 
+/* Contenedor de cada campo de Stripe */
 .FormGroup {
+  margin-bottom: 20px; /* Aumentamos el espacio vertical */
+}
+
+/* Estilo base para los elementos de Stripe */
+.StripeElement {
   border: 1px solid #e0e0e0;
   padding: 14px 12px;
   border-radius: 8px;
   background-color: #fff;
   box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+  width: 100%;
+  box-sizing: border-box; /* 👈 ¡La clave está aquí! */
 }
 
-/* El #card-element es donde Stripe inyecta su iframe */
-#card-element {
-  width: 100%;
+/* 👇 4. Nuevos estilos para el contenedor del número de tarjeta y el icono */
+.card-number-wrapper {
+  position: relative;
+}
+
+.card-brand-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 28px;
+  color: #a0aec0; /* Un color gris neutro */
+}
+
+/* Hacemos espacio para el icono dentro del campo de número de tarjeta */
+/* Stripe crea un div con la clase __PrivateStripeElement, lo usamos para ser específicos */
+.card-number-wrapper .__PrivateStripeElement {
+  padding-right: 50px !important;
+}
+/* Fin de nuevos estilos */
+
+
+.form-row {
+  display: flex;
+  gap: 20px; 
+}
+
+.half-width {
+  flex: 1;
+  min-width: 0;
 }
 
 .pay-button {
   display: block;
   width: 100%;
-  background: #2c5282; /* Un azul corporativo */
+  background: #2c5282;
   color: white;
   font-size: 16px;
   font-weight: 600;
   border: none;
   padding: 14px;
   border-radius: 8px;
-  margin-top: 20px;
+  margin-top: 15px; 
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
@@ -50,18 +84,16 @@
   cursor: not-allowed;
 }
 
-/* Mensaje de error */
 #payment-message {
-  color: #e53e3e; /* Rojo de error */
+  color: #e53e3e;
   font-size: 14px;
   margin-top: 15px;
   text-align: center;
 }
 
-/* Mensaje de éxito */
 .checkout-success {
   text-align: center;
-  color: #2f855a; /* Verde de éxito */
+  color: #2f855a; 
   padding: 20px;
   border: 1px solid #c6f6d5;
   border-radius: 8px;

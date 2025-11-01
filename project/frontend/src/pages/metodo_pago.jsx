@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from "../components/navbar";
 import CheckoutForm from '../components/CheckoutForm';
+import Modal from '../components/Modal'; // 👈 1. Importamos el Modal
 import './metodo_pago.css';
 import { FaCreditCard, FaUniversity, FaCcVisa, FaCcMastercard } from 'react-icons/fa';
 import { FaPaypal } from 'react-icons/fa6';
 
 const MetodoPago = () => {
     const [totalAmount, setTotalAmount] = useState(0);
-    const [selectedMethod, setSelectedMethod] = useState(null); 
+    const [selectedMethod, setSelectedMethod] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false); // 👈 2. Estado para controlar el modal
 
     useEffect(() => {
         try {
@@ -100,16 +102,25 @@ const MetodoPago = () => {
                     </div>
 
                     {selectedMethod === 'stripe' && (
-                        <div className="checkout-form-container">
-                            <CheckoutForm amount={totalAmount} />
+                        <div className="pagar-button-container">
+                            <button className="btn-pagar-tarjeta" onClick={() => setIsModalOpen(true)}>
+                                Pagar con Tarjeta
+                            </button>
                         </div>
                     )}
 
                 </div>
+
+                <Modal 
+                    isOpen={isModalOpen} 
+                    onClose={() => setIsModalOpen(false)} 
+                    title="Ingresa los datos de tu tarjeta"
+                >
+                    <CheckoutForm amount={totalAmount} />
+                </Modal>
             </div>
         </div>
     );
 };
 
 export default MetodoPago;
-

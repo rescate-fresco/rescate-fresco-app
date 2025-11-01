@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; 
-import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { 
+  CardNumberElement,
+  CardExpiryElement,
+  CardCvcElement,
+  useStripe, 
+  useElements 
+} from '@stripe/react-stripe-js';
+import { FaCcVisa, FaCcMastercard, FaCcAmex } from 'react-icons/fa'; 
 import './CheckoutForm.css';
 
 const CheckoutForm = ({ amount }) => {
@@ -14,6 +21,7 @@ const CheckoutForm = ({ amount }) => {
   const [userId, setUserId] = useState(null); 
   const [countdown, setCountdown] = useState(3);
   const [cartIds, setCartIds] = useState([]);
+  const [cardBrand, setCardBrand] = useState(''); //Estado para la marca de la tarjeta
 
   useEffect(() => {
     try {
@@ -68,18 +76,23 @@ const CheckoutForm = ({ amount }) => {
         throw new Error('No se recibió el clientSecret del servidor.');
       }
 
-      // Confirmar el pago en Stripe
-      const cardElement = elements.getElement(CardElement);
+      const { error: paymentMethodError, paymentMethod } = await stripe.createPaymentMethod({
+        type: 'card',
+        card: elements.getElement(CardNumberElement),
+        billing_details: {
+          name: 'Cliente de Rescate Fresco',
+        },
+      });
 
+      if (paymentMethodError) {
+        throw new Error(paymentMethodError.message);
+      }
+
+      
       const { error: stripeError, paymentIntent } = await stripe.confirmCardPayment(
         clientSecret,
         {
-          payment_method: {
-            card: cardElement,
-            billing_details: {
-              name: 'Cliente de Rescate Fresco',
-            },
-          },
+          payment_method: paymentMethod.id,
         }
       );
 
@@ -101,7 +114,6 @@ const CheckoutForm = ({ amount }) => {
     }
   };
 
-  //Lógica del contador y redirección
   useEffect(() => {
     if (succeeded) {
       if (countdown === 0) {
@@ -130,11 +142,30 @@ const CheckoutForm = ({ amount }) => {
 
   return (
     <form id="payment-form" onSubmit={handleSubmit}>
-      <label className="form-label">Datos de la Tarjeta</label>
       <div className="FormGroup">
-        <CardElement id="card-element" />
+        <label className="form-label">Número de Tarjeta</label>
+        <div className="card-number-wrapper">
+          <CardNumberElement 
+            id="card-number-element" 
+            className="StripeElement" 
+            onChange={(e) => setCardBrand(e.brand || '')} // Actualiza la marca al escribir
+          />
+          {cardBrand === 'visa' && <FaCcVisa className="card-brand-icon" />}
+          {cardBrand === 'mastercard' && <FaCcMastercard className="card-brand-icon" />}
+          {cardBrand === 'amex' && <FaCcAmex className="card-brand-icon" />}
+        </div>
       </div>
-      
+
+      <div className="form-row">
+        <div className="FormGroup half-width">
+          <label className="form-label">Vencimiento</label>
+          <CardExpiryElement id="card-expiry-element" className="StripeElement" />
+        </div>
+        <div className="FormGroup half-width">
+          <label className="form-label">CVC</label>
+          <CardCvcElement id="card-cvc-element" className="StripeElement" />
+        </div>
+      </div>
       <button 
         className="pay-button"
         type="submit" 
