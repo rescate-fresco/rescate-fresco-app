@@ -1,33 +1,62 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; 
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
-import './CheckoutForm.css'; // Crearemos este archivo para los estilos
+import './CheckoutForm.css';
 
 const CheckoutForm = ({ amount }) => {
   const stripe = useStripe();
   const elements = useElements();
+  const navigate = useNavigate(); 
 
   const [error, setError] = useState(null);
   const [succeeded, setSucceeded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [userId, setUserId] = useState(null); 
+  const [countdown, setCountdown] = useState(3);
+  const [cartIds, setCartIds] = useState([]);
+
+  useEffect(() => {
+    try {
+      const usuarioLogueado = JSON.parse(localStorage.getItem("usuario")); 
+      if (usuarioLogueado && usuarioLogueado.id_usuario) {
+        setUserId(usuarioLogueado.id_usuario);
+      } else {
+        throw new Error("No se pudo identificar al usuario. Por favor, inicie sesión de nuevo.");
+      }
+      const carrito = JSON.parse(localStorage.getItem("carrito") || "[]");
+      const ids = carrito.map(item => item.id_lote).filter(Boolean); 
+      if (ids.length === 0) {
+        throw new Error("Tu carrito está vacío.");
+      }
+      
+      setCartIds(ids);
+
+    } catch (err) {
+      setError(err.message);
+    }
+  }, []);
+
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsLoading(true);
     setError(null);
 
-    if (!stripe || !elements) {
-      // Stripe.js no ha cargado aún.
+    if (!stripe || !elements || !userId || cartIds.length === 0) {
+      setError("Faltan datos (Stripe, Usuario o Carrito). Recargue la página.");
       setIsLoading(false);
       return;
     }
-
+    
     try {
-      // 1. Llamamos a NUESTRO backend para crear el Payment Intent
-      // Usamos la ruta relativa para que el proxy de Vite funcione
       const res = await fetch('/api/payments/create-payment-intent', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: amount }), // Enviamos el monto (ej: 1000)
+        body: JSON.stringify({ 
+          amount: amount,
+          userId: userId,
+          cartIds: JSON.stringify(cartIds)
+        }),
       });
       
       const { clientSecret, error: backendError } = await res.json();
@@ -35,38 +64,36 @@ const CheckoutForm = ({ amount }) => {
       if (backendError) {
         throw new Error(backendError);
       }
-      
       if (!clientSecret) {
-         throw new Error('No se recibió el clientSecret del servidor.');
+        throw new Error('No se recibió el clientSecret del servidor.');
       }
 
-      // 2. Obtenemos la referencia al CardElement
+      // Confirmar el pago en Stripe
       const cardElement = elements.getElement(CardElement);
 
-      // 3. Confirmamos el pago en Stripe desde el frontend
       const { error: stripeError, paymentIntent } = await stripe.confirmCardPayment(
-        clientSecret, // El "token" de pago que nos dio el backend
+        clientSecret,
         {
           payment_method: {
             card: cardElement,
             billing_details: {
-              name: 'Cliente de Rescate Sabor', // Puedes hacer esto dinámico
+              name: 'Cliente de Rescate Fresco',
             },
           },
         }
       );
 
       if (stripeError) {
-        // Errores de Stripe (ej. tarjeta rechazada, fondos insuficientes)
         throw new Error(stripeError.message);
       }
 
-      // 4. ¡Pago Exitoso!
+      //Pago Exitoso
       console.log('Pago exitoso:', paymentIntent);
       setSucceeded(true);
       setIsLoading(false);
-      // Aquí podrías limpiar el carrito de localStorage
-      // localStorage.removeItem("carrito");
+      
+      // Limpiamos el carrito
+      localStorage.removeItem("carrito");
 
     } catch (err) {
       setError(err.message || "Ocurrió un error desconocido.");
@@ -74,37 +101,50 @@ const CheckoutForm = ({ amount }) => {
     }
   };
 
-  // Si el pago fue exitoso, muestra un mensaje de éxito.
+  //Lógica del contador y redirección
+  useEffect(() => {
+    if (succeeded) {
+      if (countdown === 0) {
+        navigate('/');
+        return;
+      }
+      
+      const intervalId = setInterval(() => {
+        setCountdown((currentCountdown) => currentCountdown - 1);
+      }, 1000);
+      
+      return () => clearInterval(intervalId);
+    }
+  }, [succeeded, countdown, navigate]);
+
   if (succeeded) {
     return (
       <div className="checkout-success">
         <h3>¡Pago Exitoso!</h3>
         <p>Tu pago ha sido procesado correctamente.</p>
         <p>Gracias por tu compra.</p>
+        <p><em>Serás redirigido al inicio en {countdown} segundos...</em></p> 
       </div>
     );
   }
 
-  // Si no, muestra el formulario de pago
   return (
     <form id="payment-form" onSubmit={handleSubmit}>
       <label className="form-label">Datos de la Tarjeta</label>
       <div className="FormGroup">
-        {/* Este componente renderiza el formulario de Tarjeta */}
         <CardElement id="card-element" />
       </div>
       
       <button 
         className="pay-button"
         type="submit" 
-        disabled={isLoading || !stripe || !elements}
+        disabled={isLoading || !stripe || !elements || !userId || cartIds.length === 0}
       >
         <span>
           {isLoading ? 'Procesando...' : `Pagar $${amount.toLocaleString('es-CL')} CLP`}
         </span>
       </button>
 
-      {/* Muestra errores de pago si los hay */}
       {error && <div id="payment-message" role="alert">{error}</div>}
     </form>
   );

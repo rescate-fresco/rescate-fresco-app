@@ -11,36 +11,28 @@ import "./instrument.js";
 import * as Sentry from "@sentry/node";
 const app = express();
 
-// --- INICIO CORRECCIÓN DE WEBHOOK ---
-// IMPORTANTE: Esta lógica debe ir ANTES de tus rutas (app.use('/api/...'))
 
-// Usamos un middleware para parsear JSON, EXCEPTO para el webhook de Stripe
 app.use((req, res, next) => {
-  // Comprobamos si la ruta es la del webhook
   if (req.originalUrl === '/api/payments/stripe-webhook') {
-    next(); // Si es el webhook, no usamos express.json() y pasamos al siguiente
+    next(); 
   } else {
-    express.json()(req, res, next); // Para todas las demás rutas, sí usamos express.json()
+    express.json()(req, res, next);
   }
 });
-// --- FIN CORRECCIÓN DE WEBHOOK ---
 
 app.use(cors());
 
-// --- Tus Rutas ---
 app.use("/api/auth", authRoutes);
-app.use("/api/lotes", lotesRouter); 
-app.use('/api/payments', paymentRoutes); // Esto ya estaba perfecto
-app.get("/", (req, res) => {res.send("Servidor funcionando 🚀");});
+app.use("/api/lotes", lotesRouter);
+app.use('/api/payments', paymentRoutes);
+app.get("/", (req, res) => { res.send("Servidor funcionando 🚀"); });
 
-// v8: error handler de Sentry
 app.use(Sentry.expressErrorHandler({
   shouldHandleError(err) {
     return !err.status || err.status >= 500;
   }
 }));
 
-// Tu error handler final
 app.use((err, req, res, next) => {
   if (res.headersSent) return next(err);
   const statusCode = err.status || 500;
@@ -51,7 +43,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-const PORT = process.env.PORT || 5000; // Añadido un puerto por defecto
+const PORT = process.env.PORT || 5000; 
 
 app.listen(PORT, async () => {
   // Conexión a la base de datos
