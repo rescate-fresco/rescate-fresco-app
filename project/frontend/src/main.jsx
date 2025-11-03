@@ -5,6 +5,8 @@ import * as Sentry from "@sentry/react";
 import './index.css'
 import App from './App.jsx'
 // Importación de las páginas
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
 import Home from './pages/home'
 import Login from './pages/login'
 import Register from './pages/register'
@@ -17,7 +19,6 @@ import MetodoPago from './pages/metodo_pago.jsx'
 import ErrorButton from "./components/errorButton.jsx";
 
 
-
 Sentry.init({
   dsn: "https://e9803e30b6e4e329466c65c06a7ce678@o4510195937771520.ingest.us.sentry.io/4510196401897472",
   // Setting this option to true will send default PII data to Sentry.
@@ -25,7 +26,7 @@ Sentry.init({
   sendDefaultPii: true
 });
 
-
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
 
 // Definición de las rutas
@@ -89,7 +90,9 @@ const root = createRoot(document.getElementById("root"));
 root.render(
   <StrictMode>
     <Sentry.ErrorBoundary fallback={<div>Ocurrió un error en la aplicación.</div>}>
-      <RouterProvider router={router} />
+      <Elements stripe={stripePromise}>
+        <RouterProvider router={router} />
+      </Elements>
     </Sentry.ErrorBoundary>
   </StrictMode>
 );
