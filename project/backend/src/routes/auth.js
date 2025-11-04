@@ -109,12 +109,12 @@ router.post("/register", async(req, res) => {
     try {
       const result = await pool.query(query, values);
       return res.status(201).json({ id_usuario: result.rows[0].id_usuario });
-    } catch (dbErr) {
+    } catch (error_) {
       // Manejar duplicado por constraint único (race condition)
-      if (dbErr.code === "23505" || (dbErr.constraint && dbErr.constraint.includes("email"))) {
+      if (error_.code === "23505" || (error_.constraint && error_.constraint.includes("email"))) {
         return res.status(409).json({ error: "Email ya registrado" });
       }
-      throw dbErr; // Re-lanzar otros errores
+      throw error_; // Re-lanzar otros errores
     }
   } catch (err) {
     Sentry.captureException(err); 

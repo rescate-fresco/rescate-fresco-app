@@ -2,8 +2,18 @@ import express from "express";
 import pool from "../database/index.js"; 
 import * as Sentry from "@sentry/node";
 
+// --- IMPORTACIONES S3 ---
+import multer from 'multer'; // Para manejar la subida de archivos
+import s3Client from '../config/s3.js'; // Importamos el cliente S3 que creamos
+import { PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3'; // Para subir y borrar
+
+// --- CONFIG DE MULTER ---
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
 const router = express.Router();
 
+// Función para buscar lotes usando full-text search
 async function buscarLotes(searchTerm) {
     const query = `
         SELECT 
@@ -14,7 +24,12 @@ async function buscarLotes(searchTerm) {
             l.precio_original,
             l.fecha_vencimiento,
             t.nombre_tienda,
-            t.id_tienda 
+            t.id_tienda,
+            (
+                SELECT json_agg(img.url) 
+                FROM imagenes_lote img 
+                WHERE img.id_lote = l.id_lote
+            ) as imagenes
         FROM 
             lotes l
         JOIN 
@@ -36,6 +51,7 @@ async function buscarLotes(searchTerm) {
     }
 }
 
+// Campos comunes para las consultas de lotes
 const CAMPOS_LOTE = `
     id_lote, 
     nombre_lote, 
@@ -51,14 +67,14 @@ const CAMPOS_LOTE = `
     peso_qty
 `;
 
+// Condiciones comunes para filtrar lotes como ofertas válidas
 const CONDICIONES_OFERTA = `
     precio_rescate < precio_original
     AND estado IN ('RESERVADO', 'DISPONIBLE', 'NO DISPONIBLE')
     AND fecha_vencimiento >= CURRENT_DATE
 `;
 
-
-
+// Ruta para buscar lotes por término
 router.get("/buscar", async (req, res) => {
     const searchTerm = req.query.q; 
     
@@ -76,6 +92,7 @@ router.get("/buscar", async (req, res) => {
     }
 });
 
+// Ruta para obtener todos los lotes con opciones de filtrado y ordenamiento
 router.get("/", async (req, res) => {  
     const { categoria, sortBy = 'fecha_vencimiento', order = 'ASC' } = req.query;
    
@@ -91,7 +108,6 @@ router.get("/", async (req, res) => {
 
     baseQuery += ` WHERE ${whereClauses.join(' AND ')}`;
 
-    
     const allowedSortBy = ['fecha_vencimiento', 'precio_rescate', 'ventana_retiro_inicio'];
     const sortColumn = allowedSortBy.includes(sortBy) ? sortBy : 'fecha_vencimiento'; 
     const sortOrder = order.toUpperCase() === 'DESC' ? 'DESC' : 'ASC'; 
@@ -109,7 +125,7 @@ router.get("/", async (req, res) => {
     }
 });
 
-
+// Ruta para obtener todas las categorías únicas de lotes
 router.get("/categorias", async (req, res) => {
     try {
         const resultado = await pool.query("SELECT DISTINCT categoria FROM lotes WHERE categoria IS NOT NULL AND categoria <> '' ORDER BY categoria ASC");
@@ -121,14 +137,18 @@ router.get("/categorias", async (req, res) => {
     }
 });
 
-
-
+// Ruta para obtener el detalle de un lote por su ID
 router.get("/:id_lote", async (req, res) => {
     const { id_lote } = req.params;
     const sqlQuery = `
-        SELECT ${CAMPOS_LOTE}
-        FROM lotes
-        WHERE id_lote = $1
+        SELECT l.*,
+        (
+            SELECT json_agg(img.url) 
+            FROM imagenes_lote img 
+            WHERE img.id_lote = l.id_lote
+        ) as imagenes
+        FROM lotes l
+        WHERE l.id_lote = $1
         AND ${CONDICIONES_OFERTA}
         LIMIT 1;
     `;

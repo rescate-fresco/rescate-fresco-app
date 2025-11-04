@@ -41,10 +41,10 @@ app.listen(PORT, async () => {
   // Conexión a la base de datos RDS
   try {
     const result = await pool.query("SELECT NOW()");
-    console.log("✅ DB conectada:", result.rows[0].now);
+    console.log("✅ RDS conectada:", result.rows[0].now);
   } catch (err) {
     Sentry.captureException(err);
-    console.error("❌ Error DB:", err);
+    console.error("❌ Error RDS:", err);
   }
   console.log(`Servidor corriendo en puerto ${PORT} 🚀`);
 });
