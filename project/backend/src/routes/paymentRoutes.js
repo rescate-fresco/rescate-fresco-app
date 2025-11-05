@@ -5,9 +5,12 @@
 
 import express from 'express';
 import Stripe from 'stripe';
-import pool from '../database/index.js'; 
+import pool from '../database/index.js';
+import { Resend } from 'resend';
+
 const router = express.Router();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // --- RUTA PARA CREAR EL PAGO ---
 router.post('/create-payment-intent', async (req, res) => {
@@ -72,9 +75,36 @@ router.post(
         console.log(`✅ Lotes comprados (desde metadata): ${loteIds.join(', ')}`);
         
         try {
+          // Enviar correo de confirmación al usuario
+          const userQuery = 'SELECT email FROM usuarios WHERE id_usuario = $1';
+          const userResult = await pool.query(userQuery, [userId]);
+          if (userResult.rowCount === 0) {
+            throw new Error(`Usuario ${userId} no encontrado en la DB.`);
+          }
+          const { email, nombre_usuario } = userResult.rows[0];
+          console.log(`... Email encontrado: ${email}`);
+
+          // Eliminar los lotes comprados de la base de datos
           const deleteQuery = "DELETE FROM lotes WHERE id_lote = ANY($1::int[])";
           await pool.query(deleteQuery, [loteIds]);
           console.log(`✅ Base de datos actualizada: Lotes [${loteIds.join(', ')}] eliminados.`);
+
+          // Enviar correo electrónico de confirmación
+          console.log(`... Enviando correo de confirmación a ${email}...`);
+          await resend.emails.send({
+            from: 'onboarding@resend.dev', // Dominio de prueba de Resend
+            to: email, // El email que sacamos de la DB
+            subject: '¡Confirmación de tu compra en Rescate Sabor!',
+            html: `
+              <h1>¡Gracias por tu compra, ${nombre_usuario}!</h1>
+              <p>Tu pago se ha procesado correctamente.</p>
+              <p>ID de Pago de Stripe: ${paymentIntent.id}</p>
+              <p>Monto: $${(paymentIntent.amount / 100).toLocaleString('es-CL')} CLP</p>
+              <p>¡Gracias por ayudarnos a rescatar alimentos!</p>
+            `
+          });
+          console.log(`✅ Email enviado exitosamente.`);
+
         } catch (dbError) {
           console.error("❌ Error al eliminar los lotes de la base de datos tras el pago:", dbError);
           Sentry.captureException(dbError);
