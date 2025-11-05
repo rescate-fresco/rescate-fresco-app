@@ -91,28 +91,36 @@ router.get("/buscar", async (req, res) => {
 
 // -- Ruta para obtener todos los lotes con opciones de filtrado y ordenamiento --
 router.get("/", async (req, res) => {  
-    const { categoria, sortBy = 'fecha_vencimiento', order = 'ASC' } = req.query; // Parámetros de consulta opcionales
+    const { categoria, sortBy = 'fecha_vencimiento', order = 'ASC' } = req.query;
    
-    let baseQuery = `SELECT ${CAMPOS_LOTE} FROM lotes`;
+    let baseQuery = `
+        SELECT l.*, 
+        (
+            SELECT json_agg(img.url) 
+            FROM imagenes_lotes img 
+            WHERE img.id_lote = l.id_lote
+        ) AS imagenes  -- ← Aquí incluimos las imágenes de cada lote
+        FROM lotes l
+    `;
     const whereClauses = [CONDICIONES_OFERTA];
     const queryParams = [];
-    
-    if (categoria) { // Filtrar por categoría si se proporciona
+
+    if (categoria) {
         queryParams.push(categoria);
         whereClauses.push(`categoria ILIKE $${queryParams.length}`);
     }
 
-    baseQuery += ` WHERE ${whereClauses.join(' AND ')}`; // Agregar cláusulas WHERE si existen
+    baseQuery += ` WHERE ${whereClauses.join(' AND ')}`;
 
-    // Validar y aplicar ordenamiento
     const allowedSortBy = ['fecha_vencimiento', 'precio_rescate', 'ventana_retiro_inicio'];
     const sortColumn = allowedSortBy.includes(sortBy) ? sortBy : 'fecha_vencimiento'; 
     const sortOrder = order.toUpperCase() === 'DESC' ? 'DESC' : 'ASC'; 
     
     baseQuery += ` ORDER BY ${sortColumn} ${sortOrder}`;
-    
+
     try {
-        const resultado = await pool.query(baseQuery, queryParams); // Ejecutar la consulta con parámetros
+        const resultado = await pool.query(baseQuery, queryParams);
+        console.log(resultado.rows); // <-- Debug: revisa que cada lote tenga su array "imagenes"
         res.json(resultado.rows);
     } catch (error) {
         Sentry.captureException(error);   
@@ -120,6 +128,7 @@ router.get("/", async (req, res) => {
         res.status(500).json({ mensaje: "Error interno del servidor al consultar lotes" });
     }
 });
+
 
 // -- Ruta para obtener todas las categorías únicas de lotes --
 router.get("/categorias", async (req, res) => {

@@ -66,7 +66,7 @@ const DetalleLote = () => {
                         />
                         ) : (
                         <img
-                            src="https://placehold.co/600x400/cccccc/000000?text=Sin+imagen"
+                            src="https://placehold.co/600x400/cccccc/000000?text=Producto"
                             alt="Sin imagen disponible"
                             className="detalle-imagen"
                         />
