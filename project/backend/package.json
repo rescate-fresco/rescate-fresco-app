@@ -21,7 +21,8 @@
     "jsonwebtoken": "^9.0.2",
     "multer": "^2.0.2",
     "pg": "^8.16.3",
-    "react-google-recaptcha-v3": "^1.11.0"
+    "react-google-recaptcha-v3": "^1.11.0",
+    "stripe": "^19.2.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"
