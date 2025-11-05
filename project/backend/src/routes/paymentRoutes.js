@@ -76,7 +76,7 @@ router.post(
         
         try {
           // Enviar correo de confirmación al usuario
-          const userQuery = 'SELECT email FROM usuarios WHERE id_usuario = $1';
+          const userQuery = 'SELECT email,nombre_usuario FROM usuarios WHERE id_usuario = $1';
           const userResult = await pool.query(userQuery, [userId]);
           if (userResult.rowCount === 0) {
             throw new Error(`Usuario ${userId} no encontrado en la DB.`);
@@ -84,23 +84,110 @@ router.post(
           const { email, nombre_usuario } = userResult.rows[0];
           console.log(`... Email encontrado: ${email}`);
 
-          // Eliminar los lotes comprados de la base de datos
+          // --- NUEVO: Obtener detalles de los lotes y tiendas ANTES de borrarlos ---
+          const lotesQuery = `
+            SELECT 
+              l.nombre_lote,
+              l.ventana_retiro_inicio,
+              l.ventana_retiro_fin,
+              t.nombre_tienda,
+              t.direccion_tienda
+            FROM lotes l
+            JOIN tiendas t ON l.id_tienda = t.id_tienda
+            WHERE l.id_lote = ANY($1::int[])
+          `;
+          const lotesResult = await pool.query(lotesQuery, [loteIds]);
+          const detallesLotes = lotesResult.rows;
+
+          // --- Eliminar los lotes comprados de la base de datos ---
           const deleteQuery = "DELETE FROM lotes WHERE id_lote = ANY($1::int[])";
           await pool.query(deleteQuery, [loteIds]);
           console.log(`✅ Base de datos actualizada: Lotes [${loteIds.join(', ')}] eliminados.`);
 
+          // --- NUEVO: Construir el HTML para los detalles de retiro ---
+          const detallesRetiroHtml = detallesLotes.map(lote => `
+            <div class="pickup-item">
+              <p><strong>Producto:</strong> ${lote.nombre_lote}</p>
+              <p><strong>Tienda:</strong> ${lote.nombre_tienda} - ${lote.direccion_tienda}</p>
+              <p><strong>Horario de Retiro:</strong> ${new Date(lote.ventana_retiro_inicio).toLocaleString('es-CL')} - ${new Date(lote.ventana_retiro_fin).toLocaleString('es-CL')}</p>
+            </div>
+          `).join('');
+
+
           // Enviar correo electrónico de confirmación
           console.log(`... Enviando correo de confirmación a ${email}...`);
+          const montoFormateado = (paymentIntent.amount).toLocaleString('es-CL');
+
           await resend.emails.send({
             from: 'onboarding@resend.dev', // Dominio de prueba de Resend
             to: email, // El email que sacamos de la DB
-            subject: '¡Confirmación de tu compra en Rescate Sabor!',
+            subject: `🥕 Confirmación de tu compra en Rescate Fresco #${paymentIntent.id.slice(-6)}`,
             html: `
-              <h1>¡Gracias por tu compra, ${nombre_usuario}!</h1>
-              <p>Tu pago se ha procesado correctamente.</p>
-              <p>ID de Pago de Stripe: ${paymentIntent.id}</p>
-              <p>Monto: $${(paymentIntent.amount / 100).toLocaleString('es-CL')} CLP</p>
-              <p>¡Gracias por ayudarnos a rescatar alimentos!</p>
+              <!DOCTYPE html>
+              <html lang="es">
+              <head>
+                  <meta charset="UTF-8">
+                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                  <title>Confirmación de Compra - Rescate Fresco</title>
+                  <style>
+                      body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f3ef; }
+                      .container { width: 100%; max-width: 600px; margin: 20px auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; border: 1px solid #e0e0e0; }
+                      .header { background-color: #2E7D32; color: #ffffff; padding: 25px; text-align: center; }
+                      .header h1 { margin: 0; font-size: 28px; font-weight: bold; }
+                      .content { padding: 30px; color: #333333; }
+                      .content h2 { color: #2E7D32; font-size: 22px; margin-top: 0; }
+                      .content p { line-height: 1.6; font-size: 16px; margin: 10px 0; }
+                      .receipt-details { border-top: 2px solid #eeeeee; border-bottom: 2px solid #eeeeee; padding: 20px 0; margin: 25px 0; }
+                      .detail-item { display: flex; justify-content: space-between; padding: 10px 0; font-size: 16px; border-bottom: 1px solid #f0f0f0; }
+                      .detail-item:last-child { border-bottom: none; }
+                      .detail-item span { color: #555555; }
+                      .detail-item strong { color: #333333; }
+                      .total { font-weight: bold; font-size: 20px; color: #2E7D32; padding-top: 10px; }
+                      .footer { background-color: #f9f9f9; padding: 20px; text-align: center; font-size: 12px; color: #777777; }
+                      .pickup-info { margin-top: 30px; padding-top: 20px; border-top: 2px solid #eeeeee; }
+                      .pickup-item { margin-bottom: 20px; padding: 15px; background-color: #f9f9f9; border-left: 4px solid #2E7D32; }
+                      .footer a { color: #2E7D32; text-decoration: none; }
+                  </style>
+              </head>
+              <body>
+                  <div class="container">
+                      <div class="header">
+                          <h1>Rescate Fresco 🥕</h1>
+                      </div>
+                      <div class="content">
+                          <h2>¡Gracias por tu compra, ${nombre_usuario}!</h2>
+                          <p>Tu pago se ha procesado correctamente. Con esta acción, no solo ahorras dinero, sino que también ayudas a reducir el desperdicio de alimentos. ¡Eres un héroe!</p>
+                          
+                          <div class="receipt-details">
+                              <div class="detail-item">
+                                  <span>ID de Transacción:</span>
+                                  <strong>${paymentIntent.id}</strong>
+                              </div>
+                              <div class="detail-item">
+                                  <span>Fecha de Compra:</span>
+                                  <strong>${new Date().toLocaleDateString('es-CL')}</strong>
+                              </div>
+                              <div class="detail-item total">
+                                  <span>Monto Total:</span>
+                                  <strong>$${montoFormateado} CLP</strong>
+                              </div>
+                          </div>
+
+                          <div class="pickup-info">
+                              <h3>Detalles para el Retiro</h3>
+                              ${detallesRetiroHtml}
+                          </div>
+
+                          <p>Recuerda presentar tu confirmación de compra al momento de retirar tus productos.</p>
+                          <p>¡Gracias por ser parte de la solución!</p>
+                      </div>
+                      <div class="footer">
+                          <p>&copy; ${new Date().getFullYear()} Rescate Fresco. Todos los derechos reservados.</p>
+                          <p>Si tienes alguna pregunta, contáctanos a <a href="mailto:soporte@rescatefresco.com">soporte@rescatefresco.com</a>.</p>
+                      </div>
+                  </div>
+              </body>
+              </html>
             `
           });
           console.log(`✅ Email enviado exitosamente.`);
