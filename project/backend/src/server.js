@@ -7,8 +7,11 @@ import lotesRouter from "./routes/lotes.js";
 import paymentRoutes from './routes/paymentRoutes.js'; 
 
 dotenv.config();
+
 import "./instrument.js";
 import * as Sentry from "@sentry/node";
+
+dotenv.config();
 const app = express();
 
 
@@ -46,15 +49,15 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 5000; 
 
 app.listen(PORT, async () => {
-  // Conexión a la base de datos
+  // Conexión a la base de datos RDS
   try {
     const result = await pool.query("SELECT NOW()");
-    console.log("✅ DB conectada:", result.rows[0].now);
+    console.log("✅ RDS conectada:", result.rows[0].now);
   } catch (err) {
     Sentry.captureException(err);
-    console.error("❌ Error DB:", err);
+    console.error("❌ Error RDS:", err);
   }
-  console.log(`Servidor corriendo en puerto ${PORT}`);
+  console.log(`Servidor corriendo en puerto ${PORT} 🚀`);
 });
 
 app.get("/debug-sentry", function mainHandler(req, res) {

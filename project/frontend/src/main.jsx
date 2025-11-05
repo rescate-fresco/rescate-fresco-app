@@ -1,12 +1,13 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
 import * as Sentry from "@sentry/react";
 import './index.css'
 import App from './App.jsx'
+
 // Importación de las páginas
-import { loadStripe } from '@stripe/stripe-js';
-import { Elements } from '@stripe/react-stripe-js';
 import Home from './pages/home'
 import Login from './pages/login'
 import Register from './pages/register'

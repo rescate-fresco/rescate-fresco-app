@@ -76,7 +76,11 @@ cd rescate-fresco-app
 * pg → Cliente para PostgreSQL.
 * bcrypt → Hasheo de contraseña.
 * jsonwebtoken → Token para sesión.
+
+* @aws-sdk/client-s3 → cliente s3 aws.
+* multer → gestionar carga de archivos.
 * stripe → SDK oficial de Stripe para interactuar con la API desde Node.js.
+
 * Otros módulos → Dependencias adicionales según el proyecto.
 
 Instalación (Terminal):

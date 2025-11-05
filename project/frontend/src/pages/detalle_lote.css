@@ -105,3 +105,18 @@ button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
 }
+
+.detalle-imagen {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.detalle-imagen img {
+  width: 100%;
+  max-width: 400px; /* limita el tamaño */
+  height: auto;
+  border-radius: 12px;
+  object-fit: cover; /* recorta si la proporción no encaja */
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
