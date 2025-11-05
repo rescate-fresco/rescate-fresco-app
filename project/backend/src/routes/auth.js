@@ -124,10 +124,6 @@ router.post("/register", async(req, res) => {
 // POST → login usuario
 router.post("/login", async (req, res) => {
   try {
-<<<<<<< HEAD
-    // throw new Error("Test Sentry en login"); // quitar luego
-=======
->>>>>>> dev
     const { email, contrasena, captcha } = req.body;
 
     if (!email || !contrasena) {
