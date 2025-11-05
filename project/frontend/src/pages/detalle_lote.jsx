@@ -55,6 +55,20 @@ const DetalleLote = () => {
             <div className="Cuerpo">
                 <div className="detalle-lote">
                     <h2>{lote.nombre_lote}</h2>
+                    <div className="detalle-imagen">
+                        {lote.imagenes?.length > 0 ? (
+                        <img
+                            src={lote.imagenes[0]}
+                            alt={lote.nombre_lote}
+                        />
+                        ) : (
+                        <img
+                            src="https://placehold.co/600x400/cccccc/000000?text=Sin+imagen"
+                            alt="Sin imagen disponible"
+                            className="detalle-imagen"
+                        />
+                        )}
+                    </div>
                     <div className="detalle-info">
                         <p><strong>Categoría:</strong> {lote.categoria || 'Sin categoría'}</p>
                         <p><strong>Descripción:</strong> {lote.descripcion || 'No disponible'}</p>

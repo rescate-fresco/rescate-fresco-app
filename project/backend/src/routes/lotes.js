@@ -27,7 +27,7 @@ async function buscarLotes(searchTerm) {
             t.id_tienda,
             (
                 SELECT json_agg(img.url) 
-                FROM imagenes_lote img 
+                FROM imagenes_lotes img 
                 WHERE img.id_lote = l.id_lote
             ) as imagenes
         FROM 
@@ -144,7 +144,7 @@ router.get("/:id_lote", async (req, res) => {
         SELECT l.*,
         (
             SELECT json_agg(img.url) 
-            FROM imagenes_lote img 
+            FROM imagenes_lotes img 
             WHERE img.id_lote = l.id_lote
         ) as imagenes
         FROM lotes l
@@ -153,6 +153,7 @@ router.get("/:id_lote", async (req, res) => {
         LIMIT 1;
     `;
     try {
+        
         const resultado = await pool.query(sqlQuery, [id_lote]); 
         if (resultado.rows.length === 0) {
             return res.status(404).json({ mensaje: "Lote no encontrado o no disponible como oferta." });

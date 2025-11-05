@@ -7,9 +7,13 @@ const CartasProductos = ({ lote }) => {
         nombre_lote,
         precio_original, 
         precio_rescate, 
-        imagen, 
+        imagenes = [], 
         fecha_vencimiento
     } = lote
+
+    const imagen = imagenes.length > 0 
+        ? imagenes[0] 
+        : "https://placehold.co/300x200/50B498/ffffff?text=Producto";
 
     const precioInicial = precio_rescate; 
     let precioFinal = precioInicial; 
@@ -36,7 +40,7 @@ const CartasProductos = ({ lote }) => {
 
     return (
         <div className="producto-card">
-            <img src={imagen || "https://placehold.co/300x200/50B498/ffffff?text=Producto"} alt={nombre_lote} className="imagen-producto" />
+            <img src={imagen} alt={nombre_lote} className="imagen-producto" />
             <h3>{nombre_lote}</h3>
             <p className="precio-original">${Number(precio_original).toFixed(2)}</p>
 
