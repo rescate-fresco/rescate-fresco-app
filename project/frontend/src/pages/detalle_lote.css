@@ -105,6 +105,7 @@ button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
 }
+
 .detalle-imagen {
   display: flex;
   justify-content: center;
