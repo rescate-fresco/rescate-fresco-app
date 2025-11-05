@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS lotes (
 CREATE TABLE IF NOT EXISTS imagenes_lotes (
     id_imagen SERIAL PRIMARY KEY,
     id_lote INT REFERENCES lotes(id_lote) ON DELETE CASCADE,
-    url_imagen TEXT NOT NULL
+    url TEXT NOT NULL
 );
 
 -- Reservas

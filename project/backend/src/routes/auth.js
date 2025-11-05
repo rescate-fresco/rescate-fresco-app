@@ -124,15 +124,12 @@ router.post("/register", async(req, res) => {
 });
 
 
-
-
 // POST → login usuario
 router.post("/login", async (req, res) => {
   try {
-    // dentro de /login
     // throw new Error("Test Sentry en login"); // quitar luego
     const { email, contrasena, captcha } = req.body;
-    
+
     if (!email || !contrasena) {
       return res.status(400).json({ error: "Faltan campos requeridos" });
     }
@@ -191,7 +188,11 @@ router.post("/login", async (req, res) => {
 
     // Buscar usuario por email
     const result = await pool.query(
-      "SELECT id_usuario, nombre_usuario, email, contrasena_hash, rol, tienda FROM usuarios WHERE LOWER(email) = LOWER($1)",
+      `SELECT u.id_usuario, u.nombre_usuario, u.email, u.contrasena_hash, 
+              u.rol, u.tienda, t.id_tienda
+       FROM usuarios u
+       LEFT JOIN tiendas t ON u.id_usuario = t.id_usuario
+       WHERE LOWER(u.email) = LOWER($1)`,
       [emailLimpio]
     );
 
@@ -215,6 +216,7 @@ router.post("/login", async (req, res) => {
       id_usuario: user.id_usuario,
       rol: user.rol,
       email: user.email,
+      id_tienda: user.id_tienda || null, // agregado
     };
 
     const token = jwt.sign(
@@ -229,7 +231,8 @@ router.post("/login", async (req, res) => {
         nombre_usuario: user.nombre_usuario,
         email: user.email,
         rol: user.rol,
-        tienda: user.tienda
+        tienda: user.tienda,
+        id_tienda: user.id_tienda || null,
       },
       token: token,
       message: "Login exitoso"
@@ -284,65 +287,7 @@ router.post("/tiendas", async (req, res) => {
   }
 });
 
-
-// POST → new PRODUCTO
-router.post("/lotes", async (req, res) => {
-  const {
-    id_usuario,
-    nombre_lote,
-    categoria,
-    descripcion,
-    peso_qty,
-    precio_original,
-    precio_rescate,
-    fecha_vencimiento,
-    ventana_retiro_inicio,
-    ventana_retiro_fin
-  } = req.body;
-
-  try {
-    // Obtener id_tienda desde usuario
-    const tiendaResult = await pool.query(
-      "SELECT id_tienda FROM tiendas WHERE id_usuario = $1",
-      [id_usuario]
-    );
-
-    if (tiendaResult.rows.length === 0) {
-      return res.status(400).json({ message: "El usuario no tiene tienda registrada." });
-    }
-
-    const id_tienda = tiendaResult.rows[0].id_tienda;
-
-    const result = await pool.query(
-      `INSERT INTO lotes
-        (id_tienda, nombre_lote, categoria, descripcion, peso_qty, precio_original, precio_rescate, fecha_vencimiento, ventana_retiro_inicio, ventana_retiro_fin)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
-       RETURNING *`,
-      [
-        id_tienda,
-        nombre_lote,
-        categoria,
-        descripcion,
-        peso_qty,
-        precio_original,
-        precio_rescate,
-        fecha_vencimiento,
-        ventana_retiro_inicio,
-        ventana_retiro_fin
-      ]
-    );
-
-    res.status(201).json({
-      message: "Producto publicado exitosamente",
-      lote: result.rows[0],
-    });
-  } catch (error) {
-    Sentry.captureException(error); 
-    console.error(error);
-    res.status(500).json({ message: "Error interno del servidor" });
-  }
-});
-
+// GET → obtener id_tienda por id_usuario
 router.get("/me/:id_usuario", async (req, res) => {
   try {
     const { id_usuario } = req.params;

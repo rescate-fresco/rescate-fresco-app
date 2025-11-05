@@ -295,4 +295,81 @@ router.put("/:id_lote/estado", async (req, res) => {
   }
 });
 
+
+// POST → new PRODUCTO
+router.post('/', upload.array('imagenes', 5), async (req, res, next) => {
+  const { 
+    nombre_lote, descripcion, precio_original, precio_rescate, 
+    fecha_vencimiento, id_tienda, ventana_retiro_inicio, 
+    ventana_retiro_fin, categoria, peso_qty 
+  } = req.body;
+
+  const archivos = req.files;
+
+  if (!archivos || archivos.length === 0) {
+    return res.status(400).json({ mensaje: "Se requiere al menos una imagen." });
+  }
+
+  const clientePool = await pool.connect();
+  try {
+    await clientePool.query('BEGIN');
+
+    const sqlLote = `
+      INSERT INTO lotes (
+        nombre_lote, descripcion, precio_original, precio_rescate, 
+        fecha_vencimiento, id_tienda, ventana_retiro_inicio, 
+        ventana_retiro_fin, categoria, peso_qty, estado
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'DISPONIBLE')
+      RETURNING id_lote;
+    `;
+    const valuesLote = [
+      nombre_lote, descripcion, precio_original, precio_rescate,
+      fecha_vencimiento, id_tienda, ventana_retiro_inicio,
+      ventana_retiro_fin, categoria, peso_qty
+    ];
+    const resLote = await clientePool.query(sqlLote, valuesLote);
+    const idLoteCreado = resLote.rows[0].id_lote;
+
+    // Subir imágenes a S3
+    const urlsImagenes = [];
+    for (const archivo of archivos) {
+      const nombreArchivoS3 = `lotes/${idLoteCreado}/${Date.now()}-${archivo.originalname}`;
+      const command = new PutObjectCommand({
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: nombreArchivoS3,
+        Body: archivo.buffer,
+        ContentType: archivo.mimetype
+      });
+      await s3Client.send(command);
+      const url = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${nombreArchivoS3}`;
+      urlsImagenes.push(url);
+    }
+
+    // Insertar URLs una por una (seguro y limpio)
+    for (const url of urlsImagenes) {
+      await clientePool.query(
+        'INSERT INTO imagenes_lotes (id_lote, url) VALUES ($1, $2)',
+        [idLoteCreado, url]
+      );
+    }
+
+    await clientePool.query('COMMIT');
+
+    res.status(201).json({
+      message: `Lote creado con ${archivos.length} imágenes.`,
+      id_lote: idLoteCreado
+    });
+
+  } catch (err) {
+    await clientePool.query('ROLLBACK');
+    console.error("❌ Error al crear lote (transacción revertida):", err);
+    Sentry.captureException(err);
+    res.status(500).json({ mensaje: "Error al crear lote", detalle: err.message });
+  } finally {
+    clientePool.release();
+  }
+});
+
+
 export default router;

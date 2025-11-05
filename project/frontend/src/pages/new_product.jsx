@@ -61,7 +61,7 @@ function NewProduct() {
         for (const file of files) {
             formData.append('imagenes', file);
         }
-
+        
         try {
 
             const response = await fetch(`${import.meta.env.VITE_API_URL}api/lotes`, {
