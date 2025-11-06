@@ -296,4 +296,51 @@ router.get("/me/:id_usuario", async (req, res) => {
   }
 });
 
+router.get('/:id/historial-rescates', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const query = `
+      SELECT 
+        r.id_rescate,
+        r.fecha_rescate,
+        r.nombre_lote,
+        r.categoria,
+        r.peso_qty,
+        r.precio_original,
+        r.precio_rescate,
+        (r.precio_original - r.precio_rescate) AS ahorro
+      FROM rescates r
+      WHERE r.id_usuario = $1
+      ORDER BY r.fecha_rescate DESC
+    `;
+    const { rows } = await pool.query(query, [id]);
+
+    res.status(200).json(rows);
+  } catch (error) {
+    console.error("❌ Error al obtener historial de rescates:", error);
+    res.status(500).json({ error: 'Error al obtener historial de rescates' });
+  }
+});
+
+router.get('/:id/resumen-rescates', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const query = `
+      SELECT
+        COALESCE(SUM(peso_qty), 0) AS total_kg,
+        COALESCE(SUM(precio_original - precio_rescate), 0) AS total_ahorro,
+        COUNT(*) AS total_lotes
+      FROM rescates
+      WHERE id_usuario = $1
+    `;
+    const { rows } = await pool.query(query, [id]);
+    res.status(200).json(rows[0]);
+  } catch (error) {
+    console.error("❌ Error al obtener resumen de rescates:", error);
+    res.status(500).json({ error: 'Error al obtener resumen de rescates' });
+  }
+});
+
 export default router;

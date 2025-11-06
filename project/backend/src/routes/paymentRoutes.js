@@ -1,8 +1,3 @@
-// link https://github.com/stripe/stripe-cli/releases/tag/v1.32.0 y descargar stripe_1.32.0_windows_i386.zip
-// \stripe.exe listen --forward-to http://localhost:5000/api/payments/stripe-webhook
-
-// comando que va en la terminal del archivo .exe de descargas
-
 import express from 'express';
 import Stripe from 'stripe';
 import pool from '../database/index.js'; 
@@ -48,7 +43,6 @@ router.post(
   '/stripe-webhook', 
   express.raw({ type: 'application/json' }), 
   async (req, res) => {
-    
     const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
     const sig = req.headers['stripe-signature'];
 
@@ -68,16 +62,47 @@ router.post(
         const { userId, cartIds } = paymentIntent.metadata;
         const loteIds = JSON.parse(cartIds); 
         console.log(`✅ ¡Pago Exitoso! ID: ${paymentIntent.id}`);
-        console.log(`✅ Usuario que pagó (desde metadata): ${userId}`);
-        console.log(`✅ Lotes comprados (desde metadata): ${loteIds.join(', ')}`);
-        
+        console.log(`✅ Usuario que pagó: ${userId}`);
+        console.log(`✅ Lotes comprados: ${loteIds.join(', ')}`);
+
         try {
+          // 🟢 1️⃣ Obtener los datos de los lotes antes de eliminarlos
+          const selectQuery = `
+            SELECT id_lote, nombre_lote, categoria, peso_qty, precio_original, precio_rescate
+            FROM lotes
+            WHERE id_lote = ANY($1::int[])
+          `;
+          const { rows: lotesComprados } = await pool.query(selectQuery, [loteIds]);
+
+          // 🟢 2️⃣ Insertar los lotes en la tabla "rescates"
+          const insertQuery = `
+            INSERT INTO rescates (
+              id_usuario, id_lote, nombre_lote, categoria, peso_qty, precio_original, precio_rescate
+            )
+            VALUES ($1, $2, $3, $4, $5, $6, $7)
+          `;
+
+          for (const lote of lotesComprados) {
+            await pool.query(insertQuery, [
+              userId,
+              lote.id_lote,
+              lote.nombre_lote,
+              lote.categoria,
+              lote.peso_qty,
+              lote.precio_original,
+              lote.precio_rescate
+            ]);
+          }
+
+          console.log(`💾 ${lotesComprados.length} lotes registrados en la tabla "rescates"`);
+
+          // 🟢 3️⃣ Luego eliminar los lotes originales
           const deleteQuery = "DELETE FROM lotes WHERE id_lote = ANY($1::int[])";
           await pool.query(deleteQuery, [loteIds]);
-          console.log(`✅ Base de datos actualizada: Lotes [${loteIds.join(', ')}] eliminados.`);
+          console.log(`✅ Lotes [${loteIds.join(', ')}] eliminados de la tabla 'lotes'.`);
+
         } catch (dbError) {
-          console.error("❌ Error al eliminar los lotes de la base de datos tras el pago:", dbError);
-          Sentry.captureException(dbError);
+          console.error("❌ Error al registrar rescates o eliminar lotes:", dbError);
         }
 
         break;
@@ -91,6 +116,5 @@ router.post(
     res.status(200).send();
   }
 );
-
 
 export default router;

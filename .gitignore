@@ -33,6 +33,7 @@ Thumbs.db
 
 # Ignorar el archivo de configuración de npm
 package-lock.json
+package.json
 
 # Ignorar el directorio de tests (opcional)
 /coverage

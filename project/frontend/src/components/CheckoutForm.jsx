@@ -15,11 +15,12 @@ const CheckoutForm = ({ amount }) => {
   const elements = useElements();
   const navigate = useNavigate(); 
 
+  const [carritoFinal, setCarritoFinal] = useState([]);
   const [error, setError] = useState(null);
   const [succeeded, setSucceeded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [userId, setUserId] = useState(null); 
-  const [countdown, setCountdown] = useState(3);
+  const [countdown, setCountdown] = useState(5);
   const [cartIds, setCartIds] = useState([]);
   const [cardBrand, setCardBrand] = useState(''); //Estado para la marca de la tarjeta
 
@@ -104,6 +105,10 @@ const CheckoutForm = ({ amount }) => {
       console.log('Pago exitoso:', paymentIntent);
       setSucceeded(true);
       setIsLoading(false);
+
+      // 🟢 Guardar el carrito actual antes de borrarlo
+      const carritoActual = JSON.parse(localStorage.getItem("carrito") || "[]");
+      setCarritoFinal(carritoActual);
       
       // Limpiamos el carrito
       localStorage.removeItem("carrito");
@@ -130,15 +135,37 @@ const CheckoutForm = ({ amount }) => {
   }, [succeeded, countdown, navigate]);
 
   if (succeeded) {
+    const totalKg = carritoFinal.reduce(
+      (sum, item) => sum + (parseFloat(item.peso_qty) || 0),
+      0
+    );
+
+    const totalAhorro = carritoFinal.reduce(
+      (sum, item) =>
+        sum +
+        ((parseFloat(item.precio_original) || 0) -
+          (parseFloat(item.precio_rescate) || 0)),
+      0
+    );
+
     return (
       <div className="checkout-success">
         <h3>¡Pago Exitoso!</h3>
+        <p>
+          Has rescatado un total de{" "}
+          <strong>{Number(totalKg).toFixed(2)} kg</strong> de alimentos 🥦
+        </p>
+        <p>
+          <strong>Ahorro total:</strong>{" "}
+          ${totalAhorro.toLocaleString("es-CL")} CLP 💰
+        </p>
         <p>Tu pago ha sido procesado correctamente.</p>
         <p>Gracias por tu compra.</p>
-        <p><em>Serás redirigido al inicio en {countdown} segundos...</em></p> 
+        <p><em>Serás redirigido al inicio en {countdown} segundos…</em></p>
       </div>
     );
   }
+
 
   return (
     <form id="payment-form" onSubmit={handleSubmit}>

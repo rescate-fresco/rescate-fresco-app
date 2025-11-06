@@ -1,0 +1,76 @@
+.Perfil {
+  display: flex;
+  flex-direction: column;
+  min-width: 1000px;
+  width: 100vw;
+  min-height: 100vh;
+  background-color: #f4f3ef;
+  color: #333;
+}
+
+.CuerpoPerfil {
+  flex-grow: 1;
+  width: 100%;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.perfil-contenido {
+  max-width: 900px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.perfil-resumen {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+  padding: 1.5rem 2rem;
+}
+
+.perfil-info p,
+.perfil-resumen-datos p {
+  margin: 0.5rem 0;
+  font-size: 1rem;
+}
+
+.perfil-historial {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+  padding: 1.5rem 2rem;
+}
+
+.tabla-historial {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.tabla-historial th,
+.tabla-historial td {
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+  padding: 0.75rem;
+}
+
+.tabla-historial th {
+  background-color: #f8f8f8;
+  font-weight: 600;
+}
+
+.info-msg,
+.error-msg {
+  text-align: center;
+  font-weight: 500;
+  margin-top: 2rem;
+  color: #444;
+}
+
+.error-msg {
+  color: #c0392b;
+}

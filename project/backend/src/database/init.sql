@@ -90,3 +90,16 @@ CREATE TRIGGER tgr_lotes_search_update
 BEFORE INSERT OR UPDATE ON lotes
 FOR EACH ROW EXECUTE FUNCTION actualizar_lotes_tsv();
 CREATE INDEX lotes_tsv_idx ON lotes USING GIN (lotes_search_tsv);
+
+CREATE TABLE IF NOT EXISTS rescates (
+  id_rescate SERIAL PRIMARY KEY,
+  id_usuario INT REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
+  id_lote INT REFERENCES lotes(id_lote) ON DELETE SET NULL,
+  nombre_lote VARCHAR(100),
+  categoria VARCHAR(50),
+  peso_qty NUMERIC(10,2),
+  precio_original NUMERIC(10,2),
+  precio_rescate NUMERIC(10,2),
+  fecha_rescate TIMESTAMP DEFAULT NOW()
+);
+
