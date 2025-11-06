@@ -104,14 +104,35 @@ router.post(
           await pool.query(deleteQuery, [loteIds]);
           console.log(`✅ Base de datos actualizada: Lotes [${loteIds.join(', ')}] eliminados.`);
 
-          // --- NUEVO: Construir el HTML para los detalles de retiro ---
-          const detallesRetiroHtml = detallesLotes.map(lote => `
-            <div class="pickup-item">
-              <p><strong>Producto:</strong> ${lote.nombre_lote}</p>
-              <p><strong>Tienda:</strong> ${lote.nombre_tienda} - ${lote.direccion_tienda}</p>
-              <p><strong>Horario de Retiro:</strong> ${new Date(lote.ventana_retiro_inicio).toLocaleString('es-CL')} - ${new Date(lote.ventana_retiro_fin).toLocaleString('es-CL')}</p>
-            </div>
-          `).join('');
+          // ---HTML para los detalles de retiro ---
+          const detallesRetiroHtml = detallesLotes.map(lote => {
+            const inicio = new Date(lote.ventana_retiro_inicio);
+            const fin = new Date(lote.ventana_retiro_fin);
+            const fechaStr = inicio.toLocaleDateString('es-CL', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            });
+            const horaInicioStr = inicio.toLocaleTimeString('es-CL', {
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: false
+            });
+            const horaFinStr = fin.toLocaleTimeString('es-CL', {
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: false
+            });
+            const horarioFormateado = `${fechaStr}, de ${horaInicioStr} a ${horaFinStr} hrs.`;
+            return `
+              <div class="pickup-item">
+                <p><strong>Producto:</strong> ${lote.nombre_lote}</p>
+                <p><strong>Tienda:</strong> ${lote.nombre_tienda} - ${lote.direccion_tienda}</p>
+                <p><strong>Horario de Retiro:</strong> ${horarioFormateado}</p>
+              </div>
+            `;
+          }).join('');
 
 
           // Enviar correo electrónico de confirmación
@@ -137,14 +158,14 @@ router.post(
                       .content { padding: 30px; color: #333333; }
                       .content h2 { color: #2E7D32; font-size: 22px; margin-top: 0; }
                       .content p { line-height: 1.6; font-size: 16px; margin: 10px 0; }
-                      .receipt-details { border-top: 2px solid #eeeeee; border-bottom: 2px solid #eeeeee; padding: 20px 0; margin: 25px 0; }
+                      .receipt-details { border-top: 2px solid #eeeeee; padding: 20px 0; margin: 25px 0; }
                       .detail-item { display: flex; justify-content: space-between; padding: 10px 0; font-size: 16px; border-bottom: 1px solid #f0f0f0; }
                       .detail-item:last-child { border-bottom: none; }
-                      .detail-item span { color: #555555; }
-                      .detail-item strong { color: #333333; }
+                      .detail-item span { color: #555555; text-align: left; flex-shrink: 0;margin-right: 10px; }
+                      .detail-item strong { color: #333333; word-break: break-all;max-width: 60%;  text-align: right;}
                       .total { font-weight: bold; font-size: 20px; color: #2E7D32; padding-top: 10px; }
                       .footer { background-color: #f9f9f9; padding: 20px; text-align: center; font-size: 12px; color: #777777; }
-                      .pickup-info { margin-top: 30px; padding-top: 20px; border-top: 2px solid #eeeeee; }
+                      .pickup-info { margin-top: 30px; padding-top: 20px;}
                       .pickup-item { margin-bottom: 20px; padding: 15px; background-color: #f9f9f9; border-left: 4px solid #2E7D32; }
                       .footer a { color: #2E7D32; text-decoration: none; }
                   </style>
