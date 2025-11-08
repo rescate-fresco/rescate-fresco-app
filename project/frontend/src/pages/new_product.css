@@ -59,6 +59,31 @@ body {
   min-height: 80px;
 }
 
+.lote-form input[type="file"] {
+  background-color: #fff;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 0; /* Reseteamos padding para estilizar el botón interno */
+}
+
+.lote-form input[type="file"]::file-selector-button {
+  background: #017007; /* Color principal del botón */
+  color: white;
+  padding: 8px 10px; /* Mismo padding que los otros inputs */
+  border: none;
+  border-right: 1px solid #ccc; /* Línea divisoria */
+  border-radius: 5px 0 0 5px; /* Redondea solo las esquinas izquierdas */
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-right: 10px; /* Espacio entre el botón y el texto "No file chosen" */
+}
+
+.lote-form input[type="file"]::file-selector-button:hover {
+  background: #01b50a;
+  color: black;
+}
+
 .lote-form button {
   background: #017007;
   color: white;

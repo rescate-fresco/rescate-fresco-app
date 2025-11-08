@@ -42,8 +42,8 @@ def test_login_exitoso():
     password = "MiPassword123!"
     
     registrar_usuario(email, password)
-    
-    payload_login = {"email": email, "contrasena": password}
+
+    payload_login = {"email": email, "contrasena": password, "captcha": "text-token-bypass"}
     response = requests.post(f"{BASE_URL}/login", json=payload_login)
     
     assert response.status_code == 200, f"Login falló: {response.status_code} {response.text}"
@@ -219,10 +219,9 @@ def test_login_payload_muy_grande():
         f"❌ VULNERABILIDAD: El backend procesa payloads de 100k caracteres. " \
         f"Debería devolver 400 o 413, pero obtuvo {response.status_code}"
     
-    if response.status_code == 413:
-        print("\n✅ El backend rechaza payloads muy grandes antes de procesarlos")
-    else:
-        print(f"\n✅ El backend valida tamaño del payload: status {response.status_code}")
+    data = response.json()
+    assert "error" in data
+    print(f"\n✅ El backend rechaza payloads grandes: {response.status_code} - {data['error']}")
 
 
 def test_login_caracteres_unicode():

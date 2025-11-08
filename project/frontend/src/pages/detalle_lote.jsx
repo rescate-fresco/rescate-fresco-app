@@ -6,12 +6,13 @@ import './detalle_lote.css';
 const API_URL = `${import.meta.env.VITE_API_URL}api/lotes`;
 
 const DetalleLote = () => {
-    const { id_lote } = useParams();
-    const [lote, setLote] = useState(null);
-    const [cargando, setCargando] = useState(true);
-    const [error, setError] = useState(null);
-    const [enCarrito, setEnCarrito] = useState(false);
+    const { id_lote } = useParams();                    // Obtiene el id_lote de los parámetros de la URL
+    const [lote, setLote] = useState(null);             // Estado para almacenar los detalles del lote
+    const [cargando, setCargando] = useState(true);     // Estado para manejar la carga
+    const [error, setError] = useState(null);           // Estado para manejar errores
+    const [enCarrito, setEnCarrito] = useState(false);  // Estado para verificar si el lote está en el carrito
 
+    // Función para agregar el lote al carrito en localStorage
     const agregarAlCarrito = (lote) => {
         const carritoActual = JSON.parse(localStorage.getItem("carrito")) || [];
         // Evita duplicados
@@ -25,6 +26,7 @@ const DetalleLote = () => {
         }
     };    
 
+    // useEffect para cargar los detalles del lote al montar el componente
     useEffect(() => {
         const fetchLote = async () => {
         try {
@@ -55,6 +57,21 @@ const DetalleLote = () => {
             <div className="Cuerpo">
                 <div className="detalle-lote">
                     <h2>{lote.nombre_lote}</h2>
+                    <div className="detalle-imagen">
+                        {lote.imagenes?.length > 0 ? (
+                        /* Si hay imágenes, muestra la primera */
+                        <img
+                            src={lote.imagenes[0]}
+                            alt={lote.nombre_lote}
+                        />
+                        ) : (
+                        <img
+                            src="https://placehold.co/600x400/cccccc/000000?text=Producto"
+                            alt="Sin imagen disponible"
+                            className="detalle-imagen"
+                        />
+                        )}
+                    </div>
                     <div className="detalle-info">
                         <p><strong>Categoría:</strong> {lote.categoria || 'Sin categoría'}</p>
                         <p><strong>Descripción:</strong> {lote.descripcion || 'No disponible'}</p>

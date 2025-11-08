@@ -38,8 +38,8 @@ CREATE TABLE IF NOT EXISTS lotes (
     reserva_user_id INT NULL REFERENCES usuarios(id_usuario)
 );
 
--- Imágnes
-CREATE TABLE IF NOT EXISTS imagenes_lote (
+-- Imágenes de Lotes
+CREATE TABLE IF NOT EXISTS imagenes_lotes (
     id_imagen SERIAL PRIMARY KEY,
     id_lote INT REFERENCES lotes(id_lote) ON DELETE CASCADE,
     url TEXT NOT NULL
