@@ -138,11 +138,11 @@ router.post(
           // Enviar correo electrónico de confirmación
           console.log(`... Enviando correo de confirmación a ${email}...`);
           const montoFormateado = (paymentIntent.amount).toLocaleString('es-CL');
-
+          const codigoRetiro = paymentIntent.id.slice(-6).toUpperCase();
           await resend.emails.send({
             from: 'onboarding@resend.dev', // Dominio de prueba de Resend
             to: email, // El email que sacamos de la DB
-            subject: `🥕 Confirmación de tu compra en Rescate Fresco #${paymentIntent.id.slice(-6)}`,
+            subject: `🥕 Confirmación de tu compra en Rescate Fresco`,
             html: `
               <!DOCTYPE html>
               <html lang="es">
@@ -165,6 +165,9 @@ router.post(
                       .detail-item strong { color: #333333; word-break: break-all;max-width: 60%;  text-align: right;}
                       .total { font-weight: bold; font-size: 20px; color: #2E7D32; padding-top: 10px; }
                       .footer { background-color: #f9f9f9; padding: 20px; text-align: center; font-size: 12px; color: #777777; }
+                      .pickup-code-wrapper { background-color: #f7fdf9; border: 8px; padding: 20px; text-align: center; margin-bottom: 25px; border-radius: 8px; }
+                      .pickup-code-label { font-size: 16px; color: #555; margin: 0; }
+                      .pickup-code {font-size: 36px; font-weight: bold; color: #2E7D32; letter-spacing: 4px; margin: 10px 0;  padding: 10px 20px;  border: 2px dashed #2E7D32; border-radius: 8px; display: inline-block;}
                       .pickup-info { margin-top: 30px; padding-top: 20px;}
                       .pickup-item { margin-bottom: 20px; padding: 15px; background-color: #f9f9f9; border-left: 4px solid #2E7D32; }
                       .footer a { color: #2E7D32; text-decoration: none; }
@@ -179,6 +182,12 @@ router.post(
                           <h2>¡Gracias por tu compra, ${nombre_usuario}!</h2>
                           <p>Tu pago se ha procesado correctamente. Con esta acción, no solo ahorras dinero, sino que también ayudas a reducir el desperdicio de alimentos. ¡Eres un héroe!</p>
                           
+                          <div class="pickup-code-wrapper">
+                            <p class="pickup-code-label">Tu Código de Retiro es:</p>
+                            <div class="pickup-code">${codigoRetiro}</div>
+                            <p style="font-size: 14px; color: #555; margin: 0;">Por favor, muéstrale este código al personal de la tienda.</p>
+                          </div>
+
                           <div class="receipt-details">
                               <div class="detail-item">
                                   <span>ID de Transacción:</span>
