@@ -10,7 +10,6 @@ const router = express.Router();
 dotenv.config();
 
 
-// Rate limiting simple en memoria (para producción usar Redis)
 const loginAttempts = new Map();
 const RATE_LIMIT_WINDOW = 15 * 60 * 1000; // 15 minutos
 const MAX_ATTEMPTS = 5;
@@ -19,23 +18,21 @@ function checkRateLimit(email) {
   const now = Date.now();
   const attempts = loginAttempts.get(email) || [];
   
-  // Limpiar intentos antiguos
   const recentAttempts = attempts.filter(time => now - time < RATE_LIMIT_WINDOW);
   
   if (recentAttempts.length >= MAX_ATTEMPTS) {
-    return false; // Bloqueado
+    return false; 
   }
 
   recentAttempts.push(now);
   loginAttempts.set(email, recentAttempts);
-  return true; // Permitido
+  return true;
 }
 
 
 
 // POST → registrar usuario
 router.post("/register", async(req, res) => {
-  //throw new Error("Test Sentry en registro");
   try {
     let {
       nombre_usuario,
@@ -109,12 +106,12 @@ router.post("/register", async(req, res) => {
     try {
       const result = await pool.query(query, values);
       return res.status(201).json({ id_usuario: result.rows[0].id_usuario });
-    } catch (dbErr) {
+    } catch (error_) {
       // Manejar duplicado por constraint único (race condition)
-      if (dbErr.code === "23505" || (dbErr.constraint && dbErr.constraint.includes("email"))) {
+      if (error_.code === "23505" || (error_.constraint && error_.constraint.includes("email"))) {
         return res.status(409).json({ error: "Email ya registrado" });
       }
-      throw dbErr; // Re-lanzar otros errores
+      throw error_; // Re-lanzar otros errores
     }
   } catch (err) {
     Sentry.captureException(err); 
@@ -124,15 +121,11 @@ router.post("/register", async(req, res) => {
 });
 
 
-
-
 // POST → login usuario
 router.post("/login", async (req, res) => {
   try {
-    // dentro de /login
-    // throw new Error("Test Sentry en login"); // quitar luego
     const { email, contrasena, captcha } = req.body;
-    
+
     if (!email || !contrasena) {
       return res.status(400).json({ error: "Faltan campos requeridos" });
     }
@@ -168,20 +161,15 @@ router.post("/login", async (req, res) => {
       if (!captcha) {
         return res.status(400).json({ error: "Token CAPTCHA requerido" });
       }
-      // Preparamos la URL para preguntar a Google
       const secretKey = process.env.RECAPTCHA_SECRET_KEY;
       const verifyURL = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${captcha}`;
-      // Hacemos la petición (fetch está disponible en Node.js 18+)
       const captchaRes = await fetch(verifyURL, { method: "POST" });
       const captchaData = await captchaRes.json();
-      // Google nos responde. Comprobamos si fue exitoso
       if (!captchaData.success) {
         console.warn("reCAPTCHA fallido (success: false)", captchaData["error-codes"]);
         return res.status(401).json({ error: "Verificación CAPTCHA fallida" });
       }
       
-      // Para reCAPTCHA v3, también revisamos el 'score'
-      // 0.5 es un umbral común. Si es menor, es probable que sea un bot.
       if (captchaData.score < 0.5) {
         return res.status(401).json({ error: "Verificación fallida (score bajo), posible bot." });
       }
@@ -191,7 +179,11 @@ router.post("/login", async (req, res) => {
 
     // Buscar usuario por email
     const result = await pool.query(
-      "SELECT id_usuario, nombre_usuario, email, contrasena_hash, rol, tienda FROM usuarios WHERE LOWER(email) = LOWER($1)",
+      `SELECT u.id_usuario, u.nombre_usuario, u.email, u.contrasena_hash, 
+              u.rol, u.tienda, t.id_tienda
+       FROM usuarios u
+       LEFT JOIN tiendas t ON u.id_usuario = t.id_usuario
+       WHERE LOWER(u.email) = LOWER($1)`,
       [emailLimpio]
     );
 
@@ -210,26 +202,26 @@ router.post("/login", async (req, res) => {
      // Limpiar intentos fallidos tras login exitoso
     loginAttempts.delete(emailLimpio);
 
-    // 7. GENERAR TOKEN JWT REAL (¡MEJORADO!)
     const tokenPayload = {
       id_usuario: user.id_usuario,
       rol: user.rol,
       email: user.email,
+      id_tienda: user.id_tienda || null, // agregado
     };
 
     const token = jwt.sign(
       tokenPayload, 
-      process.env.JWT_SECRET, // Usa la clave secreta del .env
-      { expiresIn: '1d' } // El token expira en 1 día
+      process.env.JWT_SECRET, 
+      { expiresIn: '1d' } 
     );
-    // Aquí normalmente se genera un token JWT, pero de momento devolvemos datos básicos
     res.json({
       usuario: {
         id_usuario: user.id_usuario,
         nombre_usuario: user.nombre_usuario,
         email: user.email,
         rol: user.rol,
-        tienda: user.tienda
+        tienda: user.tienda,
+        id_tienda: user.id_tienda || null,
       },
       token: token,
       message: "Login exitoso"
@@ -247,7 +239,6 @@ router.post("/tiendas", async (req, res) => {
   const { nombre_tienda, direccion_tienda, telefono_tienda, id_usuario } = req.body;
 
   try {
-    // Verificar si ya existe tienda con mismo usuario o nombre
     const exists = await pool.query(
       "SELECT * FROM tiendas WHERE id_usuario = $1 OR nombre_tienda = $2",
       [id_usuario, nombre_tienda]
@@ -257,7 +248,6 @@ router.post("/tiendas", async (req, res) => {
       return res.status(400).json({ message: "Ya existe una tienda con ese nombre o usuario." });
     }
 
-    // Crear la tienda (sin lat/lon)
     const result = await pool.query(
       `INSERT INTO tiendas 
         (id_usuario, nombre_tienda, direccion_tienda, telefono_tienda)
@@ -284,65 +274,7 @@ router.post("/tiendas", async (req, res) => {
   }
 });
 
-
-// POST → new PRODUCTO
-router.post("/lotes", async (req, res) => {
-  const {
-    id_usuario,
-    nombre_lote,
-    categoria,
-    descripcion,
-    peso_qty,
-    precio_original,
-    precio_rescate,
-    fecha_vencimiento,
-    ventana_retiro_inicio,
-    ventana_retiro_fin
-  } = req.body;
-
-  try {
-    // Obtener id_tienda desde usuario
-    const tiendaResult = await pool.query(
-      "SELECT id_tienda FROM tiendas WHERE id_usuario = $1",
-      [id_usuario]
-    );
-
-    if (tiendaResult.rows.length === 0) {
-      return res.status(400).json({ message: "El usuario no tiene tienda registrada." });
-    }
-
-    const id_tienda = tiendaResult.rows[0].id_tienda;
-
-    const result = await pool.query(
-      `INSERT INTO lotes
-        (id_tienda, nombre_lote, categoria, descripcion, peso_qty, precio_original, precio_rescate, fecha_vencimiento, ventana_retiro_inicio, ventana_retiro_fin)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
-       RETURNING *`,
-      [
-        id_tienda,
-        nombre_lote,
-        categoria,
-        descripcion,
-        peso_qty,
-        precio_original,
-        precio_rescate,
-        fecha_vencimiento,
-        ventana_retiro_inicio,
-        ventana_retiro_fin
-      ]
-    );
-
-    res.status(201).json({
-      message: "Producto publicado exitosamente",
-      lote: result.rows[0],
-    });
-  } catch (error) {
-    Sentry.captureException(error); 
-    console.error(error);
-    res.status(500).json({ message: "Error interno del servidor" });
-  }
-});
-
+// GET → obtener id_tienda por id_usuario
 router.get("/me/:id_usuario", async (req, res) => {
   try {
     const { id_usuario } = req.params;
