@@ -72,9 +72,36 @@ router.post(
         console.log(`✅ Lotes comprados (desde metadata): ${loteIds.join(', ')}`);
         
         try {
+          // --- Obtener peso total de los lotes ---
+          const pesosQuery = `
+            SELECT id_lote, peso_qty
+            FROM lotes
+            WHERE id_lote = ANY($1::int[])
+          `;
+          const pesosResult = await pool.query(pesosQuery, [loteIds]);
+          console.log("📦 Lotes encontrados:", pesosResult.rows);
+          
+          const pesoTotal = pesosResult.rows.reduce((sum, lote) => sum + parseFloat(lote.peso_qty || 0), 0);
+          console.log("⚖️ Peso total calculado:", pesoTotal);
+          if (pesoTotal === 0) {
+            console.warn("⚠️ ADVERTENCIA: peso_total es 0. Verifica que los lotes tengan peso_qty");
+          }
+
+         // --- Actualizar kg_rescatados del usuario ---
+          const updateUserQuery = `
+            UPDATE usuarios
+            SET kg_rescatados = kg_rescatados + $1
+            WHERE id_usuario = $2
+            RETURNING id_usuario, nombre_usuario, email, kg_rescatados
+          `;
+          const updateResult = await pool.query(updateUserQuery, [pesoTotal, userId]);
+          console.log("✅ Usuario actualizado:", updateResult.rows[0]);
+
+          // --- Eliminar los lotes comprados ---
           const deleteQuery = "DELETE FROM lotes WHERE id_lote = ANY($1::int[])";
           await pool.query(deleteQuery, [loteIds]);
           console.log(`✅ Base de datos actualizada: Lotes [${loteIds.join(', ')}] eliminados.`);
+          
         } catch (dbError) {
           console.error("❌ Error al eliminar los lotes de la base de datos tras el pago:", dbError);
           Sentry.captureException(dbError);

@@ -296,4 +296,36 @@ router.get("/me/:id_usuario", async (req, res) => {
   }
 });
 
+// GET → obtener perfil con kg rescatados
+router.get("/perfil/:id_usuario", async (req, res) => {
+  try {
+    const { id_usuario } = req.params;
+    
+    const query = `
+      SELECT 
+        id_usuario,
+        nombre_usuario,
+        email,
+        rol,
+        direccion_usuario,
+        kg_rescatados
+      FROM usuarios
+      WHERE id_usuario = $1
+    `;
+    
+    const result = await pool.query(query, [id_usuario]);
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+    
+    res.json(result.rows[0]);
+  } catch (error) {
+    Sentry.captureException(error);
+    console.error("Error obteniendo perfil:", error);
+    res.status(500).json({ message: "Error interno del servidor" });
+  }
+});
+
+
 export default router;
