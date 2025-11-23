@@ -11,7 +11,7 @@ const CartasTienda = ({ lote }) => {
         fecha_vencimiento,
         estado
     } = lote
-
+ 
     const precioInicial = precio_rescate; 
     let precioFinal = precioInicial; 
     let descuentoExtraPorVencimiento = 0;

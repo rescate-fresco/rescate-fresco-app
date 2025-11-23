@@ -22,4 +22,21 @@ body {
     width : 100%;
     display: flex;
     overflow-y: auto; /* Si el contenido es muy largo, permite scroll solo en el cuerpo */
+    justify-content: center;
+  }
+
+/* =========================================
+   3. LA GRILLA DE PRODUCTOS (¡LO QUE FALTABA!)
+   ========================================= */
+.productos-lista2 {
+  /* Usamos Flex Column para apilar uno debajo de otro */
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Espacio entre cada tarjeta */
+  
+
+  /* Importante: Un ancho máximo para que parezca una lista ordenada 
+     y no se estire de borde a borde en monitores anchos */
+  margin-left: auto;
+  margin-right: auto
 }

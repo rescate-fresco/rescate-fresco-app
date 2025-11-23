@@ -79,7 +79,7 @@ function Store() {
         <div className="Store">
             <Navbar />
             <div className="Cuerpo">
-                <div className="productos-lista">
+                <div className="productos-lista2">
                     {misProductos.map(lote => (
                         <CartasTienda key={lote.id_lote} lote={lote} />
                     ))}
