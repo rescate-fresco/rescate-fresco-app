@@ -41,7 +41,7 @@ const FiltrosLotes = ({ onFilterChange }) => {
         onFilterChange(nuevosFiltros);
     };
 
-    const capitalizar = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+    const capitalizar = (str) => typeof str === 'string' ? str.charAt(0).toUpperCase() + str.slice(1) : str;
 
     return (
         <div className="filtros-container">
@@ -63,7 +63,9 @@ const FiltrosLotes = ({ onFilterChange }) => {
                         <>
                             <option value="">Todas las categorías</option>
                             {categorias.map((cat) => (
-                                <option key={cat} value={cat}>{capitalizar(cat)}</option>
+                            <option key={cat.id_categoria} value={cat.id_categoria}>
+                                {capitalizar(cat.nombre_categoria)}
+                            </option>
                             ))}
                         </>
                     )}
