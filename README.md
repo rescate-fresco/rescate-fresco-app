@@ -76,7 +76,7 @@ cd rescate-fresco-app
 * pg → Cliente para PostgreSQL.
 * bcrypt → Hasheo de contraseña.
 * jsonwebtoken → Token para sesión.
-
+* resend → Servicio de email.
 * @aws-sdk/client-s3 → cliente s3 aws.
 * multer → gestionar carga de archivos.
 * stripe → SDK oficial de Stripe para interactuar con la API desde Node.js.
@@ -244,3 +244,9 @@ Para probar el flujo de pago completo localmente, necesitas que Stripe pueda not
     ```bash
     STRIPE_WEBHOOK_SECRET=whsec_...
     ```
+
+### Configuración para correo electronico
+1. Ir a [resent.com](https://resend.com) y crear una cuenta
+2. Obtener las API Keys y crear una nueva clave
+3. Instalar con npm install en el backend las dependencias de resend
+4. En el .env, colocar RESEND_API_KEY = 'clave'
