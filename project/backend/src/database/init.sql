@@ -21,6 +21,23 @@ CREATE TABLE IF NOT EXISTS tiendas (
     ubicacion_tienda POINT
 );
 
+CREATE TABLE IF NOT EXISTS historial_compras (
+    id_compra SERIAL PRIMARY KEY,
+    id_usuario INT REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
+    id_lote INT,
+    nombre_lote VARCHAR(100),
+    categoria VARCHAR(50),
+    peso_qty NUMERIC(10,2),
+    precio_pagado NUMERIC(10,2),
+    fecha_compra TIMESTAMP DEFAULT NOW(),
+    nombre_tienda VARCHAR(100),
+    id_tienda INT,
+    ventana_retiro_inicio TIMESTAMP,
+    ventana_retiro_fin TIMESTAMP,
+    estado_compra VARCHAR(50) DEFAULT 'PENDIENTE', -- PENDIENTE, RETIRADO, CANCELADO
+    stripe_payment_intent_id VARCHAR(255),
+    FOREIGN KEY (id_tienda) REFERENCES tiendas(id_tienda) ON DELETE SET NULL
+);
 -- Lotes
 CREATE TABLE IF NOT EXISTS lotes (
     id_lote SERIAL PRIMARY KEY,

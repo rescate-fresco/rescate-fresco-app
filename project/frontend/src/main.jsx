@@ -19,6 +19,7 @@ import Carrito from './pages/carrito.jsx'
 import MetodoPago from './pages/metodo_pago.jsx'
 import ErrorButton from "./components/errorButton.jsx";
 import Perfil from './pages/Perfil.jsx';
+import MisCompras from './pages/MisCompras';
 
 
 Sentry.init({
@@ -85,8 +86,11 @@ const router = createBrowserRouter([
       {
         path: 'perfil',
         element: <Perfil />,
-      }
-
+      },
+      {
+        path: 'mis-compras',
+        element: <MisCompras />,
+      },
     ],
   },
 ])

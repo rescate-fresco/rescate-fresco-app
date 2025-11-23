@@ -1,0 +1,186 @@
+.MisCompras {
+    display: flex;
+    flex-direction: column;
+    min-width: 1000px;
+    width: 100vw;
+    
+    min-height: 100vh;
+    background-color: #f4f3ef;
+    }
+
+.Cuerpo {
+  flex-grow: 1;
+  padding-top: 60px;
+  display: flex;
+  justify-content: center;
+}
+
+.compras-container {
+  max-width: 800px;
+  width: 100%;
+  margin: 2rem;
+  padding: 2rem;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.compras-container h2 {
+  color: #50b498;
+  margin-top: 0;
+}
+
+.sin-compras {
+  text-align: center;
+  color: #999;
+  padding: 2rem;
+}
+
+.compras-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.compra-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  background: #fafafa;
+}
+
+.compra-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #50b498;
+  padding-bottom: 1rem;
+}
+
+.compra-header h3 {
+  margin: 0;
+  color: #333;
+}
+
+.estado {
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.estado.pendiente {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.estado.retirado {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.estado.cancelado {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.compra-detalles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.detalle-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.detalle-item label {
+  font-weight: 600;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.detalle-item span {
+  color: #333;
+  margin-top: 0.25rem;
+}
+
+.compra-acciones {
+  display: flex;
+  gap: 1rem;
+}
+
+.btn-cancelar {
+  flex: 1;
+  padding: 0.75rem 1.5rem;
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s;
+}
+
+.btn-cancelar:hover {
+  background-color: #c0392b;
+}
+
+.confirmar-cancelacion {
+  background: #fff3cd;
+  padding: 1rem;
+  border-radius: 5px;
+  border-left: 4px solid #ffc107;
+}
+
+.confirmar-cancelacion p {
+  margin: 0 0 1rem 0;
+  color: #333;
+}
+
+.botones-confirm {
+  display: flex;
+  gap: 1rem;
+}
+
+.btn-si,
+.btn-no {
+  flex: 1;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s;
+}
+
+.btn-si {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.btn-si:hover {
+  background-color: #c0392b;
+}
+
+.btn-no {
+  background-color: #95a5a6;
+  color: white;
+}
+
+.btn-no:hover {
+  background-color: #7f8c8d;
+}
+
+@media (max-width: 768px) {
+  .compra-detalles {
+    grid-template-columns: 1fr;
+  }
+
+  .botones-confirm {
+    flex-direction: column;
+  }
+}
