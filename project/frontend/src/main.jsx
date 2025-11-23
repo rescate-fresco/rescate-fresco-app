@@ -18,6 +18,7 @@ import DetalleLote from './pages/detalle_lote.jsx'
 import Carrito from './pages/carrito.jsx'
 import MetodoPago from './pages/metodo_pago.jsx'
 import ErrorButton from "./components/errorButton.jsx";
+import Perfil from './pages/Perfil.jsx';
 
 
 Sentry.init({
@@ -80,6 +81,10 @@ const router = createBrowserRouter([
       {
         path: 'debug-error',
         element: <ErrorButton />,
+      },
+      {
+        path: 'perfil',
+        element: <Perfil />,
       }
 
     ],

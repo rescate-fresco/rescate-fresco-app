@@ -143,8 +143,11 @@ function Navbar() {
                             <Link to="/Registrarse" className="btn-register">Registrarse</Link>
                         </>
                     ) : (
-                        <div className="perfil-container" ref={menuRef}>
-                            <button onClick={toggleMenu}>Hola, {usuario.nombre_usuario} ▼</button>
+
+                        <div className="perfil-container-2" ref={menuRef}>
+                            <button className="usuario-nombre"onClick={toggleMenu}>
+                                Hola, {usuario.nombre_usuario}!! ▼
+                            </button>
                             {menuAbierto && (
                                 <div className="menu-desplegable">
                                     <Link to="/perfil">Mi Perfil</Link>
