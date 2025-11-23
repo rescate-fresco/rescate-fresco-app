@@ -83,16 +83,38 @@ CREATE TABLE IF NOT EXISTS pagos (
     fecha_pago TIMESTAMP DEFAULT NOW()
 );
 
--- Notificaciones (opcional)
+-- Categorías
+CREATE TABLE IF NOT EXISTS categorias (
+    id_categoria SERIAL PRIMARY KEY,
+    nombre_categoria VARCHAR(50) UNIQUE NOT NULL
+);
+
+-- Notificaciones 
 CREATE TABLE IF NOT EXISTS notificaciones (
-    id_notif SERIAL PRIMARY KEY,
+    id_notificacion SERIAL PRIMARY KEY,
     id_usuario INT REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
+    id_categoria INT REFERENCES categorias_lotes(id_categoria) ON DELETE CASCADE,
     mensaje TEXT NOT NULL,
-    tipo VARCHAR(50),
+    leida BOOLEAN DEFAULT FALSE,
     fecha_envio TIMESTAMP DEFAULT NOW()
 );
 
+-- Favoritos
+CREATE TABLE IF NOT EXISTS favoritos (
+    id_favorito SERIAL PRIMARY KEY,
+    id_usuario INT REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
+    id_categoria INT REFERENCES categorias(id_categoria) ON DELETE CASCADE,
+    UNIQUE (id_usuario, id_categoria)
+);
 
+
+CREATE TABLE IF NOT EXISTS lotes_categorias (
+    id_lote INT REFERENCES lotes(id_lote) ON DELETE CASCADE,
+    id_categoria INT REFERENCES categorias_lotes(id_categoria) ON DELETE CASCADE,
+    PRIMARY KEY(id_lote, id_categoria)
+);
+
+-- Índices para búsqueda de texto completo en lotes
 ALTER TABLE lotes
 ADD COLUMN lotes_search_tsv tsvector;
 CREATE OR REPLACE FUNCTION actualizar_lotes_tsv() RETURNS trigger AS $$

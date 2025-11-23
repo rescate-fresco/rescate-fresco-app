@@ -13,7 +13,9 @@ const upload = multer({ storage: storage });
 
 const router = express.Router();
 
-// -- Función para buscar lotes usando full-text search --
+// ----------------------------------------------
+// Función para buscar lotes usando full-text search
+// ----------------------------------------------
 async function buscarLotes(searchTerm) {
     const query = `
         SELECT 
@@ -51,7 +53,9 @@ async function buscarLotes(searchTerm) {
     }
 }
 
+// ----------------------------------------------
 // Campos comunes para las consultas de lotes
+// ----------------------------------------------
 const CAMPOS_LOTE = `
     id_lote, 
     nombre_lote, 
@@ -63,18 +67,21 @@ const CAMPOS_LOTE = `
     estado,
     ventana_retiro_inicio,
     ventana_retiro_fin,
-    categoria,
     peso_qty
 `;
 
+// ----------------------------------------------
 // -- Condiciones comunes para filtrar lotes como ofertas válidas --
+// ----------------------------------------------
 const CONDICIONES_OFERTA = `
     precio_rescate < precio_original
     AND estado IN ('RESERVADO', 'DISPONIBLE', 'NO DISPONIBLE')
     AND fecha_vencimiento >= CURRENT_DATE
 `;
 
+// ----------------------------------------------
 // -- Ruta para buscar lotes por término --
+// ----------------------------------------------
 router.get("/buscar", async (req, res) => {
     const searchTerm = req.query.q; 
     if (!searchTerm || searchTerm.trim() === '') {
@@ -89,25 +96,30 @@ router.get("/buscar", async (req, res) => {
     }
 });
 
-// -- Ruta para obtener todos los lotes con opciones de filtrado y ordenamiento --
+// ----------------------------------------------
+// Ruta para obtener todos los lotes con opciones de filtrado y ordenamiento
+// ----------------------------------------------
 router.get("/", async (req, res) => {  
     const { categoria, sortBy = 'fecha_vencimiento', order = 'ASC' } = req.query;
-   
+
+    const queryParams = [];
     let baseQuery = `
         SELECT l.*, 
         (
             SELECT json_agg(img.url) 
             FROM imagenes_lotes img 
             WHERE img.id_lote = l.id_lote
-        ) AS imagenes  -- ← Aquí incluimos las imágenes de cada lote
+        ) AS imagenes
         FROM lotes l
+        LEFT JOIN lotes_categorias lc ON lc.id_lote = l.id_lote
+        LEFT JOIN categorias c ON c.id_categoria = lc.id_categoria
     `;
-    const whereClauses = [CONDICIONES_OFERTA];
-    const queryParams = [];
+
+    const whereClauses = ["l.estado = 'DISPONIBLE'"]; // ejemplo de filtro base
 
     if (categoria) {
         queryParams.push(categoria);
-        whereClauses.push(`categoria ILIKE $${queryParams.length}`);
+        whereClauses.push(`c.id_categoria = $${queryParams.length}`);
     }
 
     baseQuery += ` WHERE ${whereClauses.join(' AND ')}`;
@@ -115,12 +127,11 @@ router.get("/", async (req, res) => {
     const allowedSortBy = ['fecha_vencimiento', 'precio_rescate', 'ventana_retiro_inicio'];
     const sortColumn = allowedSortBy.includes(sortBy) ? sortBy : 'fecha_vencimiento'; 
     const sortOrder = order.toUpperCase() === 'DESC' ? 'DESC' : 'ASC'; 
-    
+
     baseQuery += ` ORDER BY ${sortColumn} ${sortOrder}`;
 
     try {
         const resultado = await pool.query(baseQuery, queryParams);
-        console.log(resultado.rows); // <-- Debug: revisa que cada lote tenga su array "imagenes"
         res.json(resultado.rows);
     } catch (error) {
         Sentry.captureException(error);   
@@ -130,11 +141,17 @@ router.get("/", async (req, res) => {
 });
 
 
-// -- Ruta para obtener todas las categorías únicas de lotes --
+// ----------------------------------------------
+// Ruta para obtener todas las categorías únicas de lotes
+// ----------------------------------------------
 router.get("/categorias", async (req, res) => {
     try {
-        const resultado = await pool.query("SELECT DISTINCT categoria FROM lotes WHERE categoria IS NOT NULL AND categoria <> '' ORDER BY categoria ASC");
-        res.json(resultado.rows.map(row => row.categoria));
+        const resultado = await pool.query(
+            `SELECT id_categoria, nombre_categoria 
+             FROM categorias 
+             ORDER BY nombre_categoria ASC`
+        );
+        res.json(resultado.rows);
     } catch (error) {
         Sentry.captureException(error);   
         console.error("Error al obtener categorías:", error);
@@ -142,17 +159,23 @@ router.get("/categorias", async (req, res) => {
     }
 });
 
-// -- Ruta para obtener el detalle de un lote por su ID --
+// ----------------------------------------------
+// Ruta para obtener el detalle de un lote por su ID
++// ----------------------------------------------
 router.get("/:id_lote", async (req, res) => {
     // Obtener el ID del lote desde los parámetros de la ruta
     const { id_lote } = req.params;
     const sqlQuery = `
         SELECT l.*,
-        (
-            SELECT json_agg(img.url) 
+          (SELECT json_agg(img.url) 
             FROM imagenes_lotes img 
             WHERE img.id_lote = l.id_lote
-        ) as imagenes
+          ) as imagenes,
+          (SELECT json_agg(c.*) 
+            FROM lotes_categorias lc
+            JOIN categorias c ON lc.id_categoria = c.id_categoria
+            WHERE lc.id_lote = l.id_lote
+          ) as categorias
         FROM lotes l
         WHERE l.id_lote = $1
         AND ${CONDICIONES_OFERTA}
@@ -172,7 +195,9 @@ router.get("/:id_lote", async (req, res) => {
     }
 });
 
-// -- Ruta para reservar lotes --
+// ----------------------------------------------
+// Ruta para reservar lotes 
+// ----------------------------------------------
 router.post("/reservar", async (req, res) => {
     const { idUsuario, lotes } = req.body;
 
@@ -208,7 +233,9 @@ router.post("/reservar", async (req, res) => {
     }
 });
 
-// -- Ruta para liberar lotes --
+// ----------------------------------------------
+// Ruta para liberar lotes
+// ----------------------------------------------
 router.post("/liberar", async (req, res) => {
     const { lotes } = req.body;
 
@@ -238,7 +265,9 @@ router.post("/liberar", async (req, res) => {
     }
 });
 
+// ----------------------------------------------
 // -- Ruta para obtener lotes por un array de IDs --
++// ----------------------------------------------
 router.post('/por-ids', async (req, res) => {
     const { ids } = req.body; // array de id_lote
     const sqlQuery = `
@@ -256,7 +285,9 @@ router.post('/por-ids', async (req, res) => {
     }
 });
 
+// ----------------------------------------------
 // -- Ruta para obtener lotes de una tienda específica --
+// ----------------------------------------------
 router.get("/tienda/:id_tienda", async (req, res) => {
     const { id_tienda } = req.params;
     const sqlQuery = `
@@ -275,7 +306,9 @@ router.get("/tienda/:id_tienda", async (req, res) => {
     }
 });
 
+// ----------------------------------------------
 // -- Ruta para actualizar el estado de un lote --
+// ----------------------------------------------
 router.put("/:id_lote/estado", async (req, res) => {
   const { id_lote } = req.params;
   const { estado_producto } = req.body;
@@ -306,52 +339,114 @@ router.put("/:id_lote/estado", async (req, res) => {
   }
 });
 
-
+// ----------------------------------------------
 // -- Ruta para crear un nuevo lote con múltiples imágenes --
+// ----------------------------------------------
 router.post('/', upload.array('imagenes', 5), async (req, res, next) => {
-
-  // Extraer datos del cuerpo de la solicitud
-  const { 
-    nombre_lote, descripcion, precio_original, precio_rescate, 
-    fecha_vencimiento, id_tienda, ventana_retiro_inicio, 
-    ventana_retiro_fin, categoria, peso_qty 
+  const {
+    nombre_lote, descripcion, precio_original, precio_rescate,
+    fecha_vencimiento, id_tienda, ventana_retiro_inicio,
+    ventana_retiro_fin, categorias, categorias_nuevas, peso_qty
   } = req.body;
 
-  // Archivos subidos
   const archivos = req.files;
-
   if (!archivos || archivos.length === 0) {
     return res.status(400).json({ mensaje: "Se requiere al menos una imagen." });
   }
 
-  // Iniciar una transacción
+  let categoriasArray, categoriasNuevasArray;
+  try {
+    categoriasArray = JSON.parse(categorias);         // IDs existentes
+    categoriasNuevasArray = JSON.parse(categorias_nuevas); // nombres de nuevas
+  } catch (e) {
+    return res.status(400).json({ mensaje: "Formato inválido de categorías" });
+  }
+
+  
+  if ( // Validación: al menos una categoría (existente o nueva)
+    (!Array.isArray(categoriasArray) || categoriasArray.length === 0) &&
+    (!Array.isArray(categoriasNuevasArray) || categoriasNuevasArray.length === 0)
+  ) {
+    return res.status(400).json({ mensaje: "El lote debe incluir al menos una categoría" });
+  }
+
   const clientePool = await pool.connect();
 
   try {
-    // Crear el lote en la base de datos
     await clientePool.query('BEGIN');
 
-    // Crear el lote
+    // 1️⃣ Crear lote
     const sqlLote = `
       INSERT INTO lotes (
-        nombre_lote, descripcion, precio_original, precio_rescate, 
-        fecha_vencimiento, id_tienda, ventana_retiro_inicio, 
-        ventana_retiro_fin, categoria, peso_qty, estado
+        nombre_lote, descripcion, precio_original, precio_rescate,
+        fecha_vencimiento, id_tienda, ventana_retiro_inicio,
+        ventana_retiro_fin, peso_qty, estado
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'DISPONIBLE')
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'DISPONIBLE')
       RETURNING id_lote;
     `;
     const valuesLote = [
       nombre_lote, descripcion, precio_original, precio_rescate,
       fecha_vencimiento, id_tienda, ventana_retiro_inicio,
-      ventana_retiro_fin, categoria, peso_qty
+      ventana_retiro_fin, peso_qty
     ];
-
-    // Ejecutar la inserción del lote
     const resLote = await clientePool.query(sqlLote, valuesLote);
     const idLoteCreado = resLote.rows[0].id_lote;
 
-    // Subir imágenes a S3
+    // 2️⃣ Crear categorías nuevas y obtener sus IDs
+    const nuevasIds = [];
+    for (const nombre of categoriasNuevasArray) {
+      if (!nombre.trim()) continue;
+      const { rows: existing } = await clientePool.query(
+        'SELECT id_categoria FROM categorias WHERE nombre_categoria = $1',
+        [nombre]
+      );
+      if (existing.length > 0) {
+        nuevasIds.push(existing[0].id_categoria);
+      } else {
+        const { rows: newCat } = await clientePool.query(
+          'INSERT INTO categorias (nombre_categoria) VALUES ($1) RETURNING id_categoria',
+          [nombre]
+        );
+        nuevasIds.push(newCat[0].id_categoria);
+      }
+    }
+
+    // 3️⃣ Combinar IDs existentes y nuevos
+    const todasCategorias = [...categoriasArray, ...nuevasIds];
+
+    // 4️⃣ Insertar relación lote ↔ categorías
+    for (const idCategoria of todasCategorias) {
+      await clientePool.query(
+        'INSERT INTO lotes_categorias (id_lote, id_categoria) VALUES ($1, $2)',
+        [idLoteCreado, idCategoria]
+      );
+    }
+
+    // 5️⃣ Notificaciones
+    const { rows: usuariosFav } = await clientePool.query(
+      `SELECT DISTINCT id_usuario
+      FROM favoritos
+      WHERE id_categoria = ANY($1)`,
+      [todasCategorias]
+    );
+
+    for (const usuario of usuariosFav) {
+      for (const idCategoria of todasCategorias) {
+        await clientePool.query(
+          `INSERT INTO notificaciones (id_usuario, id_categoria, mensaje)
+          VALUES ($1, $2, $3)`,
+          [
+            usuario.id_usuario,
+            idCategoria,
+            `Se ha publicado un nuevo lote "${nombre_lote}" en una categoría que sigues 🎉`
+          ]
+        );
+      }
+    }
+
+
+    // 6️⃣ Subir imágenes a S3
     const urlsImagenes = [];
     for (const archivo of archivos) {
       const nombreArchivoS3 = `lotes/${idLoteCreado}/${Date.now()}-${archivo.originalname}`;
@@ -366,7 +461,6 @@ router.post('/', upload.array('imagenes', 5), async (req, res, next) => {
       urlsImagenes.push(url);
     }
 
-    // Insertar URLs una por una (seguro y limpio)
     for (const url of urlsImagenes) {
       await clientePool.query(
         'INSERT INTO imagenes_lotes (id_lote, url) VALUES ($1, $2)',
@@ -374,25 +468,21 @@ router.post('/', upload.array('imagenes', 5), async (req, res, next) => {
       );
     }
 
-    // Confirmar la transacción
     await clientePool.query('COMMIT');
 
-    // Responder con éxito
     res.status(201).json({
       message: `Lote creado con ${archivos.length} imágenes.`,
       id_lote: idLoteCreado
     });
 
   } catch (err) {
-    // Revertir la transacción en caso de error
     await clientePool.query('ROLLBACK');
-    console.error("❌ Error al crear lote (transacción revertida):", err);
+    console.error("❌ Error al crear lote:", err);
     Sentry.captureException(err);
     res.status(500).json({ mensaje: "Error al crear lote", detalle: err.message });
   } finally {
     clientePool.release();
   }
 });
-
 
 export default router;
