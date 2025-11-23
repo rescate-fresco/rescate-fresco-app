@@ -9,7 +9,7 @@ body {
     min-width: 1000px; /* Asegura un ancho mínimo para evitar que el diseño se rompa en pantallas pequeñas */
     width: 100vw; /* Asegura que ocupe todo el ancho de la ventana */
     min-height: 100vh; /* Asegura que ocupe toda la altura de la ventana */
-    background-color: #f4f3ef;
+    background-color: #F4F6F8;
 }
 
 .Navbar {

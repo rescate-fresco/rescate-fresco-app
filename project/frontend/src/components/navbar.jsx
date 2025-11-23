@@ -79,7 +79,7 @@ function Navbar() {
     return (
         <nav className="navbar">
             <div className="nav-izq">
-                <div className="logo"><Link to="/Inicio">RescateFresco</Link></div>
+                <div className="logo"><Link to="/Inicio">🥕</Link></div>
                 <ul className="nav-links">
                     <li><Link to="/Inicio">Inicio</Link></li>
                     {isLoggedIn && (usuario.rol === 'admin' || usuario.rol === 'tienda') && (

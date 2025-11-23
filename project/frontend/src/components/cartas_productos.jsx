@@ -31,7 +31,7 @@ const CartasProductos = ({ lote }) => {
                 <h3>{nombre_lote}</h3>
                 <p>VENCIDO</p>
             </div>
-        );
+        ); 
     }
     return (
         <div className="producto-card">

@@ -4,7 +4,7 @@
     align-items: center; /* Centrar verticalmente */
     padding: 10px 20px; /* Espaciado interno */
     height: 55px; /* Altura fija */
-    background-color: #5ae861;
+    background-color: #FFFFFF;
 }
 
 /* Estilos para la parte izquierda del navbar */
@@ -13,6 +13,9 @@
   display: flex;
   align-items: center; /* Centrar verticalmente */
   gap: 20px; /* Espacio entre logo y nombre */
+}
+.nav-izq .logo {
+  font-size: 30px;
 }
 
 .nav-links {
@@ -24,13 +27,13 @@
 }
 
 .nav-links a {
-  color: black;
+  color: #03aa48;
   font-weight: bold;
   text-decoration: none;
 }
 
 .nav-links a:hover { /* Efecto hover */
-  color: #017007;
+  color: black;
 }
 
 /* Estilos para la parte derecha del navbar */
@@ -56,7 +59,7 @@
 }
 
 .search-form:focus-within {
-  border-color: #017007;
+  border-color: #03aa48;
   box-shadow: 0 0 0 2px rgba(1, 112, 7, 0.2);
 }
 
@@ -81,13 +84,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #017007;
+  color: #03aa48;
   padding: 4px;
   transition: color 0.2s ease-in-out;
 }
 
 .search-button-icon:hover {
-  color: black;
+  color: #03aa48;
 }
 
 /* Texto oculto para accesibilidad */
@@ -103,18 +106,17 @@
   border: 0;
 }
 
-
 .nav-der .search-form .button_search {
   padding: 6px 12px;
   border-radius: 6px;
   text-decoration: none;
   font-size: 0.9rem;
-  border: 1px solid black;
+  border: 1px solid #03aa48;
 }
 
 .nav-der .search-form .button_search:hover {
   background: white;
-  color: black;
+  color: #03aa48;
 }
 
 .auth-buttons {
@@ -164,7 +166,7 @@
     right: 0;
     top: 100%;
     background: white;
-    border: 1px solid #ccc;
+    border: 1px solid #03aa48;
     padding: 10px;
     display: flex;
     flex-direction: column;
@@ -176,7 +178,7 @@
 .menu-desplegable button {
     padding: 8px;
     text-decoration: none;
-    color: black;
+    color: #03aa48;
     background: none;
     border: none;
     text-align: left;
@@ -189,7 +191,7 @@
 }
 
 .usuario-nombre {
-  color: black;
+  color: #03aa48;
   font-weight: bold;
   font-size: 0.9rem;
   background: transparent;
@@ -233,6 +235,7 @@
     border: none; 
     cursor: pointer; 
     font-size: 1.2rem; 
+    color:#03aa48;
 }
 .notif-count { position: absolute; 
     top: -5px; 
