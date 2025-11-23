@@ -82,7 +82,16 @@ router.post(
         console.log(`✅ Usuario: ${userId}, Lotes: ${loteIds.join(', ')}`);
         
         try {
-          // --- 1️⃣ Obtener datos de los lotes ---
+          // Enviar correo de confirmación al usuario
+          const userQuery = 'SELECT email,nombre_usuario FROM usuarios WHERE id_usuario = $1';
+          const userResult = await pool.query(userQuery, [userId]);
+          if (userResult.rowCount === 0) {
+            throw new Error(`Usuario ${userId} no encontrado en la DB.`);
+          }
+          const { email, nombre_usuario } = userResult.rows[0];
+          console.log(`... Email encontrado: ${email}`);
+
+          // --- NUEVO: Obtener detalles de los lotes y tiendas ANTES de borrarlos ---
           const lotesQuery = `
             SELECT 
               l.id_lote, 
@@ -278,8 +287,7 @@ router.post(
               </html>
             `
           });
-          console.log("✅ Email enviado exitosamente");
-          
+          console.log(`✅ Email enviado exitosamente.`);
         } catch (dbError) {
           console.error("❌ Error:", dbError);
           Sentry.captureException(dbError);
