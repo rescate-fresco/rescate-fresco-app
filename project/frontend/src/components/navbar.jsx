@@ -151,8 +151,9 @@ function Navbar() {
                             {menuAbierto && (
                                 <div className="menu-desplegable">
                                     <Link to="/perfil">Mi Perfil</Link>
-                                    <Link to="/historial">Historial</Link>
-                                    <button onClick={handleLogout}>Cerrar sesión</button>
+                                    <Link to="/mis-compras">Mis Compras</Link>
+                                    <button onClick={handleLogout} className="btn-logout">Cerrar sesión</button>
+
                                 </div>
                             )}
                         </div>

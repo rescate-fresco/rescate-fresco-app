@@ -234,6 +234,40 @@ router.post("/login", async (req, res) => {
 });
 
 
+
+
+// GET → Obtener historial de compras del usuario
+router.get("/compras/:id_usuario", async (req, res) => {
+  try {
+    const { id_usuario } = req.params;
+
+    const query = `
+      SELECT 
+        id_compra,
+        nombre_lote,
+        categoria,
+        peso_qty,
+        precio_pagado,
+        fecha_compra,
+        nombre_tienda,
+        ventana_retiro_inicio,
+        ventana_retiro_fin,
+        estado_compra,
+        stripe_payment_intent_id
+      FROM historial_compras
+      WHERE id_usuario = $1 AND estado_compra IN ('PENDIENTE', 'RETIRADO')
+      ORDER BY fecha_compra DESC
+    `;
+
+    const result = await pool.query(query, [id_usuario]);
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error obteniendo compras:", error);
+    res.status(500).json({ message: "Error interno" });
+  }
+});
+
+
 // POST → new tienda
 router.post("/tiendas", async (req, res) => {
   const { nombre_tienda, direccion_tienda, telefono_tienda, id_usuario } = req.body;
