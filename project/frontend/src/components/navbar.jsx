@@ -119,7 +119,7 @@ function Navbar() {
                             <Link to="/Registrarse" className="btn-register">Registrarse</Link>
                         </>
                     ) : (
-                        <div className="perfil-container" ref={menuRef}>
+                        <div className="perfil-container-2" ref={menuRef}>
                             <button className="usuario-nombre"onClick={toggleMenu}>
                                 Hola, {usuario.nombre_usuario}!! ▼
                             </button>
