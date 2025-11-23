@@ -1,0 +1,90 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.Perfil {
+    display: flex;
+    flex-direction: column;
+    min-width: 1000px;
+    width: 100vw;
+    
+    min-height: 100vh;
+    background-color: #f4f3ef;
+}
+
+.Cuerpo {
+    flex-grow: 1;
+    padding-top: 60px;
+}
+
+.perfil-container {
+max-width: 600px;
+width: 100%;
+margin: 2rem auto; /* "auto" a los lados es lo que lo centra */
+padding: 2rem;
+background: white;
+border-radius: 10px;
+box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.perfil-container h2 {
+    color: #50b498;
+    margin-bottom: 2rem;
+}
+
+.perfil-info {
+    margin-bottom: 2rem;
+}
+
+.info-item {
+    display: flex;
+    justify-content: flex-start; /* Alinea todo a la izquierda */
+    align-items: center;         /* Centra verticalmente */
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+.info-item label {
+    font-weight: 600;
+    color: #333;
+    width: 150px; /* Ancho fijo para la etiqueta: Alinea todos los datos */
+}
+
+.info-item span {
+    color: #666;
+    /* Ya no se irá a la derecha, se quedará pegado a la etiqueta */
+}
+
+.kg-rescatados-card {
+    background: linear-gradient(135deg, #50b498 0%, #2ecc71 100%);
+    color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.kg-icon {
+    font-size: 3rem;
+}
+
+.kg-content h3 {
+    margin: 0;
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+.kg-numero {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin: 0.5rem 0;
+}
+
+.kg-subtexto {
+    margin: 0.5rem 0 0 0;
+    opacity: 0.9;
+    font-size: 0.9rem;
+}

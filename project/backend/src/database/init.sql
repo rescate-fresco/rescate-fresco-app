@@ -7,7 +7,8 @@ CREATE TABLE IF NOT EXISTS usuarios (
     rol VARCHAR(20) CHECK (rol IN ('tienda', 'consumidor', 'admin')) NOT NULL,
     direccion_usuario TEXT,
     ubicacion_usuario POINT,
-    tienda BOOLEAN DEFAULT FALSE
+    tienda BOOLEAN DEFAULT FALSE,
+    kg_rescatados NUMERIC(10,2) DEFAULT 0
 );
 
 -- Tiendas

@@ -102,11 +102,29 @@ const CheckoutForm = ({ amount }) => {
 
       //Pago Exitoso
       console.log('Pago exitoso:', paymentIntent);
+      console.log('Esperando a que el webhook procese la transacción...');
+      await new Promise(resolve => setTimeout(resolve, 2000)); // Espera 2 segundos
+      
+      // --- NUEVO: Obtener datos actualizados del usuario ---
+      try {
+        const perfilRes = await fetch(
+          `${import.meta.env.VITE_API_URL}api/auth/perfil/${userId}`
+        );
+        const usuarioActualizado = await perfilRes.json();
+        console.log('Usuario actualizado:', usuarioActualizado);
+        
+        // Actualizar localStorage con los nuevos datos
+        localStorage.setItem("usuario", JSON.stringify(usuarioActualizado));
+      } catch (perfilError) {
+        console.warn('No se pudo obtener el perfil actualizado:', perfilError);
+      }
+      
+      localStorage.removeItem("carrito");
+      
+
       setSucceeded(true);
       setIsLoading(false);
       
-      // Limpiamos el carrito
-      localStorage.removeItem("carrito");
 
     } catch (err) {
       setError(err.message || "Ocurrió un error desconocido.");
