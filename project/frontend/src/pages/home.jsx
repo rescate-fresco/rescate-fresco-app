@@ -59,7 +59,7 @@ function Home() {
     return (
         <div className="Home">
             <Navbar />
-            <div className="Cuerpo">
+            <div className="Cuerpo-1">
                 <div className="contenido-principal">
                     <aside className="sidebar-filtros">
                         <FiltrosLotes onFilterChange={handleFilterChange} />

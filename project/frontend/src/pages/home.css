@@ -19,23 +19,25 @@ body {
     flex-direction: 0; /* Evita que el navbar se encoja si hay poco espacio */
 }
 
-.Cuerpo {
+.Cuerpo-1 {
     flex-grow: 1; /* Permite que .Cuerpo ocupe todo el espacio restante disponible */
     width : 100%;
     display: flex;
     overflow-y: auto; /* Si el contenido es muy largo, permite scroll solo en el cuerpo */
     color: black;
+    padding: 20px 40px;
 }
 
 .contenido-principal {
+    width: 100%; 
+    max-width: 1400px; 
     display: flex;
     flex-direction: column;
-    overflow-y: hidden;
 }
 
 /* Barra lateral con filtros */
 .sidebar-filtros {
-    width: 100%;
+    width: fit-content;
     height: auto;
     position: static; /* Ya no es sticky de 100vh */
     
