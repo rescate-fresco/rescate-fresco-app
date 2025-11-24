@@ -383,7 +383,7 @@ router.post('/cancelar-compra', async (req, res) => {
 
       if (categoriaResult.rows.length > 0) {
         await pool.query(`
-          INSERT INTO "lotes categorias" (id_lote, id_categoria)
+          INSERT INTO lotes_categorias (id_lote, id_categoria)
           VALUES ($1, $2)
         `, [nuevoIdLote, categoriaResult.rows[0].id_categoria]);
       }

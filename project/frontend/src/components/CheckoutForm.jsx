@@ -114,7 +114,12 @@ const CheckoutForm = ({ amount }) => {
         console.log('Usuario actualizado:', usuarioActualizado);
         
         // Actualizar localStorage con los nuevos datos
-        localStorage.setItem("usuario", JSON.stringify(usuarioActualizado));
+        localStorage.setItem("usuarioActualizado", JSON.stringify(usuarioActualizado));
+        window.dispatchEvent(
+            new CustomEvent('usuarioActualizado', { detail: usuarioActualizado })
+        );
+
+        console.log("✅ Evento despachado al Navbar");
       } catch (perfilError) {
         console.warn('No se pudo obtener el perfil actualizado:', perfilError);
       }

@@ -20,11 +20,41 @@ function Navbar() {
         const carritoGuardado = localStorage.getItem("carrito");
         setCartCount(carritoGuardado ? JSON.parse(carritoGuardado).length : 0);
 
+        // Cargar usuario inicial
         const storedUser = localStorage.getItem("usuario");
         if (storedUser) {
-            try { setUsuario(JSON.parse(storedUser)); }
-            catch { localStorage.removeItem("usuario"); }
+            try { 
+                setUsuario(JSON.parse(storedUser)); 
+            }
+            catch { 
+                localStorage.removeItem("usuario"); 
+            }
         }
+
+        // ✅ NUEVO: Revisar si hay actualización pendiente (después de redirección)
+        const usuarioActualizado = localStorage.getItem("usuarioActualizado");
+        if (usuarioActualizado) {
+            try {
+                const usuarioNuevo = JSON.parse(usuarioActualizado);
+                setUsuario(usuarioNuevo);
+                console.log("✅ Usuario actualizado desde localStorage:", usuarioNuevo);
+                localStorage.removeItem("usuarioActualizado"); // Limpiar
+            } catch (e) {
+                console.error("Error al parsear usuarioActualizado:", e);
+            }
+        }
+
+        // Escuchar eventos en tiempo real
+        const handleUserUpdate = (e) => {
+            console.log("🔄 Navbar recibió actualización de usuario:", e.detail);
+            setUsuario(e.detail);
+        };
+
+        window.addEventListener('usuarioActualizado', handleUserUpdate);
+
+        return () => {
+            window.removeEventListener('usuarioActualizado', handleUserUpdate);
+        };
     }, []);
 
     useEffect(() => {

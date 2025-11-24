@@ -14,8 +14,21 @@ const Perfil = () => {
                 .then(res => res.json())
                 .then(data => {
                     setUsuario(data);
-                    // Actualizar localStorage con datos frescos
-                    localStorage.setItem("usuario", JSON.stringify(data));
+                    
+                    // ✅ NUEVO: Solo actualizar localStorage si tiene todos los datos
+                    if (data && data.id_usuario) {
+                        // Mantener datos existentes que no vengan del servidor
+                        const usuarioCompleto = {
+                            ...storedUser, // Mantener datos previos
+                            ...data        // Sobrescribir con datos nuevos
+                        };
+                        localStorage.setItem("usuario", JSON.stringify(usuarioCompleto));
+                        
+                        // Notificar al Navbar
+                        window.dispatchEvent(
+                            new CustomEvent('usuarioActualizado', { detail: usuarioCompleto })
+                        );
+                    }
                     setCargando(false);
                 })
                 .catch(err => {
