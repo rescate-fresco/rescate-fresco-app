@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { aplicarDescuentoPorVencimiento } from '../utils/descuentos';
+import { calcularDiasRestantes } from '../utils/descuentos';
 import './cartas_productos.css';
 
 const CartasProductos = ({ lote }) => {
@@ -11,18 +11,13 @@ const CartasProductos = ({ lote }) => {
         fecha_vencimiento
     } = lote
 
-    const precioInicial = precio_rescate; 
-    let precioFinal = precioInicial; 
-    let descuentoExtraPorVencimiento = 0;
-    let diasRestantes = 999;
+    const precioInicial = precio_original; 
+    let precioFinal = precio_rescate; 
+    let diasRestantes = calcularDiasRestantes(fecha_vencimiento);
     let estaVencido = false;
     
-    if (fecha_vencimiento) {
-        const resultadoDescuento = aplicarDescuentoPorVencimiento(precioInicial, fecha_vencimiento);
-        precioFinal = resultadoDescuento.precioFinal;
-        descuentoExtraPorVencimiento = resultadoDescuento.descuentoExtraPorVencimiento;
-        diasRestantes = resultadoDescuento.diasRestantes;
-        estaVencido = diasRestantes < 0;
+    if (diasRestantes < 0) {
+        estaVencido =  true;
     }
     const descuentoTotalPorcentaje = Math.round(((precioInicial - precioFinal) / precioInicial) * 100);
     if (estaVencido) {
@@ -54,8 +49,8 @@ const CartasProductos = ({ lote }) => {
                 <span className="descuento"> -{descuentoTotalPorcentaje}%</span>
             }
             </p>
-            {descuentoExtraPorVencimiento > 0 && (
-                <p className="alerta-vencimiento">¡Vence en {diasRestantes} días! ({descuentoExtraPorVencimiento}% extra)</p>
+            {diasRestantes > 0 && (
+                <p className="alerta-vencimiento">¡Vence en {diasRestantes} días!</p>
             )}
             <Link to={`/lote/${lote.id_lote}`}>
                 <button>Ver Detalle</button>

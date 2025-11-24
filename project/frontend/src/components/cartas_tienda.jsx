@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { aplicarDescuentoPorVencimiento } from '../utils/descuentos';
+import { calcularDiasRestantes } from '../utils/descuentos';
 import './cartas_tienda.css';
 
 const CartasTienda = ({ lote }) => {
@@ -12,19 +12,14 @@ const CartasTienda = ({ lote }) => {
         estado
     } = lote
  
-    const precioInicial = precio_rescate; 
-    let precioFinal = precioInicial; 
-    let descuentoExtraPorVencimiento = 0;
-    let diasRestantes = 999;
-    let estaVencido = false;
-    let estado_producto = estado
+    const precioInicial = precio_original; 
+        let precioFinal = precio_rescate; 
+        let diasRestantes = calcularDiasRestantes(fecha_vencimiento);
+        let estaVencido = false;
+        let estado_producto = estado
     
-    if (fecha_vencimiento) {
-        const resultadoDescuento = aplicarDescuentoPorVencimiento(precioInicial, fecha_vencimiento);
-        precioFinal = resultadoDescuento.precioFinal;
-        descuentoExtraPorVencimiento = resultadoDescuento.descuentoExtraPorVencimiento;
-        diasRestantes = resultadoDescuento.diasRestantes;
-        estaVencido = diasRestantes < 0;
+    if (diasRestantes < 0) {
+        estaVencido =  true;
     }
     const descuentoTotalPorcentaje = Math.round(((precioInicial - precioFinal) / precioInicial) * 100);
     if (estaVencido) {
@@ -58,7 +53,7 @@ const CartasTienda = ({ lote }) => {
             <img src={imagen || "https://placehold.co/300x200/50B498/ffffff?text=Producto"} alt={nombre_lote} className="imagen-producto-tienda" />
             <h3>{nombre_lote}</h3>
             
-            {descuentoExtraPorVencimiento > 0 && (
+            {diasRestantes > 0 && (
                 <p className="alerta-vencimiento-tienda">¡Vence en {diasRestantes} días!</p>
             )}
              <label className="estado-lote">
