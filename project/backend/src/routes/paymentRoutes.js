@@ -307,16 +307,19 @@ router.post('/cancelar-compra', async (req, res) => {
 
     const compraQuery = `
       SELECT 
-        id_usuario,
-        nombre_lote,
-        categoria,
-        peso_qty,
-        id_tienda,
-        nombre_tienda,
-        ventana_retiro_inicio,
-        ventana_retiro_fin
-      FROM historial_compras
-      WHERE id_compra = $1 AND estado_compra = 'PENDIENTE'
+        hc.id_usuario,
+        hc.nombre_lote,
+        hc.categoria,
+        hc.peso_qty,
+        hc.id_tienda,
+        hc.nombre_tienda,
+        hc.ventana_retiro_inicio,
+        hc.ventana_retiro_fin,
+        u.email,
+        u.nombre_usuario
+      FROM historial_compras hc
+      JOIN usuarios u ON hc.id_usuario = u.id_usuario
+      WHERE hc.id_compra = $1 AND hc.estado_compra = 'PENDIENTE'
     `;
     
     const compraResult = await pool.query(compraQuery, [id_compra]);
@@ -387,7 +390,94 @@ router.post('/cancelar-compra', async (req, res) => {
           VALUES ($1, $2)
         `, [nuevoIdLote, categoriaResult.rows[0].id_categoria]);
       }
+
     }
+    // ✅ NUEVO: Enviar correo de devolución
+    console.log(`📧 Enviando correo de devolución a ${compra.email}...`);
+    const montoFormateado = montoReembolso.toLocaleString('es-CL');
+    
+    await resend.emails.send({
+      from: 'onboarding@resend.dev',
+      to: compra.email,
+      subject: `🥕 Devolución procesada - Rescate Fresco`,
+      html: `
+        <!DOCTYPE html>
+        <html lang="es">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Devolución Procesada - Rescate Fresco</title>
+            <style>
+                body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f3ef; }
+                .container { width: 100%; max-width: 600px; margin: 20px auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; border: 1px solid #e0e0e0; }
+                .header { background-color: #2E7D32; color: #ffffff; padding: 25px; text-align: center; }
+                .header h1 { margin: 0; font-size: 28px; font-weight: bold; }
+                .content { padding: 30px; color: #333333; }
+                .content h2 { color: #2E7D32; font-size: 22px; margin-top: 0; }
+                .content p { line-height: 1.6; font-size: 16px; margin: 10px 0; }
+                .refund-box { background-color: #f7fdf9; border-left: 4px solid #2E7D32; padding: 20px; margin: 25px 0; border-radius: 4px; }
+                .refund-amount { font-size: 32px; font-weight: bold; color: #2E7D32; margin: 10px 0; }
+                .detail-item { display: flex; justify-content: space-between; padding: 10px 0; font-size: 16px; border-bottom: 1px solid #f0f0f0; }
+                .detail-item:last-child { border-bottom: none; }
+                .detail-item span { color: #555555; }
+                .detail-item strong { color: #333333; }
+                .footer { background-color: #f9f9f9; padding: 20px; text-align: center; font-size: 12px; color: #777777; }
+                .footer a { color: #2E7D32; text-decoration: none; }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1>Rescate Fresco 🥕</h1>
+                </div>
+                <div class="content">
+                    <h2>Devolución Procesada</h2>
+                    <p>Hola ${compra.nombre_usuario},</p>
+                    <p>Tu devolución ha sido procesada exitosamente. El reembolso se ha iniciado y debería reflejarse en tu cuenta en 3-5 días hábiles.</p>
+                    
+                    <div class="refund-box">
+                        <p style="margin: 0 0 10px 0; color: #666;">Monto reembolsado:</p>
+                        <div class="refund-amount">$${montoFormateado} CLP</div>
+                        <p style="margin: 10px 0 0 0; font-size: 14px; color: #666;">Nota: Se reembolsa el 60% del monto pagado.</p>
+                    </div>
+
+                    <div style="border-top: 2px solid #eeeeee; padding: 20px 0; margin: 25px 0;">
+                        <h3 style="color: #2E7D32; margin-top: 0;">Detalles de la devolución</h3>
+                        <div class="detail-item">
+                            <span>Producto:</span>
+                            <strong>${compra.nombre_lote}</strong>
+                        </div>
+                        <div class="detail-item">
+                            <span>Categoría:</span>
+                            <strong>${compra.categoria || 'Sin categoría'}</strong>
+                        </div>
+                        <div class="detail-item">
+                            <span>Peso:</span>
+                            <strong>${compra.peso_qty} kg</strong>
+                        </div>
+                        <div class="detail-item">
+                            <span>Tienda:</span>
+                            <strong>${compra.nombre_tienda}</strong>
+                        </div>
+                        <div class="detail-item">
+                            <span>Fecha de devolución:</span>
+                            <strong>${new Date().toLocaleDateString('es-CL')}</strong>
+                        </div>
+                    </div>
+
+                    <p>Gracias por ser parte de Rescate Fresco y ayudar a reducir el desperdicio de alimentos.</p>
+                </div>
+                <div class="footer">
+                    <p>&copy; ${new Date().getFullYear()} Rescate Fresco. Todos los derechos reservados.</p>
+                    <p>Si tienes alguna pregunta, contáctanos a <a href="mailto:soporte@rescatefresco.com">soporte@rescatefresco.com</a>.</p>
+                </div>
+            </div>
+        </body>
+        </html>
+      `
+    });
+    console.log("✅ Email de devolución enviado exitosamente");
+
 
     console.log("✅ Lote recreado con ID:", nuevoIdLote);
 
