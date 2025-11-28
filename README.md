@@ -90,7 +90,6 @@ npm install
 ```
 
 **Frontend (package.json)**
-
 * react → Biblioteca principal para interfaces de usuario.
 * react-dom → Gestión del DOM.
 * react-scripts → Scripts para desarrollo y construcción.
