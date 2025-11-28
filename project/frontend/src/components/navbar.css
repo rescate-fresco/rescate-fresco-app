@@ -41,7 +41,7 @@
 .nav-der {
   display: flex;           /* alinea en fila */
   align-items: center;     /* centra verticalmente */
-  gap: 15px;               /* espacio entre search y botones */
+  gap: 5px;               /* espacio entre search y botones */
 }
 
 /* ======== BARRA DE BÚSQUEDA ACCESIBLE ======== */
@@ -198,7 +198,6 @@
   user-select: none;
   cursor: pointer;
   border: none;
-
 }
 
 .usuario-nombre:focus {
@@ -206,13 +205,17 @@
   box-shadow: none;
 }
 
-
-
 .cart-link {
     position: relative;
     display: flex;
     align-items: center;
 }
+
+.cart-link .icon-cart {
+    font-size: 1.2rem;
+    color: #03aa48;
+}
+
 .cart-count {
     position: absolute;
     top: -8px;

@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import React, { useState, useEffect, useRef } from "react";
 import './navbar.css';
 import { FaSearch, FaBell, FaCheck, FaTimes } from 'react-icons/fa';
+import { FiShoppingCart } from "react-icons/fi";
 
 function Navbar() {
     const [usuario, setUsuario] = useState(null);
@@ -162,7 +163,7 @@ function Navbar() {
                 )}
 
                 <Link to="/carrito" className="cart-link">
-                    <img src="https://images.falabella.com/v3/assets/blt7c5c2f2f888a7cc3/bltee24e879d497dc04/65b2492a1be7ff13e55d90c6/carritodesk.svg" alt="Carrito" />
+                    <FiShoppingCart className="icon-cart" size={24} />
                     {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
                 </Link>
 
