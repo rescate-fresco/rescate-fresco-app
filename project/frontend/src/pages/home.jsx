@@ -78,7 +78,7 @@ function Home() {
                         {!cargando && !error && productos.length > 0 && (
                             <div className="productos-lista">
                                 {productos.map((lote) => (
-                                    <CartasProductos key={lote.id_lote} lote={lote} />
+                                        <CartasProductos key={lote.id_lote} lote={lote} />
                                 ))}
                             </div>
                         )}

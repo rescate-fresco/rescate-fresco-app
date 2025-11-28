@@ -24,49 +24,122 @@ body {
     overflow-y: auto; /* Si el contenido es muy largo, permite scroll solo en el cuerpo */
 }
 
-/* Estilos para el formulario de registro */
+/* =========================================
+   2. TARJETA DE REGISTRO
+   ========================================= */
 .register-container {
-  width: 400px;
-  margin: 50px auto;
-  padding: 20px;
-  border-radius: 10px;
-  background: #5ae861;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  color: black;
+  width: 100%;
+  max-width: 450px; /* Un poco más ancho que el login porque tiene más datos */
+  height: auto;     /* Deja que crezca según el contenido */
+  margin: auto;   
+  
+  background: #ffffff; /* BLANCO PURO */
+  padding: 40px;
+  border-radius: 24px; /* Bordes muy redondeados */
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08); /* Sombra suave */
+  
+  color: #2d3436;
 }
 
+.register-container h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 1.8rem;
+    color: #2d3436;
+}
+
+/* =========================================
+   3. FORMULARIO E INPUTS
+   ========================================= */
 .register-form {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 18px; /* Espacio entre campos */
 }
 
 .register-form label {
   display: flex;
   flex-direction: column;
-  font-weight: 500;
+  font-weight: 600;
+  color: #636e72; /* Gris texto secundario */
+  font-size: 0.9rem;
+  gap: 6px;
 }
 
+/* Estilo unificado para Inputs, Selects y Textarea */
 .register-form input,
 .register-form textarea,
 .register-form select {
-  padding: 8px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
+  width: 100%;
+  padding: 12px 16px;
+  
+  background-color: #f9fafb; /* Fondo gris pálido */
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  
+  /* COLOR DE TEXTO (Corrección importante) */
+  color: #2d3436; 
+  font-size: 1rem;
+  font-family: inherit;
+  
+  transition: all 0.3s ease;
+  outline: none;
+  box-sizing: border-box;
 }
 
+/* Placeholder (Texto de ayuda) */
+.register-form input::placeholder,
+.register-form textarea::placeholder {
+  color: #b2bec3;
+}
+
+/* Efecto Focus (Cuando escribes) */
+.register-form input:focus,
+.register-form textarea:focus,
+.register-form select:focus {
+  background-color: #ffffff;
+  border-color: #00c853; 
+  box-shadow: 0 0 0 4px rgba(0, 200, 83, 0.1); 
+}
+
+/* Ajuste específico para el Textarea */
+.register-form textarea {
+    resize: vertical; /* Permite estirar solo hacia abajo */
+    min-height: 80px;
+}
+
+/* =========================================
+   4. BOTÓN DE REGISTRO
+   ========================================= */
 .register-form button {
-  padding: 10px;
+  margin-top: 10px;
+  padding: 14px;
+  
+  background: linear-gradient(135deg, #00c853 0%, #009624 100%);
+  color: white;
+  
   border: none;
-  background: #017007;
-  border-radius: 5px;
+  border-radius: 50px; /* Píldora */
+  font-size: 1.1rem;
+  font-weight: 700;
   cursor: pointer;
-  font-weight: bold;
-  width: 100%; /* hace que el botón ocupe todo el ancho del formulario */
-  box-sizing: border-box; /* asegura que el padding no expanda el ancho */
+  width: 100%;
+  
+  box-shadow: 0 4px 15px rgba(0, 200, 83, 0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .register-form button:hover {
-  background: #01b50a;
-  color : black;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 200, 83, 0.4);
+}
+
+/* =========================================
+   5. MENSAJES DE ERROR (Opcional)
+   ========================================= */
+/* Ajusta el estilo de los mensajes de error rojos que tienes en el JSX */
+.register-form p {
+    margin: -10px 0 0 0; /* Los acerca al input */
+    font-size: 0.85rem;
+    font-weight: 500;
 }
