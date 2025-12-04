@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title id="head-title">report_3.html</title>
+      <style type="text/css">body {
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 12px;
+  /* do not increase min-width as some may use split screens */
+  min-width: 800px;
+  color: #999;
+}
+
+h1 {
+  font-size: 24px;
+  color: black;
+}
+
+h2 {
+  font-size: 16px;
+  color: black;
+}
+
+p {
+  color: black;
+}
+
+a {
+  color: #999;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+/******************************
+ * SUMMARY INFORMATION
+ ******************************/
+#environment td {
+  padding: 5px;
+  border: 1px solid #e6e6e6;
+  vertical-align: top;
+}
+#environment tr:nth-child(odd) {
+  background-color: #f6f6f6;
+}
+#environment ul {
+  margin: 0;
+  padding: 0 20px;
+}
+
+/******************************
+ * TEST RESULT COLORS
+ ******************************/
+span.passed,
+.passed .col-result {
+  color: green;
+}
+
+span.skipped,
+span.xfailed,
+span.rerun,
+.skipped .col-result,
+.xfailed .col-result,
+.rerun .col-result {
+  color: orange;
+}
+
+span.error,
+span.failed,
+span.xpassed,
+.error .col-result,
+.failed .col-result,
+.xpassed .col-result {
+  color: red;
+}
+
+.col-links__extra {
+  margin-right: 3px;
+}
+
+/******************************
+ * RESULTS TABLE
+ *
+ * 1. Table Layout
+ * 2. Extra
+ * 3. Sorting items
+ *
+ ******************************/
+/*------------------
+ * 1. Table Layout
+ *------------------*/
+#results-table {
+  border: 1px solid #e6e6e6;
+  color: #999;
+  font-size: 12px;
+  width: 100%;
+}
+#results-table th,
+#results-table td {
+  padding: 5px;
+  border: 1px solid #e6e6e6;
+  text-align: left;
+}
+#results-table th {
+  font-weight: bold;
+}
+
+/*------------------
+ * 2. Extra
+ *------------------*/
+.logwrapper {
+  max-height: 230px;
+  overflow-y: scroll;
+  background-color: #e6e6e6;
+}
+.logwrapper.expanded {
+  max-height: none;
+}
+.logwrapper.expanded .logexpander:after {
+  content: "collapse [-]";
+}
+.logwrapper .logexpander {
+  z-index: 1;
+  position: sticky;
+  top: 10px;
+  width: max-content;
+  border: 1px solid;
+  border-radius: 3px;
+  padding: 5px 7px;
+  margin: 10px 0 10px calc(100% - 80px);
+  cursor: pointer;
+  background-color: #e6e6e6;
+}
+.logwrapper .logexpander:after {
+  content: "expand [+]";
+}
+.logwrapper .logexpander:hover {
+  color: #000;
+  border-color: #000;
+}
+.logwrapper .log {
+  min-height: 40px;
+  position: relative;
+  top: -50px;
+  height: calc(100% + 50px);
+  border: 1px solid #e6e6e6;
+  color: black;
+  display: block;
+  font-family: "Courier New", Courier, monospace;
+  padding: 5px;
+  padding-right: 80px;
+  white-space: pre-wrap;
+}
+
+div.media {
+  border: 1px solid #e6e6e6;
+  float: right;
+  height: 240px;
+  margin: 0 5px;
+  overflow: hidden;
+  width: 320px;
+}
+
+.media-container {
+  display: grid;
+  grid-template-columns: 25px auto 25px;
+  align-items: center;
+  flex: 1 1;
+  overflow: hidden;
+  height: 200px;
+}
+
+.media-container--fullscreen {
+  grid-template-columns: 0px auto 0px;
+}
+
+.media-container__nav--right,
+.media-container__nav--left {
+  text-align: center;
+  cursor: pointer;
+}
+
+.media-container__viewport {
+  cursor: pointer;
+  text-align: center;
+  height: inherit;
+}
+.media-container__viewport img,
+.media-container__viewport video {
+  object-fit: cover;
+  width: 100%;
+  max-height: 100%;
+}
+
+.media__name,
+.media__counter {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  flex: 0 0 25px;
+  align-items: center;
+}
+
+.collapsible td:not(.col-links) {
+  cursor: pointer;
+}
+.collapsible td:not(.col-links):hover::after {
+  color: #bbb;
+  font-style: italic;
+  cursor: pointer;
+}
+
+.col-result {
+  width: 130px;
+}
+.col-result:hover::after {
+  content: " (hide details)";
+}
+
+.col-result.collapsed:hover::after {
+  content: " (show details)";
+}
+
+#environment-header h2:hover::after {
+  content: " (hide details)";
+  color: #bbb;
+  font-style: italic;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+#environment-header.collapsed h2:hover::after {
+  content: " (show details)";
+  color: #bbb;
+  font-style: italic;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+/*------------------
+ * 3. Sorting items
+ *------------------*/
+.sortable {
+  cursor: pointer;
+}
+.sortable.desc:after {
+  content: " ";
+  position: relative;
+  left: 5px;
+  bottom: -12.5px;
+  border: 10px solid #4caf50;
+  border-bottom: 0;
+  border-left-color: transparent;
+  border-right-color: transparent;
+}
+.sortable.asc:after {
+  content: " ";
+  position: relative;
+  left: 5px;
+  bottom: 12.5px;
+  border: 10px solid #4caf50;
+  border-top: 0;
+  border-left-color: transparent;
+  border-right-color: transparent;
+}
+
+.hidden, .summary__reload__button.hidden {
+  display: none;
+}
+
+.summary__data {
+  flex: 0 0 550px;
+}
+.summary__reload {
+  flex: 1 1;
+  display: flex;
+  justify-content: center;
+}
+.summary__reload__button {
+  flex: 0 0 300px;
+  display: flex;
+  color: white;
+  font-weight: bold;
+  background-color: #4caf50;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  border-radius: 3px;
+  cursor: pointer;
+}
+.summary__reload__button:hover {
+  background-color: #46a049;
+}
+.summary__spacer {
+  flex: 0 0 550px;
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+}
+
+.filters,
+.collapse {
+  display: flex;
+  align-items: center;
+}
+.filters button,
+.collapse button {
+  color: #999;
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.filters button:hover,
+.collapse button:hover {
+  color: #ccc;
+}
+
+.filter__label {
+  margin-right: 10px;
+}
+
+      </style>
+    
+  </head>
+  <body>
+    <h1 id="title">report_3.html</h1>
+    <p>Report generated on 04-Dec-2025 at 01:36:04 by <a href="https://pypi.python.org/pypi/pytest-html">pytest-html</a>
+        v4.1.1</p>
+    <div id="environment-header">
+      <h2>Environment</h2>
+    </div>
+    <table id="environment"></table>
+    <!-- TEMPLATES -->
+      <template id="template_environment_row">
+      <tr>
+        <td></td>
+        <td></td>
+      </tr>
+    </template>
+    <template id="template_results-table__body--empty">
+      <tbody class="results-table-row">
+        <tr id="not-found-message">
+          <td colspan="4">No results found. Check the filters.</th>
+        </tr>
+    </template>
+    <template id="template_results-table__tbody">
+      <tbody class="results-table-row">
+        <tr class="collapsible">
+        </tr>
+        <tr class="extras-row">
+          <td class="extra" colspan="4">
+            <div class="extraHTML"></div>
+            <div class="media">
+              <div class="media-container">
+                  <div class="media-container__nav--left"><</div>
+                  <div class="media-container__viewport">
+                    <img src="" />
+                    <video controls>
+                      <source src="" type="video/mp4">
+                    </video>
+                  </div>
+                  <div class="media-container__nav--right">></div>
+                </div>
+                <div class="media__name"></div>
+                <div class="media__counter"></div>
+            </div>
+            <div class="logwrapper">
+              <div class="logexpander"></div>
+              <div class="log"></div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </template>
+    <!-- END TEMPLATES -->
+    <div class="summary">
+      <div class="summary__data">
+        <h2>Summary</h2>
+        <div class="additional-summary prefix">
+        </div>
+        <p class="run-count">30 tests took 00:01:30.</p>
+        <p class="filter">(Un)check the boxes to filter the results.</p>
+        <div class="summary__reload">
+          <div class="summary__reload__button hidden" onclick="location.reload()">
+            <div>There are still tests running. <br />Reload this page to get the latest results!</div>
+          </div>
+        </div>
+        <div class="summary__spacer"></div>
+        <div class="controls">
+          <div class="filters">
+            <input checked="true" class="filter" name="filter_checkbox" type="checkbox" data-test-result="failed" />
+            <span class="failed">15 Failed,</span>
+            <input checked="true" class="filter" name="filter_checkbox" type="checkbox" data-test-result="passed" />
+            <span class="passed">15 Passed,</span>
+            <input checked="true" class="filter" name="filter_checkbox" type="checkbox" data-test-result="skipped" disabled/>
+            <span class="skipped">0 Skipped,</span>
+            <input checked="true" class="filter" name="filter_checkbox" type="checkbox" data-test-result="xfailed" disabled/>
+            <span class="xfailed">0 Expected failures,</span>
+            <input checked="true" class="filter" name="filter_checkbox" type="checkbox" data-test-result="xpassed" disabled/>
+            <span class="xpassed">0 Unexpected passes,</span>
+            <input checked="true" class="filter" name="filter_checkbox" type="checkbox" data-test-result="error" disabled/>
+            <span class="error">0 Errors,</span>
+            <input checked="true" class="filter" name="filter_checkbox" type="checkbox" data-test-result="rerun" disabled/>
+            <span class="rerun">0 Reruns</span>
+          </div>
+          <div class="collapse">
+            <button id="show_all_details">Show all details</button>&nbsp;/&nbsp;<button id="hide_all_details">Hide all details</button>
+          </div>
+        </div>
+      </div>
+      <div class="additional-summary summary">
+      </div>
+      <div class="additional-summary postfix">
+      </div>
+    </div>
+    <table id="results-table">
+      <thead id="results-table-head">
+        <tr>
+          <th class="sortable" data-column-type="result">Result</th>
+          <th class="sortable" data-column-type="testId">Test</th>
+          <th class="sortable" data-column-type="duration">Duration</th>
+          <th>Links</th>
+        </tr>
+      </thead>
+    </table>
+  </body>
+  <footer>
+    <div id="data-container" data-jsonblob="{&#34;environment&#34;: {&#34;Python&#34;: &#34;3.12.3&#34;, &#34;Platform&#34;: &#34;Windows-11-10.0.26200-SP0&#34;, &#34;Packages&#34;: {&#34;pytest&#34;: &#34;8.4.2&#34;, &#34;pluggy&#34;: &#34;1.6.0&#34;}, &#34;Plugins&#34;: {&#34;html&#34;: &#34;4.1.1&#34;, &#34;metadata&#34;: &#34;3.1.1&#34;}}, &#34;tests&#34;: {&#34;test_crear_producto.py::TestCrearLoteExitoso::test_1_crear_lote_basico_exitoso&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;test_crear_producto.py::TestCrearLoteExitoso::test_1_crear_lote_basico_exitoso&#34;, &#34;duration&#34;: &#34;00:00:05&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;test_crear_producto.py::TestCrearLoteExitoso::test_1_crear_lote_basico_exitoso&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:05&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;----------------------------- Captured stdout call -----------------------------\n\n\u2705 Test 1: Lote b\u00e1sico exitoso...\n&#34;}], &#34;test_crear_producto.py::TestCrearLoteExitoso::test_2_crear_lote_con_peso_decimal&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;test_crear_producto.py::TestCrearLoteExitoso::test_2_crear_lote_con_peso_decimal&#34;, &#34;duration&#34;: &#34;00:00:03&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;test_crear_producto.py::TestCrearLoteExitoso::test_2_crear_lote_con_peso_decimal&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:03&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;----------------------------- Captured stdout call -----------------------------\n\n\u2705 Test 2: Peso decimal...\n&#34;}], &#34;test_crear_producto.py::TestCrearLoteExitoso::test_3_crear_lote_precio_rescate_alto&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;test_crear_producto.py::TestCrearLoteExitoso::test_3_crear_lote_precio_rescate_alto&#34;, &#34;duration&#34;: &#34;00:00:03&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;test_crear_producto.py::TestCrearLoteExitoso::test_3_crear_lote_precio_rescate_alto&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:03&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;----------------------------- Captured stdout call -----------------------------\n\n\u2705 Test 3: Precio rescate alto...\n&#34;}], &#34;test_crear_producto.py::TestCrearLoteExitoso::test_4_crear_lote_multiples_categorias&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;test_crear_producto.py::TestCrearLoteExitoso::test_4_crear_lote_multiples_categorias&#34;, &#34;duration&#34;: &#34;00:00:04&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;test_crear_producto.py::TestCrearLoteExitoso::test_4_crear_lote_multiples_categorias&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:04&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;----------------------------- Captured stdout call -----------------------------\n\n\u2705 Test 4: M\u00faltiples categor\u00edas...\n&#34;}], &#34;test_crear_producto.py::TestCrearLoteExitoso::test_5_crear_lote_peso_bajo&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;test_crear_producto.py::TestCrearLoteExitoso::test_5_crear_lote_peso_bajo&#34;, &#34;duration&#34;: &#34;00:00:03&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;test_crear_producto.py::TestCrearLoteExitoso::test_5_crear_lote_peso_bajo&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:03&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;----------------------------- Captured stdout call -----------------------------\n\n\u2705 Test 5: Peso muy bajo...\n&#34;}], &#34;test_crear_producto.py::TestCrearLoteExitoso::test_6_crear_lote_peso_alto&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;test_crear_producto.py::TestCrearLoteExitoso::test_6_crear_lote_peso_alto&#34;, &#34;duration&#34;: &#34;00:00:03&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;test_crear_producto.py::TestCrearLoteExitoso::test_6_crear_lote_peso_alto&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:03&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;----------------------------- Captured stdout call -----------------------------\n\n\u2705 Test 6: Peso muy alto...\n&#34;}], &#34;test_crear_producto.py::TestCrearLoteExitoso::test_7_crear_lote_ventana_retiro_1dia&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;test_crear_producto.py::TestCrearLoteExitoso::test_7_crear_lote_ventana_retiro_1dia&#34;, &#34;duration&#34;: &#34;00:00:03&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;test_crear_producto.py::TestCrearLoteExitoso::test_7_crear_lote_ventana_retiro_1dia&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:03&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;----------------------------- Captured stdout call -----------------------------\n\n\u2705 Test 7: Ventana retiro 1 d\u00eda...\n&#34;}], &#34;test_crear_producto.py::TestCrearLoteFallasValidacion::test_8_sin_nombre_lote&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;test_crear_producto.py::TestCrearLoteFallasValidacion::test_8_sin_nombre_lote&#34;, &#34;duration&#34;: &#34;00:00:02&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;test_crear_producto.py::TestCrearLoteFallasValidacion::test_8_sin_nombre_lote&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:02&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;----------------------------- Captured stdout call -----------------------------\n\n\u274c Test 8: Sin nombre...\n&#34;}], &#34;test_crear_producto.py::TestCrearLoteFallasValidacion::test_9_precio_negativo&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;test_crear_producto.py::TestCrearLoteFallasValidacion::test_9_precio_negativo&#34;, &#34;duration&#34;: &#34;00:00:04&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;test_crear_producto.py::TestCrearLoteFallasValidacion::test_9_precio_negativo&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:04&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;self = &amp;lt;test_crear_producto.TestCrearLoteFallasValidacion object at 0x0000025E96805970&amp;gt;\nusuario_tienda_con_producto = {&amp;#x27;email&amp;#x27;: &amp;#x27;tienda_prod_1764822900729847@test.com&amp;#x27;, &amp;#x27;id_tienda&amp;#x27;: 1630, &amp;#x27;id_usuario&amp;#x27;: 2404, &amp;#x27;token&amp;#x27;: &amp;#x27;eyJhbGciOiJIUzI1Ni...20iLCJpZF90aWVuZGEiOm51bGwsImlhdCI6MTc2NDgyMjkwMiwiZXhwIjoxNzY0OTA5MzAyfQ.0cCRTCHt_37Mx0mURX6QZGp7DesMz24DzQiK2Zhgm0Y&amp;#x27;}\n\n    def test_9_precio_negativo(self, usuario_tienda_con_producto):\n        &amp;quot;&amp;quot;&amp;quot;\u274c Test 9: Precio negativo es ACEPTADO (BUG)&amp;quot;&amp;quot;&amp;quot;\n        print(&amp;quot;\\n\u274c Test 9: Precio negativo...&amp;quot;)\n    \n        datos_lote = {\n            &amp;quot;nombre_lote&amp;quot;: f&amp;quot;Lote Negativo {datetime.now().timestamp()}&amp;quot;,\n            &amp;quot;descripcion&amp;quot;: &amp;quot;Precio negativo&amp;quot;,\n            &amp;quot;precio_original&amp;quot;: &amp;quot;50000&amp;quot;,\n            &amp;quot;precio_rescate&amp;quot;: &amp;quot;-25000&amp;quot;,\n            &amp;quot;fecha_vencimiento&amp;quot;: (datetime.now() + timedelta(days=5)).strftime(&amp;quot;%Y-%m-%d&amp;quot;),\n            &amp;quot;peso_qty&amp;quot;: &amp;quot;50.0&amp;quot;,\n            &amp;quot;id_tienda&amp;quot;: str(usuario_tienda_con_producto[&amp;#x27;id_tienda&amp;#x27;]),\n            &amp;quot;ventana_retiro_inicio&amp;quot;: (datetime.now() + timedelta(days=1)).isoformat(),\n            &amp;quot;ventana_retiro_fin&amp;quot;: (datetime.now() + timedelta(days=2)).isoformat(),\n            &amp;quot;categorias&amp;quot;: json.dumps([]),\n            &amp;quot;categorias_nuevas&amp;quot;: json.dumps([&amp;quot;frutas&amp;quot;])\n        }\n    \n        files = {&amp;quot;imagenes&amp;quot;: (&amp;quot;test.png&amp;quot;, crear_imagen_prueba(), &amp;quot;image/png&amp;quot;)}\n    \n        resp = requests.post(\n            f&amp;quot;{BASE_URL}/api/lotes&amp;quot;,\n            data=datos_lote,\n            files=files,\n            headers={&amp;quot;Authorization&amp;quot;: f&amp;quot;Bearer {usuario_tienda_con_producto[&amp;#x27;token&amp;#x27;]}&amp;quot;}\n        )\n    \n&amp;gt;       assert resp.status_code == 400, f&amp;quot;BUG: Precio negativo aceptado - {resp.status_code}&amp;quot;\nE       AssertionError: BUG: Precio negativo aceptado - 201\nE       assert 201 == 400\nE        +  where 201 = &amp;lt;Response [201]&amp;gt;.status_code\n\ntest_crear_producto.py:363: AssertionError\n\n----------------------------- Captured stdout call -----------------------------\n\n\u274c Test 9: Precio negativo...\n&#34;}], &#34;test_crear_producto.py::TestCrearLoteFallasValidacion::test_10_peso_negativo&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;test_crear_producto.py::TestCrearLoteFallasValidacion::test_10_peso_negativo&#34;, &#34;duration&#34;: &#34;00:00:03&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;test_crear_producto.py::TestCrearLoteFallasValidacion::test_10_peso_negativo&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:03&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;self = &amp;lt;test_crear_producto.TestCrearLoteFallasValidacion object at 0x0000025E96805AF0&amp;gt;\nusuario_tienda_con_producto = {&amp;#x27;email&amp;#x27;: &amp;#x27;tienda_prod_17648229052889173@test.com&amp;#x27;, &amp;#x27;id_tienda&amp;#x27;: 1631, &amp;#x27;id_usuario&amp;#x27;: 2405, &amp;#x27;token&amp;#x27;: &amp;#x27;eyJhbGciOiJIUzI1N...9tIiwiaWRfdGllbmRhIjpudWxsLCJpYXQiOjE3NjQ4MjI5MDYsImV4cCI6MTc2NDkwOTMwNn0.JPJKq7Y1_jQVOfBSun6TOQ1ONh5LY2u_XUuT2R3i5R8&amp;#x27;}\n\n    def test_10_peso_negativo(self, usuario_tienda_con_producto):\n        &amp;quot;&amp;quot;&amp;quot;\u274c Test 10: Peso negativo&amp;quot;&amp;quot;&amp;quot;\n        print(&amp;quot;\\n\u274c Test 10: Peso negativo...&amp;quot;)\n    \n        datos_lote = {\n            &amp;quot;nombre_lote&amp;quot;: f&amp;quot;Lote Peso Neg {datetime.now().timestamp()}&amp;quot;,\n            &amp;quot;descripcion&amp;quot;: &amp;quot;Peso negativo&amp;quot;,\n            &amp;quot;precio_original&amp;quot;: &amp;quot;50000&amp;quot;,\n            &amp;quot;precio_rescate&amp;quot;: &amp;quot;25000&amp;quot;,\n            &amp;quot;fecha_vencimiento&amp;quot;: (datetime.now() + timedelta(days=5)).strftime(&amp;quot;%Y-%m-%d&amp;quot;),\n            &amp;quot;peso_qty&amp;quot;: &amp;quot;-50.0&amp;quot;,\n            &amp;quot;id_tienda&amp;quot;: str(usuario_tienda_con_producto[&amp;#x27;id_tienda&amp;#x27;]),\n            &amp;quot;ventana_retiro_inicio&amp;quot;: (datetime.now() + timedelta(days=1)).isoformat(),\n            &amp;quot;ventana_retiro_fin&amp;quot;: (datetime.now() + timedelta(days=2)).isoformat(),\n            &amp;quot;categorias&amp;quot;: json.dumps([]),\n            &amp;quot;categorias_nuevas&amp;quot;: json.dumps([&amp;quot;frutas&amp;quot;])\n        }\n    \n        files = {&amp;quot;imagenes&amp;quot;: (&amp;quot;test.png&amp;quot;, crear_imagen_prueba(), &amp;quot;image/png&amp;quot;)}\n    \n        resp = requests.post(\n            f&amp;quot;{BASE_URL}/api/lotes&amp;quot;,\n            data=datos_lote,\n            files=files,\n            headers={&amp;quot;Authorization&amp;quot;: f&amp;quot;Bearer {usuario_tienda_con_producto[&amp;#x27;token&amp;#x27;]}&amp;quot;}\n        )\n    \n&amp;gt;       assert resp.status_code == 400, f&amp;quot;Peso negativo aceptado - {resp.status_code}&amp;quot;\nE       AssertionError: Peso negativo aceptado - 201\nE       assert 201 == 400\nE        +  where 201 = &amp;lt;Response [201]&amp;gt;.status_code\n\ntest_crear_producto.py:393: AssertionError\n\n----------------------------- Captured stdout call -----------------------------\n\n\u274c Test 10: Peso negativo...\n&#34;}], &#34;test_crear_producto.py::TestCrearLoteFallasValidacion::test_11_peso_cero&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;test_crear_producto.py::TestCrearLoteFallasValidacion::test_11_peso_cero&#34;, &#34;duration&#34;: &#34;00:00:03&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;test_crear_producto.py::TestCrearLoteFallasValidacion::test_11_peso_cero&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:03&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;self = &amp;lt;test_crear_producto.TestCrearLoteFallasValidacion object at 0x0000025E96805C70&amp;gt;\nusuario_tienda_con_producto = {&amp;#x27;email&amp;#x27;: &amp;#x27;tienda_prod_1764822908523353@test.com&amp;#x27;, &amp;#x27;id_tienda&amp;#x27;: 1632, &amp;#x27;id_usuario&amp;#x27;: 2406, &amp;#x27;token&amp;#x27;: &amp;#x27;eyJhbGciOiJIUzI1Ni...20iLCJpZF90aWVuZGEiOm51bGwsImlhdCI6MTc2NDgyMjkwOSwiZXhwIjoxNzY0OTA5MzA5fQ.r5yRfEBj_hecpRPvqvDa-ys1n9XWfMMvfa0yabaWgso&amp;#x27;}\n\n    def test_11_peso_cero(self, usuario_tienda_con_producto):\n        &amp;quot;&amp;quot;&amp;quot;\u274c Test 11: Peso cero&amp;quot;&amp;quot;&amp;quot;\n        print(&amp;quot;\\n\u274c Test 11: Peso cero...&amp;quot;)\n    \n        datos_lote = {\n            &amp;quot;nombre_lote&amp;quot;: f&amp;quot;Lote Peso 0 {datetime.now().timestamp()}&amp;quot;,\n            &amp;quot;descripcion&amp;quot;: &amp;quot;Peso cero&amp;quot;,\n            &amp;quot;precio_original&amp;quot;: &amp;quot;50000&amp;quot;,\n            &amp;quot;precio_rescate&amp;quot;: &amp;quot;25000&amp;quot;,\n            &amp;quot;fecha_vencimiento&amp;quot;: (datetime.now() + timedelta(days=5)).strftime(&amp;quot;%Y-%m-%d&amp;quot;),\n            &amp;quot;peso_qty&amp;quot;: &amp;quot;0&amp;quot;,\n            &amp;quot;id_tienda&amp;quot;: str(usuario_tienda_con_producto[&amp;#x27;id_tienda&amp;#x27;]),\n            &amp;quot;ventana_retiro_inicio&amp;quot;: (datetime.now() + timedelta(days=1)).isoformat(),\n            &amp;quot;ventana_retiro_fin&amp;quot;: (datetime.now() + timedelta(days=2)).isoformat(),\n            &amp;quot;categorias&amp;quot;: json.dumps([]),\n            &amp;quot;categorias_nuevas&amp;quot;: json.dumps([&amp;quot;frutas&amp;quot;])\n        }\n    \n        files = {&amp;quot;imagenes&amp;quot;: (&amp;quot;test.png&amp;quot;, crear_imagen_prueba(), &amp;quot;image/png&amp;quot;)}\n    \n        resp = requests.post(\n            f&amp;quot;{BASE_URL}/api/lotes&amp;quot;,\n            data=datos_lote,\n            files=files,\n            headers={&amp;quot;Authorization&amp;quot;: f&amp;quot;Bearer {usuario_tienda_con_producto[&amp;#x27;token&amp;#x27;]}&amp;quot;}\n        )\n    \n&amp;gt;       assert resp.status_code == 400, f&amp;quot;Peso cero aceptado - {resp.status_code}&amp;quot;\nE       AssertionError: Peso cero aceptado - 201\nE       assert 201 == 400\nE        +  where 201 = &amp;lt;Response [201]&amp;gt;.status_code\n\ntest_crear_producto.py:423: AssertionError\n\n----------------------------- Captured stdout call -----------------------------\n\n\u274c Test 11: Peso cero...\n&#34;}], &#34;test_crear_producto.py::TestCrearLoteFallasValidacion::test_12_fecha_vencimiento_pasada&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;test_crear_producto.py::TestCrearLoteFallasValidacion::test_12_fecha_vencimiento_pasada&#34;, &#34;duration&#34;: &#34;00:00:03&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;test_crear_producto.py::TestCrearLoteFallasValidacion::test_12_fecha_vencimiento_pasada&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:03&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;self = &amp;lt;test_crear_producto.TestCrearLoteFallasValidacion object at 0x0000025E96805B20&amp;gt;\nusuario_tienda_con_producto = {&amp;#x27;email&amp;#x27;: &amp;#x27;tienda_prod_17648229118925822@test.com&amp;#x27;, &amp;#x27;id_tienda&amp;#x27;: 1633, &amp;#x27;id_usuario&amp;#x27;: 2407, &amp;#x27;token&amp;#x27;: &amp;#x27;eyJhbGciOiJIUzI1N...9tIiwiaWRfdGllbmRhIjpudWxsLCJpYXQiOjE3NjQ4MjI5MTMsImV4cCI6MTc2NDkwOTMxM30.nLJAiis73xt-e8kj6xwxopi9Y8Zdi2x51p1NMg-xA0E&amp;#x27;}\n\n    def test_12_fecha_vencimiento_pasada(self, usuario_tienda_con_producto):\n        &amp;quot;&amp;quot;&amp;quot;\u274c Test 12: Fecha vencimiento en el pasado&amp;quot;&amp;quot;&amp;quot;\n        print(&amp;quot;\\n\u274c Test 12: Fecha vencimiento pasada...&amp;quot;)\n    \n        datos_lote = {\n            &amp;quot;nombre_lote&amp;quot;: f&amp;quot;Lote Fecha Pasada {datetime.now().timestamp()}&amp;quot;,\n            &amp;quot;descripcion&amp;quot;: &amp;quot;Fecha en el pasado&amp;quot;,\n            &amp;quot;precio_original&amp;quot;: &amp;quot;50000&amp;quot;,\n            &amp;quot;precio_rescate&amp;quot;: &amp;quot;25000&amp;quot;,\n            &amp;quot;fecha_vencimiento&amp;quot;: (datetime.now() - timedelta(days=5)).strftime(&amp;quot;%Y-%m-%d&amp;quot;),\n            &amp;quot;peso_qty&amp;quot;: &amp;quot;50.0&amp;quot;,\n            &amp;quot;id_tienda&amp;quot;: str(usuario_tienda_con_producto[&amp;#x27;id_tienda&amp;#x27;]),\n            &amp;quot;ventana_retiro_inicio&amp;quot;: (datetime.now() + timedelta(days=1)).isoformat(),\n            &amp;quot;ventana_retiro_fin&amp;quot;: (datetime.now() + timedelta(days=2)).isoformat(),\n            &amp;quot;categorias&amp;quot;: json.dumps([]),\n            &amp;quot;categorias_nuevas&amp;quot;: json.dumps([&amp;quot;frutas&amp;quot;])\n        }\n    \n        files = {&amp;quot;imagenes&amp;quot;: (&amp;quot;test.png&amp;quot;, crear_imagen_prueba(), &amp;quot;image/png&amp;quot;)}\n    \n        resp = requests.post(\n            f&amp;quot;{BASE_URL}/api/lotes&amp;quot;,\n            data=datos_lote,\n            files=files,\n            headers={&amp;quot;Authorization&amp;quot;: f&amp;quot;Bearer {usuario_tienda_con_producto[&amp;#x27;token&amp;#x27;]}&amp;quot;}\n        )\n    \n&amp;gt;       assert resp.status_code == 400, f&amp;quot;Fecha pasada aceptada - {resp.status_code}&amp;quot;\nE       AssertionError: Fecha pasada aceptada - 201\nE       assert 201 == 400\nE        +  where 201 = &amp;lt;Response [201]&amp;gt;.status_code\n\ntest_crear_producto.py:453: AssertionError\n\n----------------------------- Captured stdout call -----------------------------\n\n\u274c Test 12: Fecha vencimiento pasada...\n&#34;}], &#34;test_crear_producto.py::TestCrearLoteFallasValidacion::test_13_ventana_retiro_invalida&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;test_crear_producto.py::TestCrearLoteFallasValidacion::test_13_ventana_retiro_invalida&#34;, &#34;duration&#34;: &#34;00:00:03&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;test_crear_producto.py::TestCrearLoteFallasValidacion::test_13_ventana_retiro_invalida&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:03&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;self = &amp;lt;test_crear_producto.TestCrearLoteFallasValidacion object at 0x0000025E96805610&amp;gt;\nusuario_tienda_con_producto = {&amp;#x27;email&amp;#x27;: &amp;#x27;tienda_prod_176482291517311@test.com&amp;#x27;, &amp;#x27;id_tienda&amp;#x27;: 1634, &amp;#x27;id_usuario&amp;#x27;: 2408, &amp;#x27;token&amp;#x27;: &amp;#x27;eyJhbGciOiJIUzI1NiI...vbSIsImlkX3RpZW5kYSI6bnVsbCwiaWF0IjoxNzY0ODIyOTE2LCJleHAiOjE3NjQ5MDkzMTZ9.tMCJWs3LJ0Lu_QrEHDuo5U15sAa2GtU2D9NxWj19Cbo&amp;#x27;}\n\n    def test_13_ventana_retiro_invalida(self, usuario_tienda_con_producto):\n        &amp;quot;&amp;quot;&amp;quot;\u274c Test 13: Ventana retiro con fin antes de inicio&amp;quot;&amp;quot;&amp;quot;\n        print(&amp;quot;\\n\u274c Test 13: Ventana retiro inv\u00e1lida...&amp;quot;)\n    \n        ahora = datetime.now()\n        datos_lote = {\n            &amp;quot;nombre_lote&amp;quot;: f&amp;quot;Lote Ventana Inv {datetime.now().timestamp()}&amp;quot;,\n            &amp;quot;descripcion&amp;quot;: &amp;quot;Ventana inv\u00e1lida&amp;quot;,\n            &amp;quot;precio_original&amp;quot;: &amp;quot;50000&amp;quot;,\n            &amp;quot;precio_rescate&amp;quot;: &amp;quot;25000&amp;quot;,\n            &amp;quot;fecha_vencimiento&amp;quot;: (datetime.now() + timedelta(days=5)).strftime(&amp;quot;%Y-%m-%d&amp;quot;),\n            &amp;quot;peso_qty&amp;quot;: &amp;quot;50.0&amp;quot;,\n            &amp;quot;id_tienda&amp;quot;: str(usuario_tienda_con_producto[&amp;#x27;id_tienda&amp;#x27;]),\n            &amp;quot;ventana_retiro_inicio&amp;quot;: (ahora + timedelta(days=2)).isoformat(),\n            &amp;quot;ventana_retiro_fin&amp;quot;: (ahora + timedelta(days=1)).isoformat(),\n            &amp;quot;categorias&amp;quot;: json.dumps([]),\n            &amp;quot;categorias_nuevas&amp;quot;: json.dumps([&amp;quot;frutas&amp;quot;])\n        }\n    \n        files = {&amp;quot;imagenes&amp;quot;: (&amp;quot;test.png&amp;quot;, crear_imagen_prueba(), &amp;quot;image/png&amp;quot;)}\n    \n        resp = requests.post(\n            f&amp;quot;{BASE_URL}/api/lotes&amp;quot;,\n            data=datos_lote,\n            files=files,\n            headers={&amp;quot;Authorization&amp;quot;: f&amp;quot;Bearer {usuario_tienda_con_producto[&amp;#x27;token&amp;#x27;]}&amp;quot;}\n        )\n    \n&amp;gt;       assert resp.status_code == 400, f&amp;quot;Ventana inv\u00e1lida aceptada - {resp.status_code}&amp;quot;\nE       AssertionError: Ventana inv\u00e1lida aceptada - 201\nE       assert 201 == 400\nE        +  where 201 = &amp;lt;Response [201]&amp;gt;.status_code\n\ntest_crear_producto.py:484: AssertionError\n\n----------------------------- Captured stdout call -----------------------------\n\n\u274c Test 13: Ventana retiro inv\u00e1lida...\n&#34;}], &#34;test_crear_producto.py::TestCrearLoteFallasValidacion::test_14_sin_imagen&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;test_crear_producto.py::TestCrearLoteFallasValidacion::test_14_sin_imagen&#34;, &#34;duration&#34;: &#34;00:00:02&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;test_crear_producto.py::TestCrearLoteFallasValidacion::test_14_sin_imagen&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:02&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;----------------------------- Captured stdout call -----------------------------\n\n\u274c Test 14: Sin imagen...\n&#34;}], &#34;test_crear_producto.py::TestCrearLoteFallasValidacion::test_15_id_tienda_inexistente&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;test_crear_producto.py::TestCrearLoteFallasValidacion::test_15_id_tienda_inexistente&#34;, &#34;duration&#34;: &#34;00:00:02&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;test_crear_producto.py::TestCrearLoteFallasValidacion::test_15_id_tienda_inexistente&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:02&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;----------------------------- Captured stdout call -----------------------------\n\n\u274c Test 15: Tienda inexistente...\n&#34;}], &#34;test_crear_producto.py::TestCrearLoteFallasValidacion::test_16_precio_original_cero&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;test_crear_producto.py::TestCrearLoteFallasValidacion::test_16_precio_original_cero&#34;, &#34;duration&#34;: &#34;00:00:02&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;test_crear_producto.py::TestCrearLoteFallasValidacion::test_16_precio_original_cero&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:02&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;self = &amp;lt;test_crear_producto.TestCrearLoteFallasValidacion object at 0x0000025E96806120&amp;gt;\nusuario_tienda_con_producto = {&amp;#x27;email&amp;#x27;: &amp;#x27;tienda_prod_17648229223813107@test.com&amp;#x27;, &amp;#x27;id_tienda&amp;#x27;: 1637, &amp;#x27;id_usuario&amp;#x27;: 2411, &amp;#x27;token&amp;#x27;: &amp;#x27;eyJhbGciOiJIUzI1N...9tIiwiaWRfdGllbmRhIjpudWxsLCJpYXQiOjE3NjQ4MjI5MjMsImV4cCI6MTc2NDkwOTMyM30.NH4TA9ogNASfiM6KUJrPI82hQKsVrqSOhHDo31BFznQ&amp;#x27;}\n\n    def test_16_precio_original_cero(self, usuario_tienda_con_producto):\n        &amp;quot;&amp;quot;&amp;quot;\u274c Test 16: Precio original cero&amp;quot;&amp;quot;&amp;quot;\n        print(&amp;quot;\\n\u274c Test 16: Precio original cero...&amp;quot;)\n    \n        datos_lote = {\n            &amp;quot;nombre_lote&amp;quot;: f&amp;quot;Lote Precio 0 {datetime.now().timestamp()}&amp;quot;,\n            &amp;quot;descripcion&amp;quot;: &amp;quot;Precio original cero&amp;quot;,\n            &amp;quot;precio_original&amp;quot;: &amp;quot;0&amp;quot;,\n            &amp;quot;precio_rescate&amp;quot;: &amp;quot;25000&amp;quot;,\n            &amp;quot;fecha_vencimiento&amp;quot;: (datetime.now() + timedelta(days=5)).strftime(&amp;quot;%Y-%m-%d&amp;quot;),\n            &amp;quot;peso_qty&amp;quot;: &amp;quot;50.0&amp;quot;,\n            &amp;quot;id_tienda&amp;quot;: str(usuario_tienda_con_producto[&amp;#x27;id_tienda&amp;#x27;]),\n            &amp;quot;ventana_retiro_inicio&amp;quot;: (datetime.now() + timedelta(days=1)).isoformat(),\n            &amp;quot;ventana_retiro_fin&amp;quot;: (datetime.now() + timedelta(days=2)).isoformat(),\n            &amp;quot;categorias&amp;quot;: json.dumps([]),\n            &amp;quot;categorias_nuevas&amp;quot;: json.dumps([&amp;quot;frutas&amp;quot;])\n        }\n    \n        files = {&amp;quot;imagenes&amp;quot;: (&amp;quot;test.png&amp;quot;, crear_imagen_prueba(), &amp;quot;image/png&amp;quot;)}\n    \n        resp = requests.post(\n            f&amp;quot;{BASE_URL}/api/lotes&amp;quot;,\n            data=datos_lote,\n            files=files,\n            headers={&amp;quot;Authorization&amp;quot;: f&amp;quot;Bearer {usuario_tienda_con_producto[&amp;#x27;token&amp;#x27;]}&amp;quot;}\n        )\n    \n&amp;gt;       assert resp.status_code == 400\nE       assert 500 == 400\nE        +  where 500 = &amp;lt;Response [500]&amp;gt;.status_code\n\ntest_crear_producto.py:571: AssertionError\n\n----------------------------- Captured stdout call -----------------------------\n\n\u274c Test 16: Precio original cero...\n&#34;}], &#34;test_crear_producto.py::TestCrearLoteFallasValidacion::test_17_precio_original_negativo&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;test_crear_producto.py::TestCrearLoteFallasValidacion::test_17_precio_original_negativo&#34;, &#34;duration&#34;: &#34;00:00:02&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;test_crear_producto.py::TestCrearLoteFallasValidacion::test_17_precio_original_negativo&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:02&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;self = &amp;lt;test_crear_producto.TestCrearLoteFallasValidacion object at 0x0000025E96806300&amp;gt;\nusuario_tienda_con_producto = {&amp;#x27;email&amp;#x27;: &amp;#x27;tienda_prod_17648229246881592@test.com&amp;#x27;, &amp;#x27;id_tienda&amp;#x27;: 1638, &amp;#x27;id_usuario&amp;#x27;: 2412, &amp;#x27;token&amp;#x27;: &amp;#x27;eyJhbGciOiJIUzI1N...9tIiwiaWRfdGllbmRhIjpudWxsLCJpYXQiOjE3NjQ4MjI5MjUsImV4cCI6MTc2NDkwOTMyNX0.6ixWPRltbPb0Qi8AXKMCG_esmxfvhMsaDWLn4v4eq78&amp;#x27;}\n\n    def test_17_precio_original_negativo(self, usuario_tienda_con_producto):\n        &amp;quot;&amp;quot;&amp;quot;\u274c Test 17: Precio original negativo&amp;quot;&amp;quot;&amp;quot;\n        print(&amp;quot;\\n\u274c Test 17: Precio original negativo...&amp;quot;)\n    \n        datos_lote = {\n            &amp;quot;nombre_lote&amp;quot;: f&amp;quot;Lote Precio Neg {datetime.now().timestamp()}&amp;quot;,\n            &amp;quot;descripcion&amp;quot;: &amp;quot;Precio original negativo&amp;quot;,\n            &amp;quot;precio_original&amp;quot;: &amp;quot;-50000&amp;quot;,\n            &amp;quot;precio_rescate&amp;quot;: &amp;quot;25000&amp;quot;,\n            &amp;quot;fecha_vencimiento&amp;quot;: (datetime.now() + timedelta(days=5)).strftime(&amp;quot;%Y-%m-%d&amp;quot;),\n            &amp;quot;peso_qty&amp;quot;: &amp;quot;50.0&amp;quot;,\n            &amp;quot;id_tienda&amp;quot;: str(usuario_tienda_con_producto[&amp;#x27;id_tienda&amp;#x27;]),\n            &amp;quot;ventana_retiro_inicio&amp;quot;: (datetime.now() + timedelta(days=1)).isoformat(),\n            &amp;quot;ventana_retiro_fin&amp;quot;: (datetime.now() + timedelta(days=2)).isoformat(),\n            &amp;quot;categorias&amp;quot;: json.dumps([]),\n            &amp;quot;categorias_nuevas&amp;quot;: json.dumps([&amp;quot;frutas&amp;quot;])\n        }\n    \n        files = {&amp;quot;imagenes&amp;quot;: (&amp;quot;test.png&amp;quot;, crear_imagen_prueba(), &amp;quot;image/png&amp;quot;)}\n    \n        resp = requests.post(\n            f&amp;quot;{BASE_URL}/api/lotes&amp;quot;,\n            data=datos_lote,\n            files=files,\n            headers={&amp;quot;Authorization&amp;quot;: f&amp;quot;Bearer {usuario_tienda_con_producto[&amp;#x27;token&amp;#x27;]}&amp;quot;}\n        )\n    \n&amp;gt;       assert resp.status_code == 400\nE       assert 500 == 400\nE        +  where 500 = &amp;lt;Response [500]&amp;gt;.status_code\n\ntest_crear_producto.py:601: AssertionError\n\n----------------------------- Captured stdout call -----------------------------\n\n\u274c Test 17: Precio original negativo...\n&#34;}], &#34;test_crear_producto.py::TestCrearLoteImagenes::test_18_multiples_imagenes&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;test_crear_producto.py::TestCrearLoteImagenes::test_18_multiples_imagenes&#34;, &#34;duration&#34;: &#34;00:00:04&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;test_crear_producto.py::TestCrearLoteImagenes::test_18_multiples_imagenes&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:04&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;----------------------------- Captured stdout call -----------------------------\n\n\u2705 Test 18: M\u00faltiples im\u00e1genes...\n&#34;}], &#34;test_crear_producto.py::TestCrearLoteImagenes::test_19_imagen_muy_grande&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;test_crear_producto.py::TestCrearLoteImagenes::test_19_imagen_muy_grande&#34;, &#34;duration&#34;: &#34;00:00:03&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;test_crear_producto.py::TestCrearLoteImagenes::test_19_imagen_muy_grande&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:03&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;----------------------------- Captured stdout call -----------------------------\n\n\u2705 Test 19: Imagen muy grande...\n&#34;}], &#34;test_crear_producto.py::TestCrearLoteImagenes::test_20_imagen_muy_pequena&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;test_crear_producto.py::TestCrearLoteImagenes::test_20_imagen_muy_pequena&#34;, &#34;duration&#34;: &#34;00:00:03&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;test_crear_producto.py::TestCrearLoteImagenes::test_20_imagen_muy_pequena&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:03&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;----------------------------- Captured stdout call -----------------------------\n\n\u2705 Test 20: Imagen muy peque\u00f1a...\n&#34;}], &#34;test_crear_producto.py::TestCrearLoteImagenes::test_21_imagen_colores_diferentes&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;test_crear_producto.py::TestCrearLoteImagenes::test_21_imagen_colores_diferentes&#34;, &#34;duration&#34;: &#34;00:00:02&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;test_crear_producto.py::TestCrearLoteImagenes::test_21_imagen_colores_diferentes&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:02&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;self = &amp;lt;test_crear_producto.TestCrearLoteImagenes object at 0x0000025E96806AB0&amp;gt;\nusuario_tienda_con_producto = {&amp;#x27;email&amp;#x27;: &amp;#x27;tienda_prod_17648229377131228@test.com&amp;#x27;, &amp;#x27;id_tienda&amp;#x27;: 1642, &amp;#x27;id_usuario&amp;#x27;: 2416, &amp;#x27;token&amp;#x27;: &amp;#x27;eyJhbGciOiJIUzI1N...9tIiwiaWRfdGllbmRhIjpudWxsLCJpYXQiOjE3NjQ4MjI5MzgsImV4cCI6MTc2NDkwOTMzOH0.D6UIpEvsYsqeISfJHKayMHorgHkyvt9LaDkNMQyO4eE&amp;#x27;}\n\n    def test_21_imagen_colores_diferentes(self, usuario_tienda_con_producto):\n        &amp;quot;&amp;quot;&amp;quot;\u2705 Test 21: M\u00faltiples im\u00e1genes con colores diferentes&amp;quot;&amp;quot;&amp;quot;\n        print(&amp;quot;\\n\u2705 Test 21: Im\u00e1genes colores diferentes...&amp;quot;)\n    \n        datos_lote = {\n            &amp;quot;nombre_lote&amp;quot;: f&amp;quot;Lote Colores {datetime.now().timestamp()}&amp;quot;,\n            &amp;quot;descripcion&amp;quot;: &amp;quot;Colores diversos&amp;quot;,\n            &amp;quot;precio_original&amp;quot;: &amp;quot;50000&amp;quot;,\n            &amp;quot;precio_rescate&amp;quot;: &amp;quot;25000&amp;quot;,\n            &amp;quot;fecha_vencimiento&amp;quot;: (datetime.now() + timedelta(days=5)).strftime(&amp;quot;%Y-%m-%d&amp;quot;),\n            &amp;quot;peso_qty&amp;quot;: &amp;quot;50.0&amp;quot;,\n            &amp;quot;id_tienda&amp;quot;: str(usuario_tienda_con_producto[&amp;#x27;id_tienda&amp;#x27;]),\n            &amp;quot;ventana_retiro_inicio&amp;quot;: (datetime.now() + timedelta(days=1)).isoformat(),\n            &amp;quot;ventana_retiro_fin&amp;quot;: (datetime.now() + timedelta(days=2)).isoformat(),\n            &amp;quot;categorias&amp;quot;: json.dumps([]),\n            &amp;quot;categorias_nuevas&amp;quot;: json.dumps([&amp;quot;frutas&amp;quot;])\n        }\n    \n        colores = [&amp;#x27;red&amp;#x27;, &amp;#x27;blue&amp;#x27;, &amp;#x27;green&amp;#x27;, &amp;#x27;yellow&amp;#x27;, &amp;#x27;purple&amp;#x27;, &amp;#x27;orange&amp;#x27;]\n        files = [\n            (&amp;quot;imagenes&amp;quot;, (f&amp;quot;test_{i}.png&amp;quot;, crear_imagen_prueba(col), &amp;quot;image/png&amp;quot;))\n            for i, col in enumerate(colores)\n        ]\n    \n        resp = requests.post(\n            f&amp;quot;{BASE_URL}/api/lotes&amp;quot;,\n            data=datos_lote,\n            files=files,\n            headers={&amp;quot;Authorization&amp;quot;: f&amp;quot;Bearer {usuario_tienda_con_producto[&amp;#x27;token&amp;#x27;]}&amp;quot;}\n        )\n    \n&amp;gt;       assert resp.status_code == 201\nE       assert 500 == 201\nE        +  where 500 = &amp;lt;Response [500]&amp;gt;.status_code\n\ntest_crear_producto.py:732: AssertionError\n\n----------------------------- Captured stdout call -----------------------------\n\n\u2705 Test 21: Im\u00e1genes colores diferentes...\n&#34;}], &#34;test_crear_producto.py::TestCrearLoteAutenticacion::test_22_sin_token&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;test_crear_producto.py::TestCrearLoteAutenticacion::test_22_sin_token&#34;, &#34;duration&#34;: &#34;00:00:03&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;test_crear_producto.py::TestCrearLoteAutenticacion::test_22_sin_token&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:03&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;self = &amp;lt;test_crear_producto.TestCrearLoteAutenticacion object at 0x0000025E96806CF0&amp;gt;\nusuario_tienda_con_producto = {&amp;#x27;email&amp;#x27;: &amp;#x27;tienda_prod_1764822939484069@test.com&amp;#x27;, &amp;#x27;id_tienda&amp;#x27;: 1643, &amp;#x27;id_usuario&amp;#x27;: 2417, &amp;#x27;token&amp;#x27;: &amp;#x27;eyJhbGciOiJIUzI1Ni...20iLCJpZF90aWVuZGEiOm51bGwsImlhdCI6MTc2NDgyMjk0MCwiZXhwIjoxNzY0OTA5MzQwfQ.fRQ2QWiDYre-gq8fhzO6SKSiNq2XbKr7WUVOcFTdDk8&amp;#x27;}\n\n    def test_22_sin_token(self, usuario_tienda_con_producto):\n        &amp;quot;&amp;quot;&amp;quot;\u274c Test 22: Sin token de autenticaci\u00f3n&amp;quot;&amp;quot;&amp;quot;\n        print(&amp;quot;\\n\u274c Test 22: Sin token...&amp;quot;)\n    \n        datos_lote = {\n            &amp;quot;nombre_lote&amp;quot;: f&amp;quot;Lote Sin Token {datetime.now().timestamp()}&amp;quot;,\n            &amp;quot;descripcion&amp;quot;: &amp;quot;Sin autenticaci\u00f3n&amp;quot;,\n            &amp;quot;precio_original&amp;quot;: &amp;quot;50000&amp;quot;,\n            &amp;quot;precio_rescate&amp;quot;: &amp;quot;25000&amp;quot;,\n            &amp;quot;fecha_vencimiento&amp;quot;: (datetime.now() + timedelta(days=5)).strftime(&amp;quot;%Y-%m-%d&amp;quot;),\n            &amp;quot;peso_qty&amp;quot;: &amp;quot;50.0&amp;quot;,\n            &amp;quot;id_tienda&amp;quot;: str(usuario_tienda_con_producto[&amp;#x27;id_tienda&amp;#x27;]),\n            &amp;quot;ventana_retiro_inicio&amp;quot;: (datetime.now() + timedelta(days=1)).isoformat(),\n            &amp;quot;ventana_retiro_fin&amp;quot;: (datetime.now() + timedelta(days=2)).isoformat(),\n            &amp;quot;categorias&amp;quot;: json.dumps([]),\n            &amp;quot;categorias_nuevas&amp;quot;: json.dumps([&amp;quot;frutas&amp;quot;])\n        }\n    \n        files = {&amp;quot;imagenes&amp;quot;: (&amp;quot;test.png&amp;quot;, crear_imagen_prueba(), &amp;quot;image/png&amp;quot;)}\n    \n        resp = requests.post(\n            f&amp;quot;{BASE_URL}/api/lotes&amp;quot;,\n            data=datos_lote,\n            files=files\n        )\n    \n&amp;gt;       assert resp.status_code == 401\nE       assert 201 == 401\nE        +  where 201 = &amp;lt;Response [201]&amp;gt;.status_code\n\ntest_crear_producto.py:764: AssertionError\n\n----------------------------- Captured stdout call -----------------------------\n\n\u274c Test 22: Sin token...\n&#34;}], &#34;test_crear_producto.py::TestCrearLoteAutenticacion::test_23_token_invalido&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;test_crear_producto.py::TestCrearLoteAutenticacion::test_23_token_invalido&#34;, &#34;duration&#34;: &#34;00:00:03&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;test_crear_producto.py::TestCrearLoteAutenticacion::test_23_token_invalido&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:03&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;self = &amp;lt;test_crear_producto.TestCrearLoteAutenticacion object at 0x0000025E96806ED0&amp;gt;\nusuario_tienda_con_producto = {&amp;#x27;email&amp;#x27;: &amp;#x27;tienda_prod_17648229426617846@test.com&amp;#x27;, &amp;#x27;id_tienda&amp;#x27;: 1644, &amp;#x27;id_usuario&amp;#x27;: 2418, &amp;#x27;token&amp;#x27;: &amp;#x27;eyJhbGciOiJIUzI1N...9tIiwiaWRfdGllbmRhIjpudWxsLCJpYXQiOjE3NjQ4MjI5NDMsImV4cCI6MTc2NDkwOTM0M30.qmsvu80-RRv3EwlzhxUPWmzNm94DAIE3N6hLTZOZp-o&amp;#x27;}\n\n    def test_23_token_invalido(self, usuario_tienda_con_producto):\n        &amp;quot;&amp;quot;&amp;quot;\u274c Test 23: Token inv\u00e1lido&amp;quot;&amp;quot;&amp;quot;\n        print(&amp;quot;\\n\u274c Test 23: Token inv\u00e1lido...&amp;quot;)\n    \n        datos_lote = {\n            &amp;quot;nombre_lote&amp;quot;: f&amp;quot;Lote Token Inv {datetime.now().timestamp()}&amp;quot;,\n            &amp;quot;descripcion&amp;quot;: &amp;quot;Token inv\u00e1lido&amp;quot;,\n            &amp;quot;precio_original&amp;quot;: &amp;quot;50000&amp;quot;,\n            &amp;quot;precio_rescate&amp;quot;: &amp;quot;25000&amp;quot;,\n            &amp;quot;fecha_vencimiento&amp;quot;: (datetime.now() + timedelta(days=5)).strftime(&amp;quot;%Y-%m-%d&amp;quot;),\n            &amp;quot;peso_qty&amp;quot;: &amp;quot;50.0&amp;quot;,\n            &amp;quot;id_tienda&amp;quot;: str(usuario_tienda_con_producto[&amp;#x27;id_tienda&amp;#x27;]),\n            &amp;quot;ventana_retiro_inicio&amp;quot;: (datetime.now() + timedelta(days=1)).isoformat(),\n            &amp;quot;ventana_retiro_fin&amp;quot;: (datetime.now() + timedelta(days=2)).isoformat(),\n            &amp;quot;categorias&amp;quot;: json.dumps([]),\n            &amp;quot;categorias_nuevas&amp;quot;: json.dumps([&amp;quot;frutas&amp;quot;])\n        }\n    \n        files = {&amp;quot;imagenes&amp;quot;: (&amp;quot;test.png&amp;quot;, crear_imagen_prueba(), &amp;quot;image/png&amp;quot;)}\n    \n        resp = requests.post(\n            f&amp;quot;{BASE_URL}/api/lotes&amp;quot;,\n            data=datos_lote,\n            files=files,\n            headers={&amp;quot;Authorization&amp;quot;: &amp;quot;Bearer token_invalido_xyz&amp;quot;}\n        )\n    \n&amp;gt;       assert resp.status_code == 401\nE       assert 201 == 401\nE        +  where 201 = &amp;lt;Response [201]&amp;gt;.status_code\n\ntest_crear_producto.py:794: AssertionError\n\n----------------------------- Captured stdout call -----------------------------\n\n\u274c Test 23: Token inv\u00e1lido...\n&#34;}], &#34;test_crear_producto.py::TestCrearLoteAutenticacion::test_24_token_vacio&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;test_crear_producto.py::TestCrearLoteAutenticacion::test_24_token_vacio&#34;, &#34;duration&#34;: &#34;00:00:03&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;test_crear_producto.py::TestCrearLoteAutenticacion::test_24_token_vacio&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:03&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;self = &amp;lt;test_crear_producto.TestCrearLoteAutenticacion object at 0x0000025E968070B0&amp;gt;\nusuario_tienda_con_producto = {&amp;#x27;email&amp;#x27;: &amp;#x27;tienda_prod_1764822945895889@test.com&amp;#x27;, &amp;#x27;id_tienda&amp;#x27;: 1645, &amp;#x27;id_usuario&amp;#x27;: 2419, &amp;#x27;token&amp;#x27;: &amp;#x27;eyJhbGciOiJIUzI1Ni...20iLCJpZF90aWVuZGEiOm51bGwsImlhdCI6MTc2NDgyMjk0NywiZXhwIjoxNzY0OTA5MzQ3fQ.OWN9kXOvdKWokkoOggOmjBdXXfus_jMSAlFxA_jhmyk&amp;#x27;}\n\n    def test_24_token_vacio(self, usuario_tienda_con_producto):\n        &amp;quot;&amp;quot;&amp;quot;\u274c Test 24: Token vac\u00edo&amp;quot;&amp;quot;&amp;quot;\n        print(&amp;quot;\\n\u274c Test 24: Token vac\u00edo...&amp;quot;)\n    \n        datos_lote = {\n            &amp;quot;nombre_lote&amp;quot;: f&amp;quot;Lote Token Vacio {datetime.now().timestamp()}&amp;quot;,\n            &amp;quot;descripcion&amp;quot;: &amp;quot;Token vac\u00edo&amp;quot;,\n            &amp;quot;precio_original&amp;quot;: &amp;quot;50000&amp;quot;,\n            &amp;quot;precio_rescate&amp;quot;: &amp;quot;25000&amp;quot;,\n            &amp;quot;fecha_vencimiento&amp;quot;: (datetime.now() + timedelta(days=5)).strftime(&amp;quot;%Y-%m-%d&amp;quot;),\n            &amp;quot;peso_qty&amp;quot;: &amp;quot;50.0&amp;quot;,\n            &amp;quot;id_tienda&amp;quot;: str(usuario_tienda_con_producto[&amp;#x27;id_tienda&amp;#x27;]),\n            &amp;quot;ventana_retiro_inicio&amp;quot;: (datetime.now() + timedelta(days=1)).isoformat(),\n            &amp;quot;ventana_retiro_fin&amp;quot;: (datetime.now() + timedelta(days=2)).isoformat(),\n            &amp;quot;categorias&amp;quot;: json.dumps([]),\n            &amp;quot;categorias_nuevas&amp;quot;: json.dumps([&amp;quot;frutas&amp;quot;])\n        }\n    \n        files = {&amp;quot;imagenes&amp;quot;: (&amp;quot;test.png&amp;quot;, crear_imagen_prueba(), &amp;quot;image/png&amp;quot;)}\n    \n        resp = requests.post(\n            f&amp;quot;{BASE_URL}/api/lotes&amp;quot;,\n            data=datos_lote,\n            files=files,\n            headers={&amp;quot;Authorization&amp;quot;: &amp;quot;Bearer &amp;quot;}\n        )\n    \n&amp;gt;       assert resp.status_code == 401\nE       assert 201 == 401\nE        +  where 201 = &amp;lt;Response [201]&amp;gt;.status_code\n\ntest_crear_producto.py:824: AssertionError\n\n----------------------------- Captured stdout call -----------------------------\n\n\u274c Test 24: Token vac\u00edo...\n&#34;}], &#34;test_crear_producto.py::TestCrearLoteDatos::test_25_nombre_muy_largo&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;test_crear_producto.py::TestCrearLoteDatos::test_25_nombre_muy_largo&#34;, &#34;duration&#34;: &#34;00:00:02&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;test_crear_producto.py::TestCrearLoteDatos::test_25_nombre_muy_largo&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:02&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;self = &amp;lt;test_crear_producto.TestCrearLoteDatos object at 0x0000025E968072C0&amp;gt;\nusuario_tienda_con_producto = {&amp;#x27;email&amp;#x27;: &amp;#x27;tienda_prod_17648229490577095@test.com&amp;#x27;, &amp;#x27;id_tienda&amp;#x27;: 1646, &amp;#x27;id_usuario&amp;#x27;: 2420, &amp;#x27;token&amp;#x27;: &amp;#x27;eyJhbGciOiJIUzI1N...9tIiwiaWRfdGllbmRhIjpudWxsLCJpYXQiOjE3NjQ4MjI5NTAsImV4cCI6MTc2NDkwOTM1MH0.6tGR_QFdSPcMdeBsBY-fnAM_4oONh_5FGloLicMkLkY&amp;#x27;}\n\n    def test_25_nombre_muy_largo(self, usuario_tienda_con_producto):\n        &amp;quot;&amp;quot;&amp;quot;\u2705 Test 25: Nombre muy largo&amp;quot;&amp;quot;&amp;quot;\n        print(&amp;quot;\\n\u2705 Test 25: Nombre muy largo...&amp;quot;)\n    \n        datos_lote = {\n            &amp;quot;nombre_lote&amp;quot;: generar_string_aleatorio(200),\n            &amp;quot;descripcion&amp;quot;: &amp;quot;Nombre muy largo&amp;quot;,\n            &amp;quot;precio_original&amp;quot;: &amp;quot;50000&amp;quot;,\n            &amp;quot;precio_rescate&amp;quot;: &amp;quot;25000&amp;quot;,\n            &amp;quot;fecha_vencimiento&amp;quot;: (datetime.now() + timedelta(days=5)).strftime(&amp;quot;%Y-%m-%d&amp;quot;),\n            &amp;quot;peso_qty&amp;quot;: &amp;quot;50.0&amp;quot;,\n            &amp;quot;id_tienda&amp;quot;: str(usuario_tienda_con_producto[&amp;#x27;id_tienda&amp;#x27;]),\n            &amp;quot;ventana_retiro_inicio&amp;quot;: (datetime.now() + timedelta(days=1)).isoformat(),\n            &amp;quot;ventana_retiro_fin&amp;quot;: (datetime.now() + timedelta(days=2)).isoformat(),\n            &amp;quot;categorias&amp;quot;: json.dumps([]),\n            &amp;quot;categorias_nuevas&amp;quot;: json.dumps([&amp;quot;frutas&amp;quot;])\n        }\n    \n        files = {&amp;quot;imagenes&amp;quot;: (&amp;quot;test.png&amp;quot;, crear_imagen_prueba(), &amp;quot;image/png&amp;quot;)}\n    \n        resp = requests.post(\n            f&amp;quot;{BASE_URL}/api/lotes&amp;quot;,\n            data=datos_lote,\n            files=files,\n            headers={&amp;quot;Authorization&amp;quot;: f&amp;quot;Bearer {usuario_tienda_con_producto[&amp;#x27;token&amp;#x27;]}&amp;quot;}\n        )\n    \n&amp;gt;       assert resp.status_code in [201, 400]\nE       assert 500 in [201, 400]\nE        +  where 500 = &amp;lt;Response [500]&amp;gt;.status_code\n\ntest_crear_producto.py:857: AssertionError\n\n----------------------------- Captured stdout call -----------------------------\n\n\u2705 Test 25: Nombre muy largo...\n&#34;}], &#34;test_crear_producto.py::TestCrearLoteDatos::test_26_descripcion_especial&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;test_crear_producto.py::TestCrearLoteDatos::test_26_descripcion_especial&#34;, &#34;duration&#34;: &#34;00:00:03&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;test_crear_producto.py::TestCrearLoteDatos::test_26_descripcion_especial&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:03&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;----------------------------- Captured stdout call -----------------------------\n\n\u2705 Test 26: Descripci\u00f3n especial...\n&#34;}], &#34;test_crear_producto.py::TestCrearLoteDatos::test_27_precio_rescate_mayor_original&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;test_crear_producto.py::TestCrearLoteDatos::test_27_precio_rescate_mayor_original&#34;, &#34;duration&#34;: &#34;00:00:02&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;test_crear_producto.py::TestCrearLoteDatos::test_27_precio_rescate_mayor_original&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:02&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;self = &amp;lt;test_crear_producto.TestCrearLoteDatos object at 0x0000025E96807680&amp;gt;\nusuario_tienda_con_producto = {&amp;#x27;email&amp;#x27;: &amp;#x27;tienda_prod_17648229544760659@test.com&amp;#x27;, &amp;#x27;id_tienda&amp;#x27;: 1648, &amp;#x27;id_usuario&amp;#x27;: 2422, &amp;#x27;token&amp;#x27;: &amp;#x27;eyJhbGciOiJIUzI1N...9tIiwiaWRfdGllbmRhIjpudWxsLCJpYXQiOjE3NjQ4MjI5NTUsImV4cCI6MTc2NDkwOTM1NX0.sIp20no8uZmQsdeIhAsvqqxNtKDCkZ2Lkxj_qlpbpa8&amp;#x27;}\n\n    def test_27_precio_rescate_mayor_original(self, usuario_tienda_con_producto):\n        &amp;quot;&amp;quot;&amp;quot;\u26a0\ufe0f  Test 27: Precio rescate mayor que original&amp;quot;&amp;quot;&amp;quot;\n        print(&amp;quot;\\n\u26a0\ufe0f  Test 27: Precio rescate &amp;gt; original...&amp;quot;)\n    \n        datos_lote = {\n            &amp;quot;nombre_lote&amp;quot;: f&amp;quot;Lote Il\u00f3gico {datetime.now().timestamp()}&amp;quot;,\n            &amp;quot;descripcion&amp;quot;: &amp;quot;Precio rescate mayor&amp;quot;,\n            &amp;quot;precio_original&amp;quot;: &amp;quot;25000&amp;quot;,\n            &amp;quot;precio_rescate&amp;quot;: &amp;quot;50000&amp;quot;,\n            &amp;quot;fecha_vencimiento&amp;quot;: (datetime.now() + timedelta(days=5)).strftime(&amp;quot;%Y-%m-%d&amp;quot;),\n            &amp;quot;peso_qty&amp;quot;: &amp;quot;50.0&amp;quot;,\n            &amp;quot;id_tienda&amp;quot;: str(usuario_tienda_con_producto[&amp;#x27;id_tienda&amp;#x27;]),\n            &amp;quot;ventana_retiro_inicio&amp;quot;: (datetime.now() + timedelta(days=1)).isoformat(),\n            &amp;quot;ventana_retiro_fin&amp;quot;: (datetime.now() + timedelta(days=2)).isoformat(),\n            &amp;quot;categorias&amp;quot;: json.dumps([]),\n            &amp;quot;categorias_nuevas&amp;quot;: json.dumps([&amp;quot;frutas&amp;quot;])\n        }\n    \n        files = {&amp;quot;imagenes&amp;quot;: (&amp;quot;test.png&amp;quot;, crear_imagen_prueba(), &amp;quot;image/png&amp;quot;)}\n    \n        resp = requests.post(\n            f&amp;quot;{BASE_URL}/api/lotes&amp;quot;,\n            data=datos_lote,\n            files=files,\n            headers={&amp;quot;Authorization&amp;quot;: f&amp;quot;Bearer {usuario_tienda_con_producto[&amp;#x27;token&amp;#x27;]}&amp;quot;}\n        )\n    \n&amp;gt;       assert resp.status_code in [201, 400]\nE       assert 500 in [201, 400]\nE        +  where 500 = &amp;lt;Response [500]&amp;gt;.status_code\n\ntest_crear_producto.py:917: AssertionError\n\n----------------------------- Captured stdout call -----------------------------\n\n\u26a0\ufe0f  Test 27: Precio rescate &amp;gt; original...\n&#34;}], &#34;test_crear_producto.py::TestCrearLoteDatos::test_28_ventana_retiro_pasada&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;test_crear_producto.py::TestCrearLoteDatos::test_28_ventana_retiro_pasada&#34;, &#34;duration&#34;: &#34;00:00:03&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;test_crear_producto.py::TestCrearLoteDatos::test_28_ventana_retiro_pasada&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:03&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;self = &amp;lt;test_crear_producto.TestCrearLoteDatos object at 0x0000025E96807860&amp;gt;\nusuario_tienda_con_producto = {&amp;#x27;email&amp;#x27;: &amp;#x27;tienda_prod_17648229567808022@test.com&amp;#x27;, &amp;#x27;id_tienda&amp;#x27;: 1649, &amp;#x27;id_usuario&amp;#x27;: 2423, &amp;#x27;token&amp;#x27;: &amp;#x27;eyJhbGciOiJIUzI1N...9tIiwiaWRfdGllbmRhIjpudWxsLCJpYXQiOjE3NjQ4MjI5NTcsImV4cCI6MTc2NDkwOTM1N30.cbQrzlS91EJhinI-Kc1p5Kmvckagaun92bmXtcggmy0&amp;#x27;}\n\n    def test_28_ventana_retiro_pasada(self, usuario_tienda_con_producto):\n        &amp;quot;&amp;quot;&amp;quot;\u274c Test 28: Ventana retiro en el pasado&amp;quot;&amp;quot;&amp;quot;\n        print(&amp;quot;\\n\u274c Test 28: Ventana retiro pasada...&amp;quot;)\n    \n        datos_lote = {\n            &amp;quot;nombre_lote&amp;quot;: f&amp;quot;Lote Retiro Pasado {datetime.now().timestamp()}&amp;quot;,\n            &amp;quot;descripcion&amp;quot;: &amp;quot;Retiro en pasado&amp;quot;,\n            &amp;quot;precio_original&amp;quot;: &amp;quot;50000&amp;quot;,\n            &amp;quot;precio_rescate&amp;quot;: &amp;quot;25000&amp;quot;,\n            &amp;quot;fecha_vencimiento&amp;quot;: (datetime.now() + timedelta(days=5)).strftime(&amp;quot;%Y-%m-%d&amp;quot;),\n            &amp;quot;peso_qty&amp;quot;: &amp;quot;50.0&amp;quot;,\n            &amp;quot;id_tienda&amp;quot;: str(usuario_tienda_con_producto[&amp;#x27;id_tienda&amp;#x27;]),\n            &amp;quot;ventana_retiro_inicio&amp;quot;: (datetime.now() - timedelta(days=2)).isoformat(),\n            &amp;quot;ventana_retiro_fin&amp;quot;: (datetime.now() - timedelta(days=1)).isoformat(),\n            &amp;quot;categorias&amp;quot;: json.dumps([]),\n            &amp;quot;categorias_nuevas&amp;quot;: json.dumps([&amp;quot;frutas&amp;quot;])\n        }\n    \n        files = {&amp;quot;imagenes&amp;quot;: (&amp;quot;test.png&amp;quot;, crear_imagen_prueba(), &amp;quot;image/png&amp;quot;)}\n    \n        resp = requests.post(\n            f&amp;quot;{BASE_URL}/api/lotes&amp;quot;,\n            data=datos_lote,\n            files=files,\n            headers={&amp;quot;Authorization&amp;quot;: f&amp;quot;Bearer {usuario_tienda_con_producto[&amp;#x27;token&amp;#x27;]}&amp;quot;}\n        )\n    \n&amp;gt;       assert resp.status_code == 400\nE       assert 201 == 400\nE        +  where 201 = &amp;lt;Response [201]&amp;gt;.status_code\n\ntest_crear_producto.py:947: AssertionError\n\n----------------------------- Captured stdout call -----------------------------\n\n\u274c Test 28: Ventana retiro pasada...\n&#34;}], &#34;test_crear_producto.py::TestCrearLoteDatos::test_29_categorias_vacia_y_nueva_vacia&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Passed&#34;, &#34;testId&#34;: &#34;test_crear_producto.py::TestCrearLoteDatos::test_29_categorias_vacia_y_nueva_vacia&#34;, &#34;duration&#34;: &#34;00:00:02&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Passed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;test_crear_producto.py::TestCrearLoteDatos::test_29_categorias_vacia_y_nueva_vacia&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:02&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;----------------------------- Captured stdout call -----------------------------\n\n\u26a0\ufe0f  Test 29: Sin categor\u00edas...\n&#34;}], &#34;test_crear_producto.py::TestCrearLoteDatos::test_30_categoria_nombre_muy_largo&#34;: [{&#34;extras&#34;: [], &#34;result&#34;: &#34;Failed&#34;, &#34;testId&#34;: &#34;test_crear_producto.py::TestCrearLoteDatos::test_30_categoria_nombre_muy_largo&#34;, &#34;duration&#34;: &#34;00:00:03&#34;, &#34;resultsTableRow&#34;: [&#34;&lt;td class=\&#34;col-result\&#34;&gt;Failed&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-testId\&#34;&gt;test_crear_producto.py::TestCrearLoteDatos::test_30_categoria_nombre_muy_largo&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-duration\&#34;&gt;00:00:03&lt;/td&gt;&#34;, &#34;&lt;td class=\&#34;col-links\&#34;&gt;&lt;/td&gt;&#34;], &#34;log&#34;: &#34;self = &amp;lt;test_crear_producto.TestCrearLoteDatos object at 0x0000025E96807C20&amp;gt;\nusuario_tienda_con_producto = {&amp;#x27;email&amp;#x27;: &amp;#x27;tienda_prod_17648229616696708@test.com&amp;#x27;, &amp;#x27;id_tienda&amp;#x27;: 1651, &amp;#x27;id_usuario&amp;#x27;: 2425, &amp;#x27;token&amp;#x27;: &amp;#x27;eyJhbGciOiJIUzI1N...9tIiwiaWRfdGllbmRhIjpudWxsLCJpYXQiOjE3NjQ4MjI5NjIsImV4cCI6MTc2NDkwOTM2Mn0.CU4GeOqe0K828jCOCryY7nzfGeowCZA-_ZeqS5gJOCo&amp;#x27;}\n\n    def test_30_categoria_nombre_muy_largo(self, usuario_tienda_con_producto):\n        &amp;quot;&amp;quot;&amp;quot;\u2705 Test 30: Categor\u00eda con nombre muy largo&amp;quot;&amp;quot;&amp;quot;\n        print(&amp;quot;\\n\u2705 Test 30: Categor\u00eda nombre muy largo...&amp;quot;)\n    \n        datos_lote = {\n            &amp;quot;nombre_lote&amp;quot;: f&amp;quot;Lote Cat Largo {datetime.now().timestamp()}&amp;quot;,\n            &amp;quot;descripcion&amp;quot;: &amp;quot;Categor\u00eda con nombre muy largo&amp;quot;,\n            &amp;quot;precio_original&amp;quot;: &amp;quot;50000&amp;quot;,\n            &amp;quot;precio_rescate&amp;quot;: &amp;quot;25000&amp;quot;,\n            &amp;quot;fecha_vencimiento&amp;quot;: (datetime.now() + timedelta(days=5)).strftime(&amp;quot;%Y-%m-%d&amp;quot;),\n            &amp;quot;peso_qty&amp;quot;: &amp;quot;50.0&amp;quot;,\n            &amp;quot;id_tienda&amp;quot;: str(usuario_tienda_con_producto[&amp;#x27;id_tienda&amp;#x27;]),\n            &amp;quot;ventana_retiro_inicio&amp;quot;: (datetime.now() + timedelta(days=1)).isoformat(),\n            &amp;quot;ventana_retiro_fin&amp;quot;: (datetime.now() + timedelta(days=2)).isoformat(),\n            &amp;quot;categorias&amp;quot;: json.dumps([]),\n            &amp;quot;categorias_nuevas&amp;quot;: json.dumps([generar_string_aleatorio(100)])\n        }\n    \n        files = {&amp;quot;imagenes&amp;quot;: (&amp;quot;test.png&amp;quot;, crear_imagen_prueba(), &amp;quot;image/png&amp;quot;)}\n    \n        resp = requests.post(\n            f&amp;quot;{BASE_URL}/api/lotes&amp;quot;,\n            data=datos_lote,\n            files=files,\n            headers={&amp;quot;Authorization&amp;quot;: f&amp;quot;Bearer {usuario_tienda_con_producto[&amp;#x27;token&amp;#x27;]}&amp;quot;}\n        )\n    \n&amp;gt;       assert resp.status_code in [201, 400]\nE       assert 500 in [201, 400]\nE        +  where 500 = &amp;lt;Response [500]&amp;gt;.status_code\n\ntest_crear_producto.py:1007: AssertionError\n\n----------------------------- Captured stdout call -----------------------------\n\n\u2705 Test 30: Categor\u00eda nombre muy largo...\n&#34;}]}, &#34;renderCollapsed&#34;: [&#34;passed&#34;], &#34;initialSort&#34;: &#34;result&#34;, &#34;title&#34;: &#34;report_3.html&#34;}"></div>
+    <script>
+      (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+const { getCollapsedCategory, setCollapsedIds } = require('./storage.js')
+
+class DataManager {
+    setManager(data) {
+        const collapsedCategories = [...getCollapsedCategory(data.renderCollapsed)]
+        const collapsedIds = []
+        const tests = Object.values(data.tests).flat().map((test, index) => {
+            const collapsed = collapsedCategories.includes(test.result.toLowerCase())
+            const id = `test_${index}`
+            if (collapsed) {
+                collapsedIds.push(id)
+            }
+            return {
+                ...test,
+                id,
+                collapsed,
+            }
+        })
+        const dataBlob = { ...data, tests }
+        this.data = { ...dataBlob }
+        this.renderData = { ...dataBlob }
+        setCollapsedIds(collapsedIds)
+    }
+
+    get allData() {
+        return { ...this.data }
+    }
+
+    resetRender() {
+        this.renderData = { ...this.data }
+    }
+
+    setRender(data) {
+        this.renderData.tests = [...data]
+    }
+
+    toggleCollapsedItem(id) {
+        this.renderData.tests = this.renderData.tests.map((test) =>
+            test.id === id ? { ...test, collapsed: !test.collapsed } : test,
+        )
+    }
+
+    set allCollapsed(collapsed) {
+        this.renderData = { ...this.renderData, tests: [...this.renderData.tests.map((test) => (
+            { ...test, collapsed }
+        ))] }
+    }
+
+    get testSubset() {
+        return [...this.renderData.tests]
+    }
+
+    get environment() {
+        return this.renderData.environment
+    }
+
+    get initialSort() {
+        return this.data.initialSort
+    }
+}
+
+module.exports = {
+    manager: new DataManager(),
+}
+
+},{"./storage.js":8}],2:[function(require,module,exports){
+const mediaViewer = require('./mediaviewer.js')
+const templateEnvRow = document.getElementById('template_environment_row')
+const templateResult = document.getElementById('template_results-table__tbody')
+
+function htmlToElements(html) {
+    const temp = document.createElement('template')
+    temp.innerHTML = html
+    return temp.content.childNodes
+}
+
+const find = (selector, elem) => {
+    if (!elem) {
+        elem = document
+    }
+    return elem.querySelector(selector)
+}
+
+const findAll = (selector, elem) => {
+    if (!elem) {
+        elem = document
+    }
+    return [...elem.querySelectorAll(selector)]
+}
+
+const dom = {
+    getStaticRow: (key, value) => {
+        const envRow = templateEnvRow.content.cloneNode(true)
+        const isObj = typeof value === 'object' && value !== null
+        const values = isObj ? Object.keys(value).map((k) => `${k}: ${value[k]}`) : null
+
+        const valuesElement = htmlToElements(
+            values ? `<ul>${values.map((val) => `<li>${val}</li>`).join('')}<ul>` : `<div>${value}</div>`)[0]
+        const td = findAll('td', envRow)
+        td[0].textContent = key
+        td[1].appendChild(valuesElement)
+
+        return envRow
+    },
+    getResultTBody: ({ testId, id, log, extras, resultsTableRow, tableHtml, result, collapsed }) => {
+        const resultBody = templateResult.content.cloneNode(true)
+        resultBody.querySelector('tbody').classList.add(result.toLowerCase())
+        resultBody.querySelector('tbody').id = testId
+        resultBody.querySelector('.collapsible').dataset.id = id
+
+        resultsTableRow.forEach((html) => {
+            const t = document.createElement('template')
+            t.innerHTML = html
+            resultBody.querySelector('.collapsible').appendChild(t.content)
+        })
+
+        if (log) {
+            // Wrap lines starting with "E" with span.error to color those lines red
+            const wrappedLog = log.replace(/^E.*$/gm, (match) => `<span class="error">${match}</span>`)
+            resultBody.querySelector('.log').innerHTML = wrappedLog
+        } else {
+            resultBody.querySelector('.log').remove()
+        }
+
+        if (collapsed) {
+            resultBody.querySelector('.collapsible > td')?.classList.add('collapsed')
+            resultBody.querySelector('.extras-row').classList.add('hidden')
+        } else {
+            resultBody.querySelector('.collapsible > td')?.classList.remove('collapsed')
+        }
+
+        const media = []
+        extras?.forEach(({ name, format_type, content }) => {
+            if (['image', 'video'].includes(format_type)) {
+                media.push({ path: content, name, format_type })
+            }
+
+            if (format_type === 'html') {
+                resultBody.querySelector('.extraHTML').insertAdjacentHTML('beforeend', `<div>${content}</div>`)
+            }
+        })
+        mediaViewer.setup(resultBody, media)
+
+        // Add custom html from the pytest_html_results_table_html hook
+        tableHtml?.forEach((item) => {
+            resultBody.querySelector('td[class="extra"]').insertAdjacentHTML('beforeend', item)
+        })
+
+        return resultBody
+    },
+}
+
+module.exports = {
+    dom,
+    htmlToElements,
+    find,
+    findAll,
+}
+
+},{"./mediaviewer.js":6}],3:[function(require,module,exports){
+const { manager } = require('./datamanager.js')
+const { doSort } = require('./sort.js')
+const storageModule = require('./storage.js')
+
+const getFilteredSubSet = (filter) =>
+    manager.allData.tests.filter(({ result }) => filter.includes(result.toLowerCase()))
+
+const doInitFilter = () => {
+    const currentFilter = storageModule.getVisible()
+    const filteredSubset = getFilteredSubSet(currentFilter)
+    manager.setRender(filteredSubset)
+}
+
+const doFilter = (type, show) => {
+    if (show) {
+        storageModule.showCategory(type)
+    } else {
+        storageModule.hideCategory(type)
+    }
+
+    const currentFilter = storageModule.getVisible()
+    const filteredSubset = getFilteredSubSet(currentFilter)
+    manager.setRender(filteredSubset)
+
+    const sortColumn = storageModule.getSort()
+    doSort(sortColumn, true)
+}
+
+module.exports = {
+    doFilter,
+    doInitFilter,
+}
+
+},{"./datamanager.js":1,"./sort.js":7,"./storage.js":8}],4:[function(require,module,exports){
+const { redraw, bindEvents, renderStatic } = require('./main.js')
+const { doInitFilter } = require('./filter.js')
+const { doInitSort } = require('./sort.js')
+const { manager } = require('./datamanager.js')
+const data = JSON.parse(document.getElementById('data-container').dataset.jsonblob)
+
+function init() {
+    manager.setManager(data)
+    doInitFilter()
+    doInitSort()
+    renderStatic()
+    redraw()
+    bindEvents()
+}
+
+init()
+
+},{"./datamanager.js":1,"./filter.js":3,"./main.js":5,"./sort.js":7}],5:[function(require,module,exports){
+const { dom, find, findAll } = require('./dom.js')
+const { manager } = require('./datamanager.js')
+const { doSort } = require('./sort.js')
+const { doFilter } = require('./filter.js')
+const {
+    getVisible,
+    getCollapsedIds,
+    setCollapsedIds,
+    getSort,
+    getSortDirection,
+    possibleFilters,
+} = require('./storage.js')
+
+const removeChildren = (node) => {
+    while (node.firstChild) {
+        node.removeChild(node.firstChild)
+    }
+}
+
+const renderStatic = () => {
+    const renderEnvironmentTable = () => {
+        const environment = manager.environment
+        const rows = Object.keys(environment).map((key) => dom.getStaticRow(key, environment[key]))
+        const table = document.getElementById('environment')
+        removeChildren(table)
+        rows.forEach((row) => table.appendChild(row))
+    }
+    renderEnvironmentTable()
+}
+
+const addItemToggleListener = (elem) => {
+    elem.addEventListener('click', ({ target }) => {
+        const id = target.parentElement.dataset.id
+        manager.toggleCollapsedItem(id)
+
+        const collapsedIds = getCollapsedIds()
+        if (collapsedIds.includes(id)) {
+            const updated = collapsedIds.filter((item) => item !== id)
+            setCollapsedIds(updated)
+        } else {
+            collapsedIds.push(id)
+            setCollapsedIds(collapsedIds)
+        }
+        redraw()
+    })
+}
+
+const renderContent = (tests) => {
+    const sortAttr = getSort(manager.initialSort)
+    const sortAsc = JSON.parse(getSortDirection())
+    const rows = tests.map(dom.getResultTBody)
+    const table = document.getElementById('results-table')
+    const tableHeader = document.getElementById('results-table-head')
+
+    const newTable = document.createElement('table')
+    newTable.id = 'results-table'
+
+    // remove all sorting classes and set the relevant
+    findAll('.sortable', tableHeader).forEach((elem) => elem.classList.remove('asc', 'desc'))
+    tableHeader.querySelector(`.sortable[data-column-type="${sortAttr}"]`)?.classList.add(sortAsc ? 'desc' : 'asc')
+    newTable.appendChild(tableHeader)
+
+    if (!rows.length) {
+        const emptyTable = document.getElementById('template_results-table__body--empty').content.cloneNode(true)
+        newTable.appendChild(emptyTable)
+    } else {
+        rows.forEach((row) => {
+            if (!!row) {
+                findAll('.collapsible td:not(.col-links', row).forEach(addItemToggleListener)
+                find('.logexpander', row).addEventListener('click',
+                    (evt) => evt.target.parentNode.classList.toggle('expanded'),
+                )
+                newTable.appendChild(row)
+            }
+        })
+    }
+
+    table.replaceWith(newTable)
+}
+
+const renderDerived = () => {
+    const currentFilter = getVisible()
+    possibleFilters.forEach((result) => {
+        const input = document.querySelector(`input[data-test-result="${result}"]`)
+        input.checked = currentFilter.includes(result)
+    })
+}
+
+const bindEvents = () => {
+    const filterColumn = (evt) => {
+        const { target: element } = evt
+        const { testResult } = element.dataset
+
+        doFilter(testResult, element.checked)
+        const collapsedIds = getCollapsedIds()
+        const updated = manager.renderData.tests.map((test) => {
+            return {
+                ...test,
+                collapsed: collapsedIds.includes(test.id),
+            }
+        })
+        manager.setRender(updated)
+        redraw()
+    }
+
+    const header = document.getElementById('environment-header')
+    header.addEventListener('click', () => {
+        const table = document.getElementById('environment')
+        table.classList.toggle('hidden')
+        header.classList.toggle('collapsed')
+    })
+
+    findAll('input[name="filter_checkbox"]').forEach((elem) => {
+        elem.addEventListener('click', filterColumn)
+    })
+
+    findAll('.sortable').forEach((elem) => {
+        elem.addEventListener('click', (evt) => {
+            const { target: element } = evt
+            const { columnType } = element.dataset
+            doSort(columnType)
+            redraw()
+        })
+    })
+
+    document.getElementById('show_all_details').addEventListener('click', () => {
+        manager.allCollapsed = false
+        setCollapsedIds([])
+        redraw()
+    })
+    document.getElementById('hide_all_details').addEventListener('click', () => {
+        manager.allCollapsed = true
+        const allIds = manager.renderData.tests.map((test) => test.id)
+        setCollapsedIds(allIds)
+        redraw()
+    })
+}
+
+const redraw = () => {
+    const { testSubset } = manager
+
+    renderContent(testSubset)
+    renderDerived()
+}
+
+module.exports = {
+    redraw,
+    bindEvents,
+    renderStatic,
+}
+
+},{"./datamanager.js":1,"./dom.js":2,"./filter.js":3,"./sort.js":7,"./storage.js":8}],6:[function(require,module,exports){
+class MediaViewer {
+    constructor(assets) {
+        this.assets = assets
+        this.index = 0
+    }
+
+    nextActive() {
+        this.index = this.index === this.assets.length - 1 ? 0 : this.index + 1
+        return [this.activeFile, this.index]
+    }
+
+    prevActive() {
+        this.index = this.index === 0 ? this.assets.length - 1 : this.index -1
+        return [this.activeFile, this.index]
+    }
+
+    get currentIndex() {
+        return this.index
+    }
+
+    get activeFile() {
+        return this.assets[this.index]
+    }
+}
+
+
+const setup = (resultBody, assets) => {
+    if (!assets.length) {
+        resultBody.querySelector('.media').classList.add('hidden')
+        return
+    }
+
+    const mediaViewer = new MediaViewer(assets)
+    const container = resultBody.querySelector('.media-container')
+    const leftArrow = resultBody.querySelector('.media-container__nav--left')
+    const rightArrow = resultBody.querySelector('.media-container__nav--right')
+    const mediaName = resultBody.querySelector('.media__name')
+    const counter = resultBody.querySelector('.media__counter')
+    const imageEl = resultBody.querySelector('img')
+    const sourceEl = resultBody.querySelector('source')
+    const videoEl = resultBody.querySelector('video')
+
+    const setImg = (media, index) => {
+        if (media?.format_type === 'image') {
+            imageEl.src = media.path
+
+            imageEl.classList.remove('hidden')
+            videoEl.classList.add('hidden')
+        } else if (media?.format_type === 'video') {
+            sourceEl.src = media.path
+
+            videoEl.classList.remove('hidden')
+            imageEl.classList.add('hidden')
+        }
+
+        mediaName.innerText = media?.name
+        counter.innerText = `${index + 1} / ${assets.length}`
+    }
+    setImg(mediaViewer.activeFile, mediaViewer.currentIndex)
+
+    const moveLeft = () => {
+        const [media, index] = mediaViewer.prevActive()
+        setImg(media, index)
+    }
+    const doRight = () => {
+        const [media, index] = mediaViewer.nextActive()
+        setImg(media, index)
+    }
+    const openImg = () => {
+        window.open(mediaViewer.activeFile.path, '_blank')
+    }
+    if (assets.length === 1) {
+        container.classList.add('media-container--fullscreen')
+    } else {
+        leftArrow.addEventListener('click', moveLeft)
+        rightArrow.addEventListener('click', doRight)
+    }
+    imageEl.addEventListener('click', openImg)
+}
+
+module.exports = {
+    setup,
+}
+
+},{}],7:[function(require,module,exports){
+const { manager } = require('./datamanager.js')
+const storageModule = require('./storage.js')
+
+const genericSort = (list, key, ascending, customOrder) => {
+    let sorted
+    if (customOrder) {
+        sorted = list.sort((a, b) => {
+            const aValue = a.result.toLowerCase()
+            const bValue = b.result.toLowerCase()
+
+            const aIndex = customOrder.findIndex((item) => item.toLowerCase() === aValue)
+            const bIndex = customOrder.findIndex((item) => item.toLowerCase() === bValue)
+
+            // Compare the indices to determine the sort order
+            return aIndex - bIndex
+        })
+    } else {
+        sorted = list.sort((a, b) => a[key] === b[key] ? 0 : a[key] > b[key] ? 1 : -1)
+    }
+
+    if (ascending) {
+        sorted.reverse()
+    }
+    return sorted
+}
+
+const durationSort = (list, ascending) => {
+    const parseDuration = (duration) => {
+        if (duration.includes(':')) {
+            // If it's in the format "HH:mm:ss"
+            const [hours, minutes, seconds] = duration.split(':').map(Number)
+            return (hours * 3600 + minutes * 60 + seconds) * 1000
+        } else {
+            // If it's in the format "nnn ms"
+            return parseInt(duration)
+        }
+    }
+    const sorted = list.sort((a, b) => parseDuration(a['duration']) - parseDuration(b['duration']))
+    if (ascending) {
+        sorted.reverse()
+    }
+    return sorted
+}
+
+const doInitSort = () => {
+    const type = storageModule.getSort(manager.initialSort)
+    const ascending = storageModule.getSortDirection()
+    const list = manager.testSubset
+    const initialOrder = ['Error', 'Failed', 'Rerun', 'XFailed', 'XPassed', 'Skipped', 'Passed']
+
+    storageModule.setSort(type)
+    storageModule.setSortDirection(ascending)
+
+    if (type?.toLowerCase() === 'original') {
+        manager.setRender(list)
+    } else {
+        let sortedList
+        switch (type) {
+        case 'duration':
+            sortedList = durationSort(list, ascending)
+            break
+        case 'result':
+            sortedList = genericSort(list, type, ascending, initialOrder)
+            break
+        default:
+            sortedList = genericSort(list, type, ascending)
+            break
+        }
+        manager.setRender(sortedList)
+    }
+}
+
+const doSort = (type, skipDirection) => {
+    const newSortType = storageModule.getSort(manager.initialSort) !== type
+    const currentAsc = storageModule.getSortDirection()
+    let ascending
+    if (skipDirection) {
+        ascending = currentAsc
+    } else {
+        ascending = newSortType ? false : !currentAsc
+    }
+    storageModule.setSort(type)
+    storageModule.setSortDirection(ascending)
+
+    const list = manager.testSubset
+    const sortedList = type === 'duration' ? durationSort(list, ascending) : genericSort(list, type, ascending)
+    manager.setRender(sortedList)
+}
+
+module.exports = {
+    doInitSort,
+    doSort,
+}
+
+},{"./datamanager.js":1,"./storage.js":8}],8:[function(require,module,exports){
+const possibleFilters = [
+    'passed',
+    'skipped',
+    'failed',
+    'error',
+    'xfailed',
+    'xpassed',
+    'rerun',
+]
+
+const getVisible = () => {
+    const url = new URL(window.location.href)
+    const settings = new URLSearchParams(url.search).get('visible')
+    const lower = (item) => {
+        const lowerItem = item.toLowerCase()
+        if (possibleFilters.includes(lowerItem)) {
+            return lowerItem
+        }
+        return null
+    }
+    return settings === null ?
+        possibleFilters :
+        [...new Set(settings?.split(',').map(lower).filter((item) => item))]
+}
+
+const hideCategory = (categoryToHide) => {
+    const url = new URL(window.location.href)
+    const visibleParams = new URLSearchParams(url.search).get('visible')
+    const currentVisible = visibleParams ? visibleParams.split(',') : [...possibleFilters]
+    const settings = [...new Set(currentVisible)].filter((f) => f !== categoryToHide).join(',')
+
+    url.searchParams.set('visible', settings)
+    window.history.pushState({}, null, unescape(url.href))
+}
+
+const showCategory = (categoryToShow) => {
+    if (typeof window === 'undefined') {
+        return
+    }
+    const url = new URL(window.location.href)
+    const currentVisible = new URLSearchParams(url.search).get('visible')?.split(',').filter(Boolean) ||
+        [...possibleFilters]
+    const settings = [...new Set([categoryToShow, ...currentVisible])]
+    const noFilter = possibleFilters.length === settings.length || !settings.length
+
+    noFilter ? url.searchParams.delete('visible') : url.searchParams.set('visible', settings.join(','))
+    window.history.pushState({}, null, unescape(url.href))
+}
+
+const getSort = (initialSort) => {
+    const url = new URL(window.location.href)
+    let sort = new URLSearchParams(url.search).get('sort')
+    if (!sort) {
+        sort = initialSort || 'result'
+    }
+    return sort
+}
+
+const setSort = (type) => {
+    const url = new URL(window.location.href)
+    url.searchParams.set('sort', type)
+    window.history.pushState({}, null, unescape(url.href))
+}
+
+const getCollapsedCategory = (renderCollapsed) => {
+    let categories
+    if (typeof window !== 'undefined') {
+        const url = new URL(window.location.href)
+        const collapsedItems = new URLSearchParams(url.search).get('collapsed')
+        switch (true) {
+        case !renderCollapsed && collapsedItems === null:
+            categories = ['passed']
+            break
+        case collapsedItems?.length === 0 || /^["']{2}$/.test(collapsedItems):
+            categories = []
+            break
+        case /^all$/.test(collapsedItems) || collapsedItems === null && /^all$/.test(renderCollapsed):
+            categories = [...possibleFilters]
+            break
+        default:
+            categories = collapsedItems?.split(',').map((item) => item.toLowerCase()) || renderCollapsed
+            break
+        }
+    } else {
+        categories = []
+    }
+    return categories
+}
+
+const getSortDirection = () => JSON.parse(sessionStorage.getItem('sortAsc')) || false
+const setSortDirection = (ascending) => sessionStorage.setItem('sortAsc', ascending)
+
+const getCollapsedIds = () => JSON.parse(sessionStorage.getItem('collapsedIds')) || []
+const setCollapsedIds = (list) => sessionStorage.setItem('collapsedIds', JSON.stringify(list))
+
+module.exports = {
+    getVisible,
+    hideCategory,
+    showCategory,
+    getCollapsedIds,
+    setCollapsedIds,
+    getSort,
+    setSort,
+    getSortDirection,
+    setSortDirection,
+    getCollapsedCategory,
+    possibleFilters,
+}
+
+},{}]},{},[4]);
+    </script>
+  </footer>
+</html>
