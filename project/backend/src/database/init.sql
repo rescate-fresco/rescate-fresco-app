@@ -7,7 +7,8 @@ CREATE TABLE IF NOT EXISTS usuarios (
     rol VARCHAR(20) CHECK (rol IN ('tienda', 'consumidor', 'admin')) NOT NULL,
     direccion_usuario TEXT,
     ubicacion_usuario POINT,
-    tienda BOOLEAN DEFAULT FALSE
+    tienda BOOLEAN DEFAULT FALSE,
+    kg_rescatados NUMERIC(10,2) DEFAULT 0
 );
 
 -- Tiendas
@@ -20,6 +21,23 @@ CREATE TABLE IF NOT EXISTS tiendas (
     ubicacion_tienda POINT
 );
 
+CREATE TABLE IF NOT EXISTS historial_compras (
+    id_compra SERIAL PRIMARY KEY,
+    id_usuario INT REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
+    id_lote INT,
+    nombre_lote VARCHAR(100),
+    categoria VARCHAR(50),
+    peso_qty NUMERIC(10,2),
+    precio_pagado NUMERIC(10,2),
+    fecha_compra TIMESTAMP DEFAULT NOW(),
+    nombre_tienda VARCHAR(100),
+    id_tienda INT,
+    ventana_retiro_inicio TIMESTAMP,
+    ventana_retiro_fin TIMESTAMP,
+    estado_compra VARCHAR(50) DEFAULT 'PENDIENTE', -- PENDIENTE, RETIRADO, CANCELADO
+    stripe_payment_intent_id VARCHAR(255),
+    FOREIGN KEY (id_tienda) REFERENCES tiendas(id_tienda) ON DELETE SET NULL
+);
 -- Lotes
 CREATE TABLE IF NOT EXISTS lotes (
     id_lote SERIAL PRIMARY KEY,
@@ -65,16 +83,38 @@ CREATE TABLE IF NOT EXISTS pagos (
     fecha_pago TIMESTAMP DEFAULT NOW()
 );
 
--- Notificaciones (opcional)
+-- Categorías
+CREATE TABLE IF NOT EXISTS categorias (
+    id_categoria SERIAL PRIMARY KEY,
+    nombre_categoria VARCHAR(50) UNIQUE NOT NULL
+);
+
+-- Notificaciones 
 CREATE TABLE IF NOT EXISTS notificaciones (
-    id_notif SERIAL PRIMARY KEY,
+    id_notificacion SERIAL PRIMARY KEY,
     id_usuario INT REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
+    id_categoria INT REFERENCES categorias_lotes(id_categoria) ON DELETE CASCADE,
     mensaje TEXT NOT NULL,
-    tipo VARCHAR(50),
+    leida BOOLEAN DEFAULT FALSE,
     fecha_envio TIMESTAMP DEFAULT NOW()
 );
 
+-- Favoritos
+CREATE TABLE IF NOT EXISTS favoritos (
+    id_favorito SERIAL PRIMARY KEY,
+    id_usuario INT REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
+    id_categoria INT REFERENCES categorias(id_categoria) ON DELETE CASCADE,
+    UNIQUE (id_usuario, id_categoria)
+);
 
+
+CREATE TABLE IF NOT EXISTS lotes_categorias (
+    id_lote INT REFERENCES lotes(id_lote) ON DELETE CASCADE,
+    id_categoria INT REFERENCES categorias_lotes(id_categoria) ON DELETE CASCADE,
+    PRIMARY KEY(id_lote, id_categoria)
+);
+
+-- Índices para búsqueda de texto completo en lotes
 ALTER TABLE lotes
 ADD COLUMN lotes_search_tsv tsvector;
 CREATE OR REPLACE FUNCTION actualizar_lotes_tsv() RETURNS trigger AS $$

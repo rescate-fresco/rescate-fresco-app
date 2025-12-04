@@ -53,7 +53,7 @@ function LoginForm() {
 
             if (res.ok) {
                 alert("Login exitoso");
-                //localStorage.setItem("token", data.token);
+                localStorage.setItem("token", data.token);
                 localStorage.setItem("usuario", JSON.stringify(data.usuario));
                 
                 navigate("/Inicio");

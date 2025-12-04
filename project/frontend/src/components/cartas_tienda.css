@@ -1,83 +1,98 @@
+/* =========================================
+   TARJETA HORIZONTAL
+   ========================================= */
 .producto-tienda {
-    display: flex;
-    padding: 20px;
-    border-radius: 10px;
-    width: 1000px; /* Mantenemos el ancho fijo */
-    height: 70px;
-    align-items: center;
-    background: white;
-    justify-content: space-between;
+  display: flex;
+  align-items: center;
+  background: white;
+  padding: 15px 25px;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 1000px;
+  min-height: 80px;
+  gap: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease;
 }
 
-.producto-tienda button {
-    padding: 10px;
-    border: none;
-    background: #017007;
-    color: white;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    flex: 1; /* Hace que ambos botones ocupen el mismo espacio */
-    transition: background 0.2s ease;
-}
-
-.producto-tienda button:hover {
-    background: #01b50a;
-    color: black;
-}
-
-.alerta-vencimiento-tienda {
-    color: #b50a0a;
-    font-size: 0.9em;
-}
-
+/* =========================================
+   BLOQUE IZQUIERDO (Img, Cat, Nombre)
+   ========================================= */
 .imagen-producto-tienda {
-    width: 100px;
-    height: 80px;
-    object-fit: cover;
-    border-radius: 8px;
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 12px;
+  flex-shrink: 0;
 }
 
+.etiqueta-categoria {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
 
-.botones-container {
-    display: flex;
-    justify-content: space-between; /* Espacio entre los botones */
-    gap: 10px; /* Espacio entre botones si no ocupan todo el ancho */
-    margin-top: 1rem; /* Espacio arriba de los botones */
+.producto-tienda h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #2d3436;
+  text-align: left;
+  white-space: nowrap;
+  /* YA NO tiene margin-left: auto, así que se queda pegado a la izquierda */
+}
+
+/* =========================================
+   BLOQUE DERECHO (Vencimiento, Estado, Botón)
+   ========================================= */
+
+/* Aquí empieza el grupo de la derecha */
+.alerta-vencimiento-tienda {
+  /* EL RESORTE MÁGICO */
+  margin-left: auto; /* Empuja este elemento (y los siguientes) a la derecha */
+  
+  color: #c62828;
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
+  text-align: right;
 }
 
 .estado-lote {
   display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0; /* Sin márgenes automáticos, se pega al vencimiento */
+  
   font-weight: 600;
-  color: #333;
-  gap: 4px;
-  margin-top: 8px;
+  color: #636e72;
+  font-size: 0.9rem;
+  white-space: nowrap;
 }
 
 .select-estado {
-  padding: 8px 10px;
-  border: 1.5px solid #ccc;
+  padding: 8px 12px;
+  border: 1px solid #e0e0e0;
   border-radius: 8px;
-  font-size: 0.95rem;
-  background-color: #fff;
-  transition: all 0.2s ease;
+  font-size: 0.9rem;
+  background-color: #f9fafb;
+  color: #2d3436;
   cursor: pointer;
-}
-
-.select-estado:hover:not(:disabled) {
-  border-color: #50b498;
-  box-shadow: 0 0 5px rgba(80, 180, 152, 0.4);
-}
-
-.select-estado:focus {
   outline: none;
-  border-color: #50b498;
-  box-shadow: 0 0 5px rgba(80, 180, 152, 0.6);
+  transition: all 0.2s ease;
 }
 
-.select-estado:disabled {
-  background-color: #f3f3f3;
-  color: #999;
-  cursor: not-allowed;
-  border-color: #ddd;
+.producto-tienda button {
+  background-color: #00c853;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-weight: 600;
+  padding: 10px 20px;
+  cursor: pointer;
+  width: auto; 
 }
