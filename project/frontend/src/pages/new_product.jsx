@@ -173,7 +173,7 @@ function NewProduct() {
                         <label>Categorías:</label>
 
                         {categoriasSeleccionadas.map((cat, index) => (
-                            <div key={index} style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+                            <div key={index} style={{ display: "flex", gap: "10px", alignItems: "center", paddingTop: "5px"  }}>
 
                                 <select
                                     value={cat.tipo === "new" ? "new" : cat.valor || ""}

@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import React, { useState, useEffect, useRef } from "react";
 import './navbar.css';
 import { FaSearch, FaBell, FaCheck, FaTimes } from 'react-icons/fa';
+import { FiShoppingCart } from "react-icons/fi";
 
 function Navbar() {
     const [usuario, setUsuario] = useState(null);
@@ -20,11 +21,41 @@ function Navbar() {
         const carritoGuardado = localStorage.getItem("carrito");
         setCartCount(carritoGuardado ? JSON.parse(carritoGuardado).length : 0);
 
+        // Cargar usuario inicial
         const storedUser = localStorage.getItem("usuario");
         if (storedUser) {
-            try { setUsuario(JSON.parse(storedUser)); }
-            catch { localStorage.removeItem("usuario"); }
+            try { 
+                setUsuario(JSON.parse(storedUser)); 
+            }
+            catch { 
+                localStorage.removeItem("usuario"); 
+            }
         }
+
+        // ✅ NUEVO: Revisar si hay actualización pendiente (después de redirección)
+        const usuarioActualizado = localStorage.getItem("usuarioActualizado");
+        if (usuarioActualizado) {
+            try {
+                const usuarioNuevo = JSON.parse(usuarioActualizado);
+                setUsuario(usuarioNuevo);
+                console.log("✅ Usuario actualizado desde localStorage:", usuarioNuevo);
+                localStorage.removeItem("usuarioActualizado"); // Limpiar
+            } catch (e) {
+                console.error("Error al parsear usuarioActualizado:", e);
+            }
+        }
+
+        // Escuchar eventos en tiempo real
+        const handleUserUpdate = (e) => {
+            console.log("🔄 Navbar recibió actualización de usuario:", e.detail);
+            setUsuario(e.detail);
+        };
+
+        window.addEventListener('usuarioActualizado', handleUserUpdate);
+
+        return () => {
+            window.removeEventListener('usuarioActualizado', handleUserUpdate);
+        };
     }, []);
 
     useEffect(() => {
@@ -79,7 +110,7 @@ function Navbar() {
     return (
         <nav className="navbar">
             <div className="nav-izq">
-                <div className="logo"><Link to="/Inicio">RescateFresco</Link></div>
+                <div className="logo"><Link to="/Inicio">🥕</Link></div>
                 <ul className="nav-links">
                     <li><Link to="/Inicio">Inicio</Link></li>
                     {isLoggedIn && (usuario.rol === 'admin' || usuario.rol === 'tienda') && (
@@ -132,7 +163,7 @@ function Navbar() {
                 )}
 
                 <Link to="/carrito" className="cart-link">
-                    <img src="https://images.falabella.com/v3/assets/blt7c5c2f2f888a7cc3/bltee24e879d497dc04/65b2492a1be7ff13e55d90c6/carritodesk.svg" alt="Carrito" />
+                    <FiShoppingCart className="icon-cart" size={24} />
                     {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
                 </Link>
 

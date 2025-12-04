@@ -9,7 +9,7 @@ body {
     min-width: 1000px; /* Asegura un ancho mínimo para evitar que el diseño se rompa en pantallas pequeñas */
     width: 100vw; /* Asegura que ocupe todo el ancho de la ventana */
     min-height: 100vh; /* Asegura que ocupe toda la altura de la ventana */
-    background-color: #f4f3ef;
+    background-color: #F4F6F8;
 }
 
 .Navbar {
@@ -24,49 +24,95 @@ body {
     overflow-y: auto; /* Si el contenido es muy largo, permite scroll solo en el cuerpo */
 }
 
+/* =========================================
+   2. TARJETA DE LOGIN (MODERNA)
+   ========================================= */
 .login-container {
-  height: 255px;
-  width: 400px;
-  margin: 50px auto;
-  padding: 20px;
-  border-radius: 10px;
-  background: #5ae861;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  color: black;
+  /* Dimensiones */
+  width: 100%;
+  max-width: 400px; /* Ancho máximo elegante */
+  height: auto; /* IMPORTANTE: Nunca uses height fijo, deja que el contenido decida */
+  margin: auto;
+  
+  /* Estilo Tarjeta Blanca */
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 24px; /* Bordes muy redondeados */
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08); /* Sombra suave y difusa */
+  
+  text-align: center; /* Centra el título H2 */
 }
 
+.login-container h2 {
+    color: #2d3436;
+    margin-bottom: 30px;
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+/* =========================================
+   3. FORMULARIO E INPUTS
+   ========================================= */
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 20px; /* Espacio entre campos */
+  text-align: left; /* Regresa los labels a la izquierda */
 }
 
 .login-form label {
   display: flex;
   flex-direction: column;
-  font-weight: 500;
+  font-weight: 600;
+  color: #636e72;
+  font-size: 0.9rem;
+  gap: 8px;
 }
 
-.login-form input,
-.login-form textarea,
-.login-form select {
-  padding: 8px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
+.login-form input {
+  padding: 12px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  background-color: #f9fafb; /* Gris muy pálido */
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  outline: none;
+  color: #7a7878;
 }
 
+/* Efecto Focus (Cuando escribes) */
+.login-form input:focus {
+  color: #000000;
+  background-color: #ffffff;
+  border-color: #00c853; /* Tu verde de marca */
+  box-shadow: 0 0 0 4px rgba(0, 200, 83, 0.1); /* Anillo de luz verde */
+}
+
+/* =========================================
+   4. BOTÓN DE INICIO DE SESIÓN
+   ========================================= */
 .login-form button {
-  padding: 10px;
+  margin-top: 10px;
+  padding: 14px;
+  
+  background: linear-gradient(135deg, #00c853 0%, #009624 100%); /* Degradado sutil */
+  color: white;
+  
   border: none;
-  background: #017007;
-  border-radius: 5px;
+  border-radius: 50px; /* Botón tipo píldora */
+  font-size: 1.1rem;
+  font-weight: 700;
   cursor: pointer;
-  font-weight: bold;
-  width: 100%; /* hace que el botón ocupe todo el ancho del formulario */
-  box-sizing: border-box; /* asegura que el padding no expanda el ancho */
+  width: 100%;
+  box-shadow: 0 4px 15px rgba(0, 200, 83, 0.3); /* Sombra verde */
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .login-form button:hover {
-  background: #01b50a;
-  color : black;
+  transform: translateY(-2px); /* Se levanta un poco */
+  box-shadow: 0 6px 20px rgba(0, 200, 83, 0.4);
+}
+
+.login-form button:active {
+  transform: translateY(0);
 }
