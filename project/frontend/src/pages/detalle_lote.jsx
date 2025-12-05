@@ -11,8 +11,40 @@ const DetalleLote = () => {
     const [cargando, setCargando] = useState(true);     // Estado para manejar la carga
     const [error, setError] = useState(null);           // Estado para manejar errores
     const [enCarrito, setEnCarrito] = useState(false);  // Estado para verificar si el lote está en el carrito
+    const [favorito, setFavorito] = useState({});       // Estado para verificar si el lote está en favoritos
 
+    // ----------------------------------
+    // Función para alternar el estado de favorito
+    // ----------------------------------
+    const toggleFavorito = async (id_categoria) => {
+        const yaEsFavorito = favorito[id_categoria] === true;
+
+        try {
+            const url = `${import.meta.env.VITE_API_URL}api/favoritos/${id_categoria}`;
+
+            const resp = await fetch(url, {
+                method: yaEsFavorito ? "DELETE" : "POST",
+                headers: {
+                    "Authorization": "Bearer " + localStorage.getItem("token")
+                }
+            });
+
+            if (!resp.ok) throw new Error("Error al actualizar favorito");
+
+            // actualizar UI local
+            setFavorito(prev => ({
+                ...prev,
+                [id_categoria]: !yaEsFavorito
+            }));
+
+        } catch (err) {
+            console.error("Error al cambiar favorito:", err);
+        }
+    };
+
+    // ----------------------------------
     // Función para agregar el lote al carrito en localStorage
+    // ----------------------------------
     const agregarAlCarrito = (lote) => {
         const carritoActual = JSON.parse(localStorage.getItem("carrito")) || [];
         // Evita duplicados
@@ -24,9 +56,39 @@ const DetalleLote = () => {
         } else {
             alert("Este producto ya está en el carrito.");
         }
-    };    
+    };
 
+    // ----------------------------------
+    // useEffect para cargar los favoritos del usuario
+    // ----------------------------------
+    useEffect(() => {
+        const checkFavorito = async () => {
+            try {
+                const resp = await fetch(`${import.meta.env.VITE_API_URL}api/favoritos`, {
+                    headers: {
+                        "Authorization": "Bearer " + localStorage.getItem("token")
+                    }
+                });
+                const data = await resp.json(); // [{id_categoria:1}, {...}]
+                
+                // Convertir a objeto: {1:true, 3:true}
+                const mapa = {};
+                data.forEach(cat => {
+                    mapa[cat.id_categoria] = true;
+                });
+
+                setFavorito(mapa);
+            } catch (err) {
+                console.error("Error cargando favoritos:", err);
+            }
+        };
+
+        if (lote) checkFavorito();
+    }, [lote]);
+
+    // ----------------------------------
     // useEffect para cargar los detalles del lote al montar el componente
+    // ----------------------------------
     useEffect(() => {
         const fetchLote = async () => {
         try {
@@ -47,6 +109,9 @@ const DetalleLote = () => {
         fetchLote();
     }, [id_lote]);
 
+    // ----------------------------------
+    // Renderizado condicional basado en el estado
+    // ----------------------------------
     if (cargando) return <div>Cargando detalles del lote...</div>;
     if (error) return <div>Error: {error}</div>;
     if (!lote) return <div>No se encontró el lote.</div>;
@@ -73,16 +138,50 @@ const DetalleLote = () => {
                         )}
                     </div>
                     <div className="detalle-info">
-                        <p><strong>Categoría:</strong> {lote.categoria || 'Sin categoría'}</p>
+                        <p>
+                            <strong>Categorías: </strong>
+
+                            {lote.categorias?.length > 0 ? (
+                                lote.categorias.map(c => (
+                                    <span key={c.id_categoria} style={{ marginLeft: 5, marginRight: 10 }}>
+                                        {c.nombre_categoria}
+                                        {/* El botón está directamente dentro del span */}
+                                        <button
+                                            className="boton-favorito" 
+                                            onClick={() => toggleFavorito(c.id_categoria)}
+                                            style={{ marginLeft: 5, cursor: "pointer" }}
+                                        >
+                                            {favorito[c.id_categoria] ? '❤️' : '♡'}
+                                        </button>
+                                    </span>
+                                ))
+                            ) : (
+                                "Sin categoría"
+                            )}
+                        </p>
                         <p><strong>Descripción:</strong> {lote.descripcion || 'No disponible'}</p>
                         <p><strong>Peso:</strong> {lote.peso_qty} kg</p>
                         <p><strong>Precio original:</strong> <span className="precio-original"> ${Number(lote.precio_original).toFixed(2)}</span></p>
                         <p><strong>Precio oferta:</strong> <span className="precio-rescate">${Number(lote.precio_rescate).toFixed(2)}</span></p>
                         <p><strong>Fecha de vencimiento:</strong> {new Date(lote.fecha_vencimiento).toLocaleDateString()}</p>
-                        <p><strong>Ventana de retiro:</strong>{' '}
-                        {lote?.ventana_retiro_inicio && lote?.ventana_retiro_fin
-                            ? `${new Date(lote.ventana_retiro_inicio.replace(' ', 'T')).toLocaleString('es-CL', { hour12: false })} - ${new Date(lote.ventana_retiro_fin.replace(' ', 'T')).toLocaleString('es-CL', { hour12: false })}`
-                            : 'No definida'}
+                        <p>
+                            <strong>Ventana de retiro:</strong>{' '}
+                            {lote?.ventana_retiro_inicio && lote?.ventana_retiro_fin
+                                ? (
+                                    <>
+                                        <br />
+                                        Desde: {new Date(lote.ventana_retiro_inicio.replace(' ', 'T')).toLocaleString('es-CL', {
+                                            day: '2-digit', month: '2-digit', year: 'numeric',
+                                            hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+                                        }).replace(/\,/, ' a las ')}
+                                        <br />
+                                        Hasta: {new Date(lote.ventana_retiro_fin.replace(' ', 'T')).toLocaleString('es-CL', {
+                                            day: '2-digit', month: '2-digit', year: 'numeric',
+                                            hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+                                        }).replace(/\,/, ' a las ')}
+                                    </>
+                                )
+                                : 'No definida'}
                         </p>
                         <p>
                         <strong>Estado:</strong>{' '}

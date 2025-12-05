@@ -8,10 +8,9 @@ body {
     flex-direction: column; /* Alinea el navbar y el cuerpo en columna */
     min-width: 1000px; /* Asegura un ancho mínimo para evitar que el diseño se rompa en pantallas pequeñas */
     width: 100vw; /* Asegura que ocupe todo el ancho de la ventana */
-    min-height: 100vh; /* Asegura que ocupe toda la altura de la ventana */
-    background-color: #f4f3ef;
+    background-color: #F4F6F8;
 }
-
+ 
 .Navbar {
     position: fixed; /* Fija el navbar en la parte superior */
     flex-direction: 0; /* Evita que el navbar se encoja si hay poco espacio */
@@ -24,79 +23,158 @@ body {
     overflow-y: auto; /* Si el contenido es muy largo, permite scroll solo en el cuerpo */
 }
 
+/* =========================================
+   FORMULARIO MODERNIZADO
+   ========================================= */
+
+/* 1. El Contenedor Principal (La tarjeta blanca) */
 .lote-container {
-  width: 700px;
-  margin: 80px auto;
-  padding: 25px;
-  background: #5ae861;
-  border-radius: 12px;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-  color: black;
+  width: 100%;
+  max-width: 700px; /* Un ancho máximo prudente */
+  margin: 0 auto 80px auto;   /* Centrado horizontal (el vertical lo maneja el padding del Cuerpo) */
+  
+  background: #ffffff; /* BLANCO: La clave de la limpieza */
+  padding: 40px;
+  border-radius: 24px; /* Bordes muy redondeados */
+  
+  /* Sombra sofisticada: difusa y suave */
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0,0,0,0.02); /* Borde sutil opcional */
 }
 
+/* Título del formulario */
 .lote-container h2 {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
+  color: #2d3436; /* Gris oscuro elegante */
+  font-size: 1.8rem;
+  font-weight: 700;
 }
+
+/* =========================================
+   ESTILOS DE LOS INPUTS Y LABELS
+   ========================================= */
 
 .lote-form label {
   display: flex;
   flex-direction: column;
-  font-weight: 500;
+  font-weight: 600; /* Semi-negrita para legibilidad */
+  color: #4a4a4a;   /* Gris medio, no negro */
+  margin-bottom: 20px; /* Espacio entre preguntas */
+  gap: 8px; /* Espacio entre el texto del label y el input */
 }
 
-.lote-form input,
-.lote-form textarea {
-  padding: 8px 10px;
-  margin-bottom: 15px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 14px;
+/* Inputs, Textareas y Selects unificados */
+.lote-form input[type="text"],
+.lote-form input[type="number"],
+.lote-form input[type="datetime-local"],
+.lote-form textarea,
+.lote-form select {
+  width: 100%;
+  padding: 12px 16px; /* Mucho aire interno */
+  
+  background-color: #f9fafb; /* Gris casi blanco */
+  border: 1px solid #e0e0e0; /* Borde gris muy claro */
+  border-radius: 12px; /* Esquinas redondeadas */
+  
+  font-family: inherit;
+  font-size: 1rem;
+  color: #2d3436;
+  
+  transition: all 0.3s ease;
+  box-sizing: border-box; /* Evita que el padding rompa el ancho */
+}
+
+/* Efecto al hacer clic en un input (Focus) */
+.lote-form input:focus,
+.lote-form textarea:focus,
+.lote-form select:focus {
+  outline: none;
+  background-color: #ffffff;
+  border-color: #00c853; /* TU VERDE DE MARCA */
+  box-shadow: 0 0 0 4px rgba(0, 200, 83, 0.1); /* Anillo de luz verde suave */
 }
 
 .lote-form textarea {
+  min-height: 120px;
   resize: vertical;
-  min-height: 80px;
 }
 
+/* =========================================
+   ZONA DE CATEGORÍAS (Específico)
+   ========================================= */
+/* Botón secundario "+ Agregar categoría" */
+.lote-form button[type="button"] {
+    background-color: #e8f5e9; /* Fondo verde muy pálido */
+    color: #00c853; /* Texto verde */
+    border: 1px dashed #00c853; /* Borde punteado estilo "slot vacío" */
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-weight: 600;
+    margin-top: 10px;
+    width: auto; /* Que no ocupe todo el ancho */
+    align-self: flex-start; /* Alineado a la izquierda */
+}
+
+.lote-form button[type="button"]:hover {
+    background-color: #dcedc8;
+}
+
+/* Botón pequeño de eliminar (X) */
+.btn-delete-cat {
+    background: #ffebee !important; /* Rojo muy pálido */
+    color: #c62828 !important;
+    border: 1px solid #ffcdd2 !important;
+    width: 40px !important; /* Cuadrado */
+    padding: 0 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* =========================================
+   BOTÓN PRINCIPAL (SUBMIT)
+   ========================================= */
+.lote-form button[type="submit"] {
+  background: linear-gradient(135deg, #00c853 0%, #009624 100%); /* Degradado sutil */
+  color: white;
+  padding: 16px;
+  width: 100%;
+  border: none;
+  border-radius: 50px; /* Botón píldora */
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 20px;
+  box-shadow: 0 4px 15px rgba(0, 200, 83, 0.3); /* Sombra verde brillante */
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.lote-form button[type="submit"]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 200, 83, 0.4);
+}
+
+/* =========================================
+   INPUT DE ARCHIVO (FILE) - TRUCO PRO
+   ========================================= */
 .lote-form input[type="file"] {
-  background-color: #fff;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 0; /* Reseteamos padding para estilizar el botón interno */
+    padding: 8px;
+    background: white;
+    border: 1px dashed #bdbdbd;
 }
 
 .lote-form input[type="file"]::file-selector-button {
-  background: #017007; /* Color principal del botón */
-  color: white;
-  padding: 8px 10px; /* Mismo padding que los otros inputs */
-  border: none;
-  border-right: 1px solid #ccc; /* Línea divisoria */
-  border-radius: 5px 0 0 5px; /* Redondea solo las esquinas izquierdas */
-  cursor: pointer;
-  transition: background-color 0.3s;
-  margin-right: 10px; /* Espacio entre el botón y el texto "No file chosen" */
+    background: #2d3436;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    margin-right: 15px;
+    cursor: pointer;
+    transition: background 0.3s;
 }
 
 .lote-form input[type="file"]::file-selector-button:hover {
-  background: #01b50a;
-  color: black;
-}
-
-.lote-form button {
-  background: #017007;
-  color: white;
-  padding: 12px;
-  width: 100%;
-  border: none;
-  border-radius: 6px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.lote-form button:hover {
-  background: #01b50a;
-  color : black;
+    background: #00c853;
 }

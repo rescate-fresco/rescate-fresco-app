@@ -59,7 +59,7 @@ function Home() {
     return (
         <div className="Home">
             <Navbar />
-            <div className="Cuerpo">
+            <div className="Cuerpo-1">
                 <div className="contenido-principal">
                     <aside className="sidebar-filtros">
                         <FiltrosLotes onFilterChange={handleFilterChange} />
@@ -78,7 +78,7 @@ function Home() {
                         {!cargando && !error && productos.length > 0 && (
                             <div className="productos-lista">
                                 {productos.map((lote) => (
-                                    <CartasProductos key={lote.id_lote} lote={lote} />
+                                        <CartasProductos key={lote.id_lote} lote={lote} />
                                 ))}
                             </div>
                         )}
