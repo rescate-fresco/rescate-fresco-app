@@ -1,0 +1,6 @@
+projectKey=rescate-fresco-app
+serverUrl=http://localhost:9000
+serverVersion=25.10.0.114319
+dashboardUrl=http://localhost:9000/dashboard?id=rescate-fresco-app
+ceTaskId=b484989a-34ce-4fe7-b29b-af32ff6e701d
+ceTaskUrl=http://localhost:9000/api/ce/task?id=b484989a-34ce-4fe7-b29b-af32ff6e701d
