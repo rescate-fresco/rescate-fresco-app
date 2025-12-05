@@ -7,6 +7,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium.common.exceptions import NoAlertPresentException
 
 load_dotenv()
 
@@ -36,9 +37,14 @@ def navegador_session():
 
 @pytest.fixture
 def navegador(navegador_session):
-    """Navegador limpio para cada test"""
-    navegador_session.delete_all_cookies()
-    navegador_session.get(BASE_URL)
+    """Reutiliza el mismo navegador, limpia alertas entre tests"""
+    try:
+        alert = navegador_session.switch_to.alert
+        alert.dismiss()
+        print("⚠️ Alert cerrado antes del test")
+    except NoAlertPresentException:
+        pass
+    
     yield navegador_session
 
 
@@ -81,6 +87,17 @@ class Helper:
             return True
         except:
             return False
+    def cerrar_alerta(self):
+        """✅ NUEVO: Cierra cualquier alerta abierta"""
+        try:
+            alert = self.driver.switch_to.alert
+            texto_alerta = alert.text
+            print(f"🚨 Alert encontrada: {texto_alerta}")
+            alert.dismiss()
+            print("✅ Alert cerrada")
+            return texto_alerta
+        except NoAlertPresentException:
+            return None
     
     def captura_pantalla(self, nombre):
         os.makedirs("screenshots", exist_ok=True)
