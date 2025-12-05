@@ -1,29 +1,29 @@
 body {
-  margin: 0;
-  padding: 0;
+    margin: 0;
+    padding: 0;
 }
 
 .Home {
     display: flex;
-    flex-direction: column; /* Alinea el navbar y el cuerpo en columna */
-    min-width: 1000px; /* Asegura un ancho mínimo para evitar que el diseño se rompa en pantallas pequeñas */
-    width: 100vw; /* usa todo el ancho de la ventana */
-    position: relative; /* Asegura que ocupe todo el ancho de la ventana */
-    min-height: 100vh; /* Asegura que ocupe toda la altura de la ventana */
+    flex-direction: column;
+    min-width: 1000px;
+    width: 100vw;
+    position: relative;
+    min-height: 100vh;
     background-color: #F4F6F8;
 }
 
 .Navbar {
     width: 100%;
-    position: fixed; /* Fija el navbar en la parte superior */
-    flex-direction: 0; /* Evita que el navbar se encoja si hay poco espacio */
+    position: fixed;
+    flex-direction: 0;
 }
 
 .Cuerpo-1 {
-    flex-grow: 1; /* Permite que .Cuerpo ocupe todo el espacio restante disponible */
+    flex-grow: 1;
     width : 100%;
     display: flex;
-    overflow-y: auto; /* Si el contenido es muy largo, permite scroll solo en el cuerpo */
+    overflow-y: auto;
     color: black;
     padding: 20px 20px;
 }
@@ -35,40 +35,65 @@ body {
     flex-direction: column;
 }
 
-/* Barra lateral con filtros */
 .sidebar-filtros {
     width: fit-content;
     height: auto;
-    position: static; /* Ya no es sticky de 100vh */
+    position: static;
     
     background: white;
-    border-radius: 12px; /* Bordes redondeados modernos */
+    border-radius: 12px;
     padding: 15px 25px;
-    margin-bottom: 30px; /* Separación con los productos */
+    margin-bottom: 30px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
     
-    /* Lógica Flex para poner los filtros en fila */
     display: flex;
-    flex-wrap: wrap; /* Si no caben, bajan a la siguiente línea */
-    gap: 20px; /* Espacio entre cada filtro */
+    flex-wrap: wrap;
+    gap: 20px;
     align-items: center;
 }
 
 .productos-grid {
     width: 100%;
-    padding: 0; /* Quitamos padding extra porque ya lo maneja el .Cuerpo */
+    padding: 0;
     padding-bottom: 100px;
 }
 
-/* Lista de productos con diseño en cuadrícula */
 .productos-lista {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 30px; /* Espacio generoso entre tarjetas */
+    gap: 30px;
     width: 100%;
 }
 
-/* Mensajes de carga o error centrados */
+@media (max-width: 640px) {
+    .productos-lista {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+    .productos-lista {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1025px) and (max-width: 1280px) {
+    .productos-lista {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 1281px) and (max-width: 1600px) {
+    .productos-lista {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (min-width: 1601px) {
+    .productos-lista {
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
+
 .info-msg, .error-msg {
     text-align: center;
     color: #333;
