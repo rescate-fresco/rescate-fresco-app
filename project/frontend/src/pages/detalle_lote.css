@@ -1,6 +1,6 @@
 body {
-  margin: 0;
-  padding: 0;
+    margin: 0;
+    padding: 0;
 }
 
 .DetalleLote {
@@ -26,46 +26,47 @@ body {
 }
 
 .detalle-lote {
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 20px 30px;
-  max-width: 600px;
-  margin: 40px auto;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-  font-family: "Inter", sans-serif;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 20px 30px;
+    max-width: 600px;
+    width: 40%;
+    margin: 40px auto;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    font-family: "Inter", sans-serif;
 }
 
 .detalle-lote h2 {
-  color: #2c3e50;
-  border-bottom: 2px solid #50b498;
-  padding-bottom: 10px;
-  margin-bottom: 20px;
-  text-align: center;
+    color: #2c3e50;
+    border-bottom: 2px solid #50b498;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    text-align: center;
 }
 
 .detalle-info p {
-  margin: 10px 0;
-  color: #555;
-  font-size: 15px;
+    margin: 10px 0;
+    color: #555;
+    font-size: 15px;
 }
 
 .precio-original {
-  text-decoration: line-through;
-  color: #888;
-  font-size: 16px;
+    text-decoration: line-through;
+    color: #888;
+    font-size: 16px;
 }
 
 .precio-rescate {
-  color: #50b498; 
-  font-size: 20px;
-  font-weight: 700;
+    color: #50b498; 
+    font-size: 20px;
+    font-weight: 700;
 }
 
 .estado {
-  padding: 4px 10px;
-  border-radius: 8px;
-  color: white;
-  font-weight: bold;
+    padding: 4px 10px;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
 }
 
 /* Use a hyphenated class name for "no disponible" (apply in HTML as class="estado no-disponible") */
@@ -77,6 +78,8 @@ body {
 .estado.oculto { background: #7f8c8d; }
 .estado.eliminado { background: #e74c3c; }
 
+
+/* Estilos del botón de Carrito */
 .detalle-lote button {
     padding: 10px;
     border: none;
@@ -107,16 +110,52 @@ button:disabled {
 }
 
 .detalle-imagen {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
 }
 
 .detalle-imagen img {
-  width: 100%;
-  max-width: 400px; /* limita el tamaño */
-  height: auto;
-  border-radius: 12px;
-  object-fit: cover; /* recorta si la proporción no encaja */
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 400px; /* limita el tamaño */
+    height: auto;
+    border-radius: 12px;
+    object-fit: cover; /* recorta si la proporción no encaja */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* ------------------------------------------- */
+/* --- ESTILOS CORREGIDOS PARA EL CORAZÓN --- */
+/* ------------------------------------------- */
+
+/* 1. Estilo para el span contenedor de la categoría y el corazón (Alineación) */
+.detalle-info p span {
+    display: inline-flex; /* Convierte el span en un contenedor flexible en línea */
+    align-items: center; /* Centra verticalmente el texto y el corazón */
+}
+
+/* 2. Estilos para el botón del corazón (Anula estilos de botón general y quita el borde) */
+.boton-favorito {
+    /* Anula los estilos generales de botón (verde, padding, borde, etc.) */
+    padding: 0 5px !important; 
+    border: none !important;
+    background: none !important; 
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    width: auto !important; 
+    margin: 0 0 0 5px !important;
+    
+    /* Estilos de apariencia */
+    display: inline-block !important; /* Vuelve a usar inline-block para no forzar flex en el botón */
+    font-size: 1.2rem;
+    line-height: 1; /* Ayuda a la alineación */
+    color: #7f8c8d; /* Color gris para el corazón no favorito (♡) */
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.boton-favorito:hover {
+    transform: scale(1.1);
+    background: none !important;
+    color: inherit !important; 
 }
