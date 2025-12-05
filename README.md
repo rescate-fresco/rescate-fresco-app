@@ -24,6 +24,8 @@ Reducir la merma en comercios locales y facilitar el acceso a alimentos más bar
 
 [**Tutorial para levevantar el proyecto**](https://youtu.be/ARGkUSNoyf8)
 
+[**Entrega Final**](https://www.youtube.com/watch?v=zRNs_3XpyyI)
+
 # 📚 Documentación del Proyecto
 
 ### ⏱️ Requisitos Previos
