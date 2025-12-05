@@ -49,13 +49,35 @@ El proyecto está organizado con directorios separados para el front-end y el ba
 ```bash
 rescate-fresco-app/
 ├── project/
-│   ├── frontend/   # Aplicación de front-end con React
-│   └── backend/    # Servidor de back-end con Node.js y Express
-├── tests/
-│   └── test.py
-├── .gitignore      # Archivo para ignorar directorios y archivos de Git
-└── README.md       # Este archivo
+│   ├── backend/       
+│   │   ├── src/
+│   │   │   ├── config/
+│   │   │   ├── database/ 
+│   │   │   ├── middleware/
+│   │   │   ├── routes/
+│   │   │   ├── instrument.js 
+│   │   │   └── server.js
+│   │   └── package.json
+│   ├── frontend/
+│   │   ├── src/
+│   │   │   ├── components/ 
+│   │   │   ├── pages/ 
+│   │   │   ├── utils/
+│   │   │   ├── App.css 
+│   │   │   ├── App.jsx
+│   │   │   ├── index.css
+│   │   │   └── main.jsx
+│   │   └── package.json
+│   └── test/
+│       ├── .scannerwork/
+│       ├── Cypress/
+│       ├── Python/
+│       ├── Selenium/
+│       └── jmeter/
+├── .gitignore
+└── README.md        
 ```
+
 ### 🏛️ Dependencias
 
 **Clonar Repositorio**
@@ -80,7 +102,6 @@ cd rescate-fresco-app
 * @aws-sdk/client-s3 → cliente s3 aws.
 * multer → gestionar carga de archivos.
 * stripe → SDK oficial de Stripe para interactuar con la API desde Node.js.
-
 * Otros módulos → Dependencias adicionales según el proyecto.
 
 Instalación (Terminal):
@@ -114,23 +135,44 @@ npm install
 
 Luego, pegar el siguiente contenido en el archivo creado en backend:
 ```bash
-PORT = 5000 # Se recomienda 5000
-DATABASE_URL = postgres://usuario:contraseña@localhost:5432/rescate_db # Modificar ususario y contraseña de Postgres
+PORT=5000
+
+# --- Configuración de la base de datos local ---
+DATABASE_URL
+JWT_SECRET
+
+# --- Credenciales de AWS S3 (Del usuario IAM) ---
+AWS_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY
+AWS_BUCKET_NAME
+AWS_REGION
+
+# --- Credenciales de AWS RDS (PostgreSQL) ---
+DB_HOST
+DB_PORT
+DB_USER
+DB_PASSWORD
+DB_NAME
+
+# --- Credenciales Jenkins ---
+JENKINS_USER
+JENKINS_PASSWORD
+JENKINS_HOST
+# Correr docker en PuTTY: docker start c8640771ed33
+
+# --- Credenciales de Stripe ---
+STRIPE_SECRET_KEY
+STRIPE_WEBHOOK_SECRET
+
+RESEND_API_KEY
 ```
 
 Finalmente, pegar el siguiente contenido en el archivo creado en frontend:
 ```bash
-VITE_API_URL=http://localhost:5000/
-```
+VITE_API_URL
 
-### 💾 Configuración de la Base de Datos
-
-⚠️ IMPORTANTE: se debe tener PostgreSQL instalado y configurado con un **usuario y contraseña válidos**, los cuales deben ser agregados en el archivo .env (**Configuración del entorno**).
-
-Creae tablas: Antes de ejecutar el siguiente código en terminal, se debe modificar el usuario:
-```bash
-psql -U usuario -d rescate_db -f project/backend/src/database/init.sql
-# Pedirá la contraseña de Postgres por terminal
+# --- Credenciales de Stripe ---
+VITE_STRIPE_PUBLIC_KEY
 ```
 
 ### 🏆 Ejecución del Proyecto
@@ -153,8 +195,6 @@ npm run start
 cd project/frontend
 npm run dev
 ```
-
-
 
 ------
 ### 🛡️ Configuración de Google reCAPTCHA v3
