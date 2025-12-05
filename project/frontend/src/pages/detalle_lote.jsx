@@ -145,12 +145,13 @@ const DetalleLote = () => {
                                 lote.categorias.map(c => (
                                     <span key={c.id_categoria} style={{ marginLeft: 5, marginRight: 10 }}>
                                         {c.nombre_categoria}
-                                        
+                                        {/* El botón está directamente dentro del span */}
                                         <button
+                                            className="boton-favorito" 
                                             onClick={() => toggleFavorito(c.id_categoria)}
                                             style={{ marginLeft: 5, cursor: "pointer" }}
                                         >
-                                            {favorito[c.id_categoria] ? "★" : "☆"}
+                                            {favorito[c.id_categoria] ? '❤️' : '♡'}
                                         </button>
                                     </span>
                                 ))
@@ -163,10 +164,24 @@ const DetalleLote = () => {
                         <p><strong>Precio original:</strong> <span className="precio-original"> ${Number(lote.precio_original).toFixed(2)}</span></p>
                         <p><strong>Precio oferta:</strong> <span className="precio-rescate">${Number(lote.precio_rescate).toFixed(2)}</span></p>
                         <p><strong>Fecha de vencimiento:</strong> {new Date(lote.fecha_vencimiento).toLocaleDateString()}</p>
-                        <p><strong>Ventana de retiro:</strong>{' '}
-                        {lote?.ventana_retiro_inicio && lote?.ventana_retiro_fin
-                            ? `${new Date(lote.ventana_retiro_inicio.replace(' ', 'T')).toLocaleString('es-CL', { hour12: false })} - ${new Date(lote.ventana_retiro_fin.replace(' ', 'T')).toLocaleString('es-CL', { hour12: false })}`
-                            : 'No definida'}
+                        <p>
+                            <strong>Ventana de retiro:</strong>{' '}
+                            {lote?.ventana_retiro_inicio && lote?.ventana_retiro_fin
+                                ? (
+                                    <>
+                                        <br />
+                                        Desde: {new Date(lote.ventana_retiro_inicio.replace(' ', 'T')).toLocaleString('es-CL', {
+                                            day: '2-digit', month: '2-digit', year: 'numeric',
+                                            hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+                                        }).replace(/\,/, ' a las ')}
+                                        <br />
+                                        Hasta: {new Date(lote.ventana_retiro_fin.replace(' ', 'T')).toLocaleString('es-CL', {
+                                            day: '2-digit', month: '2-digit', year: 'numeric',
+                                            hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+                                        }).replace(/\,/, ' a las ')}
+                                    </>
+                                )
+                                : 'No definida'}
                         </p>
                         <p>
                         <strong>Estado:</strong>{' '}

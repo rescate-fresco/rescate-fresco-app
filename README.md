@@ -24,6 +24,8 @@ Reducir la merma en comercios locales y facilitar el acceso a alimentos más bar
 
 [**Tutorial para levevantar el proyecto**](https://youtu.be/ARGkUSNoyf8)
 
+[**Entrega Final**](https://www.youtube.com/watch?v=zRNs_3XpyyI)
+
 # 📚 Documentación del Proyecto
 
 ### ⏱️ Requisitos Previos
@@ -49,13 +51,35 @@ El proyecto está organizado con directorios separados para el front-end y el ba
 ```bash
 rescate-fresco-app/
 ├── project/
-│   ├── frontend/   # Aplicación de front-end con React
-│   └── backend/    # Servidor de back-end con Node.js y Express
-├── tests/
-│   └── test.py
-├── .gitignore      # Archivo para ignorar directorios y archivos de Git
-└── README.md       # Este archivo
+│   ├── backend/       
+│   │   ├── src/
+│   │   │   ├── config/
+│   │   │   ├── database/ 
+│   │   │   ├── middleware/
+│   │   │   ├── routes/
+│   │   │   ├── instrument.js 
+│   │   │   └── server.js
+│   │   └── package.json
+│   ├── frontend/
+│   │   ├── src/
+│   │   │   ├── components/ 
+│   │   │   ├── pages/ 
+│   │   │   ├── utils/
+│   │   │   ├── App.css 
+│   │   │   ├── App.jsx
+│   │   │   ├── index.css
+│   │   │   └── main.jsx
+│   │   └── package.json
+│   └── test/
+│       ├── .scannerwork/
+│       ├── Cypress/
+│       ├── Python/
+│       ├── Selenium/
+│       └── jmeter/
+├── .gitignore
+└── README.md        
 ```
+
 ### 🏛️ Dependencias
 
 **Clonar Repositorio**
@@ -80,7 +104,6 @@ cd rescate-fresco-app
 * @aws-sdk/client-s3 → cliente s3 aws.
 * multer → gestionar carga de archivos.
 * stripe → SDK oficial de Stripe para interactuar con la API desde Node.js.
-
 * Otros módulos → Dependencias adicionales según el proyecto.
 
 Instalación (Terminal):
@@ -114,24 +137,51 @@ npm install
 
 Luego, pegar el siguiente contenido en el archivo creado en backend:
 ```bash
-PORT = 5000 # Se recomienda 5000
-DATABASE_URL = postgres://usuario:contraseña@localhost:5432/rescate_db # Modificar ususario y contraseña de Postgres
+PORT=5000
+
+# --- Configuración de la base de datos local ---
+DATABASE_URL
+JWT_SECRET
+
+# --- Credenciales de AWS S3 (Del usuario IAM) ---
+AWS_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY
+AWS_BUCKET_NAME
+AWS_REGION
+
+# --- Credenciales de AWS RDS (PostgreSQL) ---
+DB_HOST
+DB_PORT
+DB_USER
+DB_PASSWORD
+DB_NAME
+
+# --- Credenciales Jenkins ---
+JENKINS_USER
+JENKINS_PASSWORD
+JENKINS_HOST
+# Correr docker en PuTTY: docker start c8640771ed33
+
+# --- Credenciales de Stripe ---
+STRIPE_SECRET_KEY
+STRIPE_WEBHOOK_SECRET
+
+RESEND_API_KEY
 ```
 
 Finalmente, pegar el siguiente contenido en el archivo creado en frontend:
 ```bash
-VITE_API_URL=http://localhost:5000/
+VITE_API_URL
+
+# --- Credenciales de Stripe ---
+VITE_STRIPE_PUBLIC_KEY
 ```
 
-### 💾 Configuración de la Base de Datos
+### ⚙️ Configuraciones de dependencias
 
-⚠️ IMPORTANTE: se debe tener PostgreSQL instalado y configurado con un **usuario y contraseña válidos**, los cuales deben ser agregados en el archivo .env (**Configuración del entorno**).
+**Stripe:** haz click [AQUÍ](https://github.com/rescate-fresco/rescate-fresco-app/wiki/Stripe) para configurar Stripe.
 
-Creae tablas: Antes de ejecutar el siguiente código en terminal, se debe modificar el usuario:
-```bash
-psql -U usuario -d rescate_db -f project/backend/src/database/init.sql
-# Pedirá la contraseña de Postgres por terminal
-```
+**reCAPTCHA:** haz click [AQUÍ](https://github.com/rescate-fresco/rescate-fresco-app/wiki/reCAPTCHA-V3) para configurar reCAPTCHA.
 
 ### 🏆 Ejecución del Proyecto
 
@@ -153,99 +203,3 @@ npm run start
 cd project/frontend
 npm run dev
 ```
-
-
-
-------
-### 🛡️ Configuración de Google reCAPTCHA v3
-
-El proyecto utiliza Google reCAPTCHA v3 en el formulario de inicio de sesión para protegerlo contra bots. Para que funcione en un entorno de producción, necesitas obtener tus propias claves de API de Google.
-
-**1. Obtener Claves de reCAPTCHA**
-
-1.  Ve a la [consola de administración de reCAPTCHA](https://www.google.com/recaptcha/admin/create).
-2.  Inicia sesión con tu cuenta de Google.
-3.  Registra un nuevo sitio:
-    *   **Etiqueta:** Elige un nombre descriptivo (ej. `Rescate Fresco App`).
-    *   **Tipo de reCAPTCHA:** Selecciona **reCAPTCHA v3** (por puntuación) o **reCAPTCHA v2** (por desafío).
-    *   **Dominios:** Agrega los dominios donde se ejecutará tu aplicación. Para desarrollo local, puedes agregar `localhost`.
-4.  Acepta los términos del servicio y haz clic en "Enviar".
-5.  En la siguiente página, se te proporcionarán la **Clave del sitio** y la **Clave secreta**.
-
-**2. Configurar Variables de Entorno**
-
-Ahora, debes agregar estas claves a los archivos `.env` correspondientes.
-
-*   **Backend:** Agrega la **Clave secreta** al archivo `project/backend/.env`.
-    ```bash
-    RECAPTCHA_SECRET_KEY=TU_CLAVE_SECRETA_AQUI
-    ```
-
-*   **Frontend:** Agrega la **Clave del sitio** al archivo `project/frontend/.env`.
-    ```bash
-    VITE_RECAPTCHA_SITE_KEY=TU_CLAVE_DEL_SITIO_AQUI
-    ```
-
-> **Nota:** La validación de reCAPTCHA en el backend está configurada para ejecutarse únicamente en el entorno de producción (`NODE_ENV=production`). Esto facilita las pruebas durante el desarrollo sin necesidad de un token de CAPTCHA válido.
-
-
-### 💳 Configuración de Stripe
-
-El proyecto utiliza Stripe para procesar los pagos de las reservas de productos. Para habilitar esta funcionalidad, necesitas obtener tus propias claves de API desde el dashboard de Stripe.
-
-**1. Obtener Claves de API de Stripe**
-
-1.  Crea una cuenta o inicia sesión en el Dashboard de Stripe.
-2.  Asegúrate de que estás en **modo de prueba** (el interruptor suele estar en la parte superior izquierda).
-3.  Ve a la sección de **Desarrolladores > Claves de API**.
-4.  Allí encontrarás dos claves que necesitas:
-    *   **Clave publicable (Publishable key):** Empieza con `pk_test_...`. Se usa en el frontend.
-    *   **Clave secreta (Secret key):** Empieza con `sk_test_...`. Se usa en el backend. Haz clic en "Revelar clave de prueba" para verla.
-
-**2. Configurar Variables de Entorno**
-
-Agrega estas claves a tus archivos `.env` para que la aplicación pueda usarlas.
-
-*   **Backend:** Agrega la **Clave secreta** al archivo `project/backend/.env`.
-    ```bash
-    STRIPE_SECRET_KEY=TU_CLAVE_SECRETA_AQUI
-    ```
-
-*   **Frontend:** Agrega la **Clave publicable** al archivo `project/frontend/.env`.
-    ```bash
-    VITE_STRIPE_PUBLIC_KEY=TU_CLAVE_PUBLICABLE_AQUI
-    ```
-
-> **Nota:** Los comandos `npm install` que ejecutaste anteriormente en las carpetas `frontend` y `backend` ya se encargaron de instalar los paquetes necesarios de Stripe (`@stripe/react-stripe-js`, `@stripe/stripe-js` y `stripe`).
-
-**3. Configurar Webhooks para Desarrollo Local (con Stripe CLI)**
-
-Para probar el flujo de pago completo localmente, necesitas que Stripe pueda notificar a tu backend cuando un pago es exitoso. Para ello, se utiliza la CLI de Stripe.
-
-1.  **Descarga la CLI de Stripe:** Ve a la página de lanzamientos de la [CLI en GitHub](https://github.com/stripe/stripe-cli/releases/tag/v1.32.0) y descarga el archivo para tu sistema operativo (ej. `stripe_1.32.0_windows_i386.zip`).
-
-2.  **Inicia sesión (solo una vez):** Descomprime el archivo y abre una terminal en la carpeta donde está el ejecutable `stripe.exe`. Ejecuta el siguiente comando para vincular la CLI con tu cuenta de Stripe. **Este paso solo se hace una vez.**
-    ```bash
-    ./stripe login
-    ```
-    Esto abrirá tu navegador para que confirmes el acceso.
-
-    > **Importante:** Si recibes un error de "comando no encontrado", asegúrate de que la terminal esté abierta **dentro de la carpeta** donde se encuentra `stripe.exe`. El comando `./` le indica a la terminal que ejecute el programa desde el directorio actual.
-
-3.  **Escucha y reenvía eventos (para cada sesión de desarrollo):** Con tu servidor backend corriendo, ejecuta el siguiente comando en la terminal de la CLI de Stripe. **Debes hacer esto cada vez que inicies una sesión de desarrollo para probar los pagos.**
-    ```bash
-    .\stripe.exe listen --forward-to http://localhost:5000/api/payments/stripe-webhook
-    ```
-
-4.  **Configura el Webhook Secret:** Al ejecutar el comando `listen`, la terminal te mostrará un **secreto de firma de webhook** (empieza con `whsec_...`).
-
-    Copia este valor y agrégalo a tu archivo `project/backend/.env`:
-    ```bash
-    STRIPE_WEBHOOK_SECRET=whsec_...
-    ```
-
-### Configuración para correo electronico
-1. Ir a [resent.com](https://resend.com) y crear una cuenta
-2. Obtener las API Keys y crear una nueva clave
-3. Instalar con npm install en el backend las dependencias de resend
-4. En el .env, colocar RESEND_API_KEY = 'clave'

@@ -39,3 +39,4 @@ package-lock.json
 
 # Ignoar .venv o cualquier entorno virtual de Python
 .venv/
+venv/
